@@ -22,6 +22,7 @@ import {
   Wallet,
   Copy,
   Star,
+  MessageSquareDot,
 } from "lucide-react";
 import { addToCart } from "@/app/lib/store/features/cartSlice";
 import { RootState, useAppDispatch, useAppSelector } from "@/app/lib/store/store";
@@ -192,21 +193,21 @@ export default function ProductDetailClient({
           <nav className="flex flex-wrap items-center space-x-1 text-[4px] sm:text-[8px] text-gray-500">
             <Link
               href={"/"}
-              className="hover:text-[#E53935] cursor-pointer transition-colors"
+              className="hover:text-green-700 cursor-pointer transition-colors"
             >
               <Heading title="Home" />
             </Link>
             <Heading title="/" />
             <Link
               href={"/products"}
-              className="hover:text-[#E53935] cursor-pointer transition-colors"
+              className="hover:text-green-700 cursor-pointer transition-colors"
             >
               <Heading title="Products" />
             </Link>{" "}
             <Heading title="/" />
             <Link
               href={`/products?search=${product?.categoryId}`}
-              className="hover:text-[#E53935] cursor-pointer transition-colors"
+              className="hover:text-green-700 cursor-pointer transition-colors"
             >
               <Heading title={product?.Category?.name} />
             </Link>
@@ -325,7 +326,7 @@ export default function ProductDetailClient({
             {/* Header */}
             <div className="space-y-4">
               <div className="flex flex-row justify-between ">
-                <span className=" bg-gradient-to-r from-green-100 to-lime-100 text-[#E53935] text-sm font-semibold px-3 py-2 rounded-full">
+                <span className=" bg-gradient-to-r from-green-100 to-lime-100 text-green-700 text-sm font-semibold px-3 py-2 rounded-full">
                   {product.Category?.name || "Uncategorized"}
                 </span>
                 <div className="relative inline-block">
@@ -364,7 +365,7 @@ export default function ProductDetailClient({
                 </div>
               </div>
 
-              <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-lg md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent leading-tight">
                 {product.name}
               </h1>
               {/* ⭐ Average Rating Under Product Name */}
@@ -377,7 +378,7 @@ export default function ProductDetailClient({
                       size={18}
                       className={
                         star <= Math.round(averageRating)
-                          ? "text-yellow-500 fill-yellow-500"
+                          ? "text-green-600 fill-green-600"
                           : "text-gray-300"
                       }
                     />
@@ -408,7 +409,7 @@ export default function ProductDetailClient({
                         .join(", ")
                     : product?.varientValue}
                 </div>
-                <span className="text-2xl text-[#E53935] line-through">
+                <span className="text-2xl text-green-700 line-through">
                   ₹{product.originalPrice}
                 </span>
               </div>
@@ -459,7 +460,7 @@ export default function ProductDetailClient({
                     );
                     router.push("/cart");
                   }}
-                  className=" group relative bg-[#E53935] hover:bg-red-600 text-white font-semibold py-4 px-16  rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl overflow-hidden"
+                  className=" group relative bg-green-700 hover:bg-green-700 text-white font-semibold py-4 px-16  rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"></div>
                   <div className="relative flex items-center justify-center space-x-2">
@@ -491,7 +492,7 @@ export default function ProductDetailClient({
                       }),
                     );
                   }}
-                  className=" group bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-gray-200 hover:border-red-300 text-gray-700 hover:text-red-600 font-semibold py-4 px-16 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                  className=" group bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-gray-200 hover:border-green-600 text-gray-700 hover:text-green-700 font-semibold py-4 px-16 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                 >
                   <div className="flex items-center justify-center space-x-2">
                     <ShoppingCart /> <span>Add to cart</span>
@@ -506,7 +507,10 @@ export default function ProductDetailClient({
                 onClick={() => setReviewOpen(true)}
                 className="mt-3 bg-gray-300 border border-black hover:scale-105 duration-300 text-black font-semibold block w-full max-w-[500px] mx-auto py-2 rounded-lg transition"
               >
-                Write a Review
+                <span className="flex gap-2 items-center justify-center">
+                  <MessageSquareDot />
+                  Write a Review 
+                </span>
               </button>             
           )}
 
@@ -533,7 +537,7 @@ export default function ProductDetailClient({
                       onClick={() => setReviewRating(star)}
                       className={`cursor-pointer ${
                         star <= reviewRating
-                          ? "text-yellow-500 fill-yellow-500"
+                          ? "text-yelolow-500 fill-yellow-400"
                           : "text-gray-300"
                       }`}
                     />
@@ -576,7 +580,7 @@ export default function ProductDetailClient({
                       alert(error.response?.data?.message || "Error adding review");
                     }
                   }}
-                  className="w-full bg-[#E53935] hover:bg-red-600 text-white py-2 rounded-lg"
+                  className="w-full bg-green-700 hover:bg-green-700 text-white py-2 rounded-lg"
                 >
                   Submit Review
                 </button>
@@ -598,7 +602,7 @@ export default function ProductDetailClient({
                     Stock Available
                   </h4>
                   <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-[#E53935] rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-green-700 rounded-full animate-pulse"></div>
                     <span className="text-gray-700 font-medium">
                       {selectedVariant ? selectedVariant.stock : product.stock}{" "}
                       units
@@ -712,7 +716,7 @@ export default function ProductDetailClient({
                       size={16}
                       className={
                         i < review.rating
-                          ? "text-yellow-500 fill-yellow-500"
+                          ? "text-green-600 fill-green-600"
                           : "text-gray-300"
                       }
                     />
@@ -751,7 +755,7 @@ export default function ProductDetailClient({
                   className={`w-9 h-9 rounded-full text-sm font-medium transition 
                     ${
                       currentPage === index + 1
-                        ? "bg-[#E53935] text-white"
+                        ? "bg-green-700 text-white"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                 >

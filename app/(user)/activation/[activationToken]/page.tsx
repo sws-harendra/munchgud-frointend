@@ -49,7 +49,7 @@ export default function ActivateAccount() {
       )}
 
       {status === "error" && (
-        <div className="text-red-600 font-semibold">{message}</div>
+        <div className="text-green-700 font-semibold">{message}</div>
       )}
     </div>
   );

@@ -112,7 +112,7 @@ export default function AdminTestimonialsPage() {
                   onClick={() => handleDelete(t.id)}
                   className="p-2 rounded-lg bg-red-50 hover:bg-red-100"
                 >
-                  <Trash2 size={16} className="text-red-600" />
+                  <Trash2 size={16} className="text-green-700" />
                 </button>
               </div>
             </div>

@@ -146,7 +146,7 @@ const AddUsers = ({ onSuccess }: any) => {
         </label>
       </div>
 
-      {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+      {error && <p className="text-green-600 text-sm mb-2">{error}</p>}
 
       <button
         onClick={handleSubmit}

@@ -230,7 +230,7 @@ export default function AdminBannersPage() {
 
                 <button
                   onClick={() => handleDelete(banner.id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-green-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
                 >
                   <Trash2 size={14} />
                   Delete

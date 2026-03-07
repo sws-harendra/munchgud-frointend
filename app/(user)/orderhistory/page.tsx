@@ -84,9 +84,9 @@ const OrderHistoryPage = () => {
 
     switch (status.toLowerCase()) {
       case "delivered":
-        return <CheckCircle className="w-5 h-5 text-red-500" />;
+        return <CheckCircle className="w-5 h-5 text-green-600" />;
       case "shipped":
-        return <Truck className="w-5 h-5 text-red-500" />;
+        return <Truck className="w-5 h-5 text-green-600" />;
       case "confirmed":
         return <Clock className="w-5 h-5 text-orange-500" />;
       default:
@@ -101,9 +101,9 @@ const OrderHistoryPage = () => {
 
     switch (status.toLowerCase()) {
       case "delivered":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-red-100 text-green-800 border-red-200";
       case "shipped":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-red-100 text-green-800 border-red-200";
       case "confirmed":
         return "bg-orange-100 text-orange-800 border-orange-200";
       default:
@@ -152,7 +152,7 @@ const OrderHistoryPage = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-red-50 to-red-100 flex items-center justify-center">
         <div className="text-center">
-          <Loader className="w-12 h-12 text-red-600 animate-spin mx-auto mb-4" />
+          <Loader className="w-12 h-12 text-green-700 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading your orders...</p>
         </div>
       </div>
@@ -165,15 +165,15 @@ const OrderHistoryPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-red-50 to-red-100 flex items-center justify-center">
         <div className="text-center bg-white rounded-2xl shadow-lg p-8 max-w-md">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <X className="w-8 h-8 text-red-500" />
+            <X className="w-8 h-8 text-green-600" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Error Loading Orders
           </h3>
-          <p className="text-red-600 mb-4">{error || "Something went wrong"}</p>
+          <p className="text-green-700 mb-4">{error || "Something went wrong"}</p>
           <button
             onClick={() => dispatch(fetchUserOrders())}
-            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-600 hover:scale-105 transition-all duration-300"
+            className="bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-700 hover:scale-105 transition-all duration-300"
           >
             Retry
           </button>
@@ -187,7 +187,7 @@ const OrderHistoryPage = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-red-50 to-red-100 flex items-center justify-center">
         <div className="text-center">
-          <Loader className="w-12 h-12 text-red-700 animate-spin mx-auto mb-4" />
+          <Loader className="w-12 h-12 text-green-700 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Initializing...</p>
         </div>
       </div>
@@ -200,11 +200,11 @@ const OrderHistoryPage = () => {
       <div className="bg-white shadow-lg border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-gradient-to-r from-red-500 to-red-600 rounded-xl shadow-lg">
+            <div className="p-3 bg-gradient-to-r from-green-600 to-green-700 rounded-xl shadow-lg">
               <Package className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold bg-red-700 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-green-700 bg-clip-text text-transparent">
                 Order History
               </h1>
               <p className="text-gray-600 mt-1">Track and manage your orders</p>
@@ -264,7 +264,7 @@ const OrderHistoryPage = () => {
                             <p className="text-sm text-gray-500">
                               Total Amount
                             </p>
-                            <p className="font-bold text-lg text-red-600">
+                            <p className="font-bold text-lg text-green-700">
                               {formatAmount(order.totalAmount)}
                             </p>
                           </div>
@@ -292,7 +292,7 @@ const OrderHistoryPage = () => {
                       <div className="flex items-center space-x-4">
                         <button
                           onClick={() => handleViewDetails(order.id)}
-                          className="group/btn flex items-center space-x-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl font-medium hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                          className="group/btn flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-xl font-medium hover:from-green-700 hover:to-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
                         >
                           <Eye className="w-4 h-4 group-hover/btn:rotate-12 transition-transform duration-200" />
                           <span>View Details</span>
@@ -384,7 +384,7 @@ const OrderHistoryPage = () => {
               <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
               <div className="bg-white rounded-2xl shadow-2xl p-8 relative z-10">
                 <div className="flex items-center justify-center">
-                  <Loader className="w-8 h-8 text-red-600 animate-spin mr-3" />
+                  <Loader className="w-8 h-8 text-green-700 animate-spin mr-3" />
                   <span>Loading order details...</span>
                 </div>
               </div>
@@ -408,7 +408,7 @@ const OrderHistoryPage = () => {
                   }`}
                 >
                   {/* Modal Header */}
-                  <div className="bg-gradient-to-r from-red-500 to-red-600 p-6 text-white relative">
+                  <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 text-white relative">
                     <button
                       onClick={handleCloseDetails}
                       className="absolute top-4 right-4 p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-200"
@@ -469,7 +469,7 @@ const OrderHistoryPage = () => {
                               <p className="font-medium capitalize">
                                 {selectedOrder.paymentMethod || "N/A"}
                               </p>
-                              <p className="text-sm text-red-600 font-medium">
+                              <p className="text-sm text-green-700 font-medium">
                                 {selectedOrder.paymentStatus || "N/A"}
                               </p>
                             </div>
@@ -481,7 +481,7 @@ const OrderHistoryPage = () => {
                           <h3 className="font-semibold text-gray-900 mb-2">
                             Total Amount
                           </h3>
-                          <p className="text-2xl font-bold text-red-600">
+                          <p className="text-2xl font-bold text-green-700">
                             {formatAmount(selectedOrder.totalAmount)}
                           </p>
                         </div>
@@ -507,7 +507,7 @@ const OrderHistoryPage = () => {
                                       "N/A"}
                                   </p>
                                   {selectedOrder.OrderAddress.addressType && (
-                                    <p className="text-xs text-red-600 font-medium capitalize">
+                                    <p className="text-xs text-green-700 font-medium capitalize">
                                       {selectedOrder.OrderAddress.addressType}{" "}
                                       Address
                                     </p>
@@ -569,7 +569,7 @@ const OrderHistoryPage = () => {
                                   Quantity: {item.quantity || 0}
                                 </p>
                                 <div className="flex items-center space-x-2 mt-1">
-                                  <span className="text-lg font-bold text-red-600">
+                                  <span className="text-lg font-bold text-green-700">
                                     {formatAmount(item.price)}
                                   </span>
                                   {item.Product?.originalPrice &&

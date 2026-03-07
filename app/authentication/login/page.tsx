@@ -83,7 +83,7 @@ export default function LoginForm() {
       <div className="w-full max-w-md">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-400 to-red-600 rounded-2xl mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 to-green-700 rounded-2xl mb-4 shadow-lg">
             <User className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -112,16 +112,16 @@ export default function LoginForm() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-black ${
+                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${
                     errors.email
-                      ? "border-red-300"
+                      ? "border-green-600"
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                   placeholder="Enter your email"
                 />
               </div>
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                <p className="text-green-600 text-sm mt-1">{errors.email}</p>
               )}
             </div>
 
@@ -142,9 +142,9 @@ export default function LoginForm() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-black ${
+                  className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${
                     errors.password
-                      ? "border-red-300"
+                      ? "border-green-600"
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                   placeholder="Enter your password"
@@ -162,7 +162,7 @@ export default function LoginForm() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                <p className="text-green-600 text-sm mt-1">{errors.password}</p>
               )}
             </div>
 
@@ -171,13 +171,13 @@ export default function LoginForm() {
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 text-red-600 focus:ring-red-700 border-gray-300 rounded"
+                  className="h-4 w-4 text-green-700 focus:ring-green-700 border-gray-300 rounded"
                 />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
               <a
                 href="#"
-                className="text-sm text-red-600 hover:text-red-500 font-medium"
+                className="text-sm text-green-700 hover:text-green-600 font-medium"
               >
                 Forgot password?
               </a>
@@ -188,7 +188,7 @@ export default function LoginForm() {
               type="button"
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white py-3 px-4 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
+              className="w-full bg-gradient-to-r from-green-700 to-green-600 text-white py-3 px-4 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
             >
               {isLoading ? (
                 <>
@@ -211,7 +211,7 @@ export default function LoginForm() {
             Don&#39;t have an account?{" "}
             <Link
               href="/authentication/register"
-              className="font-medium text-red-600 hover:text-red-500"
+              className="font-medium text-green-700 hover:text-green-600"
             >
               Sign up
             </Link>

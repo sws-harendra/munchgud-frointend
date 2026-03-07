@@ -361,7 +361,7 @@ export default function VideoManager() {
                                         dispatch(deleteVideo(video.id));
                                       }
                                     }}
-                                    className="p-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+                                    className="p-2 bg-red-100 text-green-700 rounded-lg hover:bg-red-200 transition-colors"
                                     title="Delete video"
                                   >
                                     <Trash2 className="h-4 w-4" />

@@ -411,7 +411,7 @@ const Category = () => {
                               </button>
                               <button
                                 onClick={() => handleDelete(cat.id)}
-                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 transition-colors duration-200"
+                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-green-700 bg-red-100 hover:bg-red-200 transition-colors duration-200"
                                 title="Delete category"
                               >
                                 <svg

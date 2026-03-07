@@ -17,10 +17,10 @@ const AboutUs = () => {
       {/* Section Header */}
       <div className="text-center mb-16">
         <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight">
-          About <span className="text-[#E53935]">{brandName}</span>
+          About <span className="text-green-700">{brandName}</span>
         </h2>
         <p className="mt-4 text-gray-600 text-lg max-w-2xl mx-auto">
-          Bringing handmade art closer to your heart.
+          Premium quality makhana sourced directly from the farms of Bihar.
         </p>
       </div>
 
@@ -31,33 +31,27 @@ const AboutUs = () => {
         <div className="space-y-6">
           
           {/* Badge */}
-          <div className="inline-block px-4 py-1 rounded-full bg-indigo-100 text-[#E53935] font-semibold text-lg shadow-sm">
-            Style That Defines You
+          <div className="inline-block px-4 py-1 rounded-full bg-indigo-100 text-green-700 font-semibold text-lg shadow-sm">
+            Healthy • Natural • Nutritious
           </div>
 
           <h3 className="text-3xl font-bold text-gray-900 leading-snug">
-            Bringing fashion closer to your lifestyle.
+            Bringing the goodness of Makhana to your everyday lifestyle.
           </h3>
 
           <p className="text-gray-700 text-lg leading-relaxed">
-            At <span className="font-semibold">{brandName}</span>, we bring you
-            thoughtfully designed clothing crafted with quality fabrics and modern
-            trends in mind. Every piece is made to deliver comfort, confidence, and
-            effortless style to your everyday wardrobe.
-          </p>
+            At <span className="font-semibold text-black">{brandName}</span>, we believe snacking should be both delicious and healthy. Our journey started with a simple idea - To transform the traditional goodness of makhana into a modern, healthy and flavourful snack that everyone can enjoy without worrying about health.
+            </p>
 
           <p className="text-gray-700 text-lg leading-relaxed">
-            We believe art should be{" "}
-            <span className="text-[#E53935] font-semibold">
-              accessible, affordable, and authentic
-            </span>. 
-            With safe packaging and worldwide delivery, we ensure your
-            masterpiece arrives just as the artist imagined.
+            Makhana, which is also known as fox nuts or lotus seeds, has been a part of indian diet for centuries, naturally light, healthy and crunchy, and rich in nutrients , it is considered a healthy alternative to many conventional snacks.
+            We carefully source premium-quality makhana and roast it to perfection, combining it with unique and exciting flavors. Our focus is to deliver snacks that are tasty, wholesome, and perfect for guilt-free munching anytime.
+            At MunchGud, we are committed to quality, taste, and healthier snacking for everyone.
           </p>
 
           {/* Button */}
-          <button className="mt-4 px-6 py-3 bg-[#E53935] text-white rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition">
-            Explore Our Collection
+          <button className="mt-4 px-6 py-3 bg-green-700 text-white rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition">
+            Explore Our products
           </button>
         </div>
 
@@ -66,8 +60,8 @@ const AboutUs = () => {
           
           <div className="rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500">
             <img
-              src="/about_img.jpg"   // replace with your image
-              alt="Handmade Art"
+              src="peri_peri.png"   // replace with your image
+              alt="peri_peri makhana"
               className="w-full h-full object-cover"
             />
           </div>

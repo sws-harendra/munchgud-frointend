@@ -57,7 +57,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       >
         {/* Discount Badge */}
         {discountPercent > 0 && (
-          <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-[#E53935] via-[#D32F2F] to-[#B71C1C] text-white px-2.5 py-1 rounded-full text-xs font-semibold shadow-md">
+          <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-green-700 via-[#D32F2F] to-[#B71C1C] text-white px-2.5 py-1 rounded-full text-xs font-semibold shadow-md">
             {discountPercent}% OFF
           </div>
         )}
@@ -71,7 +71,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Heart
             size={18}
             className={`transition-colors duration-300 ${
-              isFavorite ? "text-red-500 fill-red-500" : "text-gray-400"
+              isFavorite ? "text-green-600 fill-green-600" : "text-gray-400"
             }`}
           />
         </button>
@@ -128,13 +128,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
           className={`${viewMode === "list" ? "flex-1 py-2" : "p-4 space-y-3"}`}
         >
           {/* Category Badge */}
-          <span className="inline-block px-2 py-1 text-xs font-medium text-red-600 bg-green-50 rounded-full capitalize mb-2">
+          <span className="inline-block px-2 py-1 text-xs font-medium text-green-700 bg-green-50 rounded-full capitalize mb-2">
             {product.Category?.name || "General"}
           </span>
 
           {/* Product Name */}
           <h3
-            className={`font-medium text-gray-800 group-hover:text-red-600 transition-colors duration-300 line-clamp-2 ${
+            className={`font-medium text-gray-800 group-hover:text-green-700 transition-colors duration-300 line-clamp-2 ${
               viewMode === "list" ? "text-lg" : "text-sm leading-tight"
             }`}
           >
@@ -157,7 +157,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   size={12}
                   className={`${
                     i < 4 // Using a fixed 4-star rating for now
-                      ? "text-yellow-400 fill-yellow-400"
+                      ? "text-green-700 fill-green-700"
                       : "text-gray-300"
                   }`}
                 />
@@ -168,7 +168,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {/* Stock Status */}
             <span
               className={`text-xs font-medium ${
-                product.stock > 0 ? "text-red-600" : "text-gray-500"
+                product.stock > 0 ? "text-green-700" : "text-gray-500"
               }`}
             >
               {product.stock > 0 ? "In Stock" : "Out of Stock"}
@@ -193,7 +193,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               className={`p-2 rounded-lg transition-colors duration-200 group/cart ${
                 product.sold_out === 1
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-green-100 text-red-600 hover:bg-red-200"
+                  : "bg-green-100 text-green-700 hover:bg-red-200"
               }`}
               disabled={product.sold_out === 1}
             >
@@ -375,7 +375,7 @@ const FilterSidebar = ({
                         key={i}
                         className={`w-4 h-4 ${
                           i < stars
-                            ? "fill-yellow-400 text-yellow-400"
+                            ? "fill-green-700 text-green-700"
                             : "text-gray-300"
                         }`}
                       />

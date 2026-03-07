@@ -11,6 +11,8 @@ import AllBlogsHomePage from "./components/blogs";
 import MediaCoveragePage from "./components/mediaCoverage";
 import TestimonialCarousel from "./components/testimonials";
 import FeaturedArtists from "./components/featuredArtists";
+import InstagramSection from "./components/InstagramSection";
+import ChooseYourMakhana from "./components/ChooseYourMakhana";
 
 const HomePage = () => {
   return (
@@ -22,6 +24,8 @@ const HomePage = () => {
         <TrendingProducts />
         <AllSections />
         <FeaturedArtists />
+        <ChooseYourMakhana/>
+        <InstagramSection />
         <TestimonialCarousel />
         <AllBlogsHomePage />
         <MediaCoveragePage />

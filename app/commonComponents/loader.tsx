@@ -5,7 +5,7 @@ export default function Loader() {
         {[...Array(10)].map((_, i) => (
           <div
             key={i}
-            className="w-2.5 h-12 bg-gradient-to-t from-[#E53935]  to-red-500 rounded-full animate-[pulseScale_1s_ease-in-out_infinite]"
+            className="w-2.5 h-12 bg-gradient-to-t from-green-700  to-green-600 rounded-full animate-[pulseScale_1s_ease-in-out_infinite]"
             style={{
 
               animationDelay: `${i * 0.15}s`,

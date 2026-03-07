@@ -20,7 +20,7 @@ const AllArtistsHomePage = () => {
     return <div className="text-center py-10">Loading artists...</div>;
   if (status === "failed")
     return (
-      <div className="text-center py-10 text-red-500">
+      <div className="text-center py-10 text-green-600">
         Failed to load artists.
       </div>
     );

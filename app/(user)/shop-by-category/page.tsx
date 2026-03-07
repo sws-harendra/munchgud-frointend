@@ -10,9 +10,9 @@ const categories = Array.from({ length: 6 }).map((_, i) => ({
 // 🎨 Define a pool of gradient+pattern styles
 const bgStyles = [
   "bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 before:bg-[radial-gradient(circle,rgba(255,255,255,0.1)_1px,transparent_1px)] before:bg-[length:20px_20px]",
-  "bg-gradient-to-r from-pink-500 via-red-500 to-orange-500 before:bg-[linear-gradient(45deg,rgba(255,255,255,0.15)_25%,transparent_25%,transparent_75%,rgba(255,255,255,0.15)_75%)] before:bg-[length:20px_20px]",
+  "bg-gradient-to-r from-pink-500 via-green-600 to-orange-500 before:bg-[linear-gradient(45deg,rgba(255,255,255,0.15)_25%,transparent_25%,transparent_75%,rgba(255,255,255,0.15)_75%)] before:bg-[length:20px_20px]",
   "bg-gradient-to-r from-green-400 via-teal-500 to-emerald-600 before:bg-[radial-gradient(circle,rgba(255,255,255,0.15)_2px,transparent_2px)] before:bg-[length:25px_25px]",
-  "bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 before:bg-[linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] before:bg-[length:20px_20px]",
+  "bg-gradient-to-r from-green-700 via-orange-400 to-pink-500 before:bg-[linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] before:bg-[length:20px_20px]",
   "bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-600 before:bg-[radial-gradient(circle,rgba(255,255,255,0.15)_3px,transparent_3px)] before:bg-[length:30px_30px]",
   "bg-gradient-to-r from-rose-400 via-fuchsia-500 to-purple-600 before:bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_10%,transparent_10%)] before:bg-[length:25px_25px]",
 ];

@@ -58,7 +58,7 @@ export default function TestimonialCarousel() {
             <div className="bg-[#f1f6ee] mb-4 rounded-2xl shadow-xl h-[320px] flex flex-col items-center relative overflow-hidden group transition-transform hover:-translate-y-2 hover:shadow-xl">
               {/* Quote icon */}
               <div className="mr-auto px-4">
-                <Quote className="w-10 h-10 mt-6 text-start fill-[#E53935]/40 text-[#E53935]  opacity-60" />
+                <Quote className="w-10 h-10 mt-6 text-start fill-green-700/40 text-green-700  opacity-60" />
               </div>
 
               {/* Testimonial text */}

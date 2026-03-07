@@ -76,7 +76,7 @@ export default function BlogList() {
 
               {/* Delete */}
               <button
-                className="px-3 py-1 border rounded bg-red-600 text-white hover:bg-red-700"
+                className="px-3 py-1 border rounded bg-green-700 text-white hover:bg-green-700"
                 onClick={() => handleDelete(post.id!)}
               >
                 Delete

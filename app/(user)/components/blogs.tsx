@@ -24,7 +24,7 @@ const AllBlogsHomePage = () => {
     );
   if (status === "failed")
     return (
-      <div className="text-center py-12 text-red-500 font-medium">
+      <div className="text-center py-12 text-green-600 font-medium">
         Failed to load blogs.
       </div>
     );

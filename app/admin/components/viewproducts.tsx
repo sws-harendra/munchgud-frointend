@@ -72,7 +72,7 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
                           size={16}
                           className={
                             i < Math.floor(product.ratings)
-                              ? "text-yellow-400 fill-current"
+                              ? "text-green-700 fill-current"
                               : "text-gray-300"
                           }
                         />
@@ -100,7 +100,7 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
                         <span className="text-lg text-gray-500 line-through">
                           {parseFloat(product.originalPrice).toFixed(2)}
                         </span>
-                        <span className="text-sm bg-red-100 text-red-600 px-2 py-1 rounded">
+                        <span className="text-sm bg-red-100 text-green-700 px-2 py-1 rounded">
                           {Math.round(
                             ((parseFloat(product.originalPrice) -
                               parseFloat(product.discountPrice)) /
@@ -140,7 +140,7 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
                     className={`text-sm px-3 py-1 rounded-full ${
                       product.stock > 0 && !product.sold_out
                         ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
+                        : "bg-red-100 text-green-700"
                     }`}
                   >
                     {product.sold_out
@@ -174,12 +174,12 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
               <div className="flex items-center space-x-2">
                 <div
                   className={`w-3 h-3 rounded-full ${
-                    product.isActive ? "bg-green-500" : "bg-red-500"
+                    product.isActive ? "bg-green-500" : "bg-green-600"
                   }`}
                 ></div>
                 <span
                   className={`text-sm font-medium ${
-                    product.isActive ? "text-green-700" : "text-red-700"
+                    product.isActive ? "text-green-700" : "text-green-700"
                   }`}
                 >
                   {product.isActive ? "Active" : "Inactive"}

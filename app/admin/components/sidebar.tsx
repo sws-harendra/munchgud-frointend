@@ -18,6 +18,8 @@ import {
   Camera,
   Star,
   ChartNoAxesGanttIcon,
+  Instagram,
+  LocateIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation"; // ✅ for navigation
@@ -50,6 +52,16 @@ const menuItems = [
     name: "Category",
     icon: SeparatorVertical,
     href: "/admin/dashboard/category",
+  },
+  {
+    name: "Instargram",
+    icon: Instagram,
+    href: "/admin/dashboard/instagram",
+  },
+  {
+    name: "Service Area",
+    icon: LocateIcon,
+    href: "/admin/dashboard/service-area",
   },
   {
     name: "Artist",

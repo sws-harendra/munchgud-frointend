@@ -198,7 +198,7 @@ export default function SectionManager() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleDelete(section.id)}
-                            className="bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg transition-colors"
+                            className="bg-green-700 hover:bg-green-700 text-white py-2 px-3 rounded-lg transition-colors"
                           >
                             <AlertTriangle size={16} />
                           </button>
@@ -212,7 +212,7 @@ export default function SectionManager() {
                       ) : (
                         <button
                           onClick={() => setDeleteConfirm(section.id)}
-                          className="bg-red-100 hover:bg-red-200 text-red-600 py-2 px-3 rounded-lg transition-colors"
+                          className="bg-red-100 hover:bg-red-200 text-green-700 py-2 px-3 rounded-lg transition-colors"
                         >
                           <Trash2 size={16} />
                         </button>

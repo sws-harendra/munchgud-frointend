@@ -127,7 +127,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                     <svg
                       key={i}
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 text-yellow-400"
+                      className="h-5 w-5 text-green-700"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >

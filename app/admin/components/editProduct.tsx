@@ -534,7 +534,7 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
                                 onClick={() =>
                                   handleRemoveExistingMedia(mediaPath, idx)
                                 }
-                                className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transform hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                                className="absolute -top-2 -right-2 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transform hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -572,7 +572,7 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
                             <button
                               type="button"
                               onClick={() => handleRemoveNewMedia(idx)}
-                              className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transform hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                              className="absolute -top-2 -right-2 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transform hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -592,7 +592,7 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
                           <span>New: {newMedia.length}</span>
                           <span>Total: {totalMedia}</span>
                           {removedMedia.length > 0 && (
-                            <span className="text-red-500">
+                            <span className="text-green-600">
                               Removed: {removedMedia.length}
                             </span>
                           )}

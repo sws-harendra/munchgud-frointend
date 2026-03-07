@@ -136,7 +136,7 @@ const MediaCoverageForm = ({
                     setPreviewImage(null);
                     setSelectedFile(null);
                   }}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                  className="absolute -top-2 -right-2 bg-green-600 text-white rounded-full p-1"
                 >
                   <X size={16} />
                 </button>

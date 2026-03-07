@@ -29,7 +29,7 @@ export default function BlogList() {
     return <p className="text-center mt-10 text-gray-500">Loading blogs...</p>;
   if (status === "failed")
     return (
-      <p className="text-center mt-10 text-red-500">Failed to load blogs.</p>
+      <p className="text-center mt-10 text-green-600">Failed to load blogs.</p>
     );
 
   return (

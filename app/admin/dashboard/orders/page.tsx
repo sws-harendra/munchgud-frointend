@@ -221,7 +221,7 @@ const OrderManagement = () => {
       case "shipped":
         return "bg-blue-100 text-blue-800 border-blue-200";
       case "cancelled":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-red-100 text-green-800 border-red-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
@@ -235,7 +235,7 @@ const OrderManagement = () => {
         return "bg-amber-100 text-amber-800 border-amber-200";
       case "failed":
       case "refunded":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-red-100 text-green-800 border-red-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
@@ -420,8 +420,8 @@ const OrderManagement = () => {
           ) : error ? (
             <div className="p-12 text-center">
               <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-                <p className="text-red-600 font-medium">Error loading orders</p>
-                <p className="text-red-500 text-sm mt-2">{error}</p>
+                <p className="text-green-700 font-medium">Error loading orders</p>
+                <p className="text-green-600 text-sm mt-2">{error}</p>
               </div>
             </div>
           ) : (
@@ -546,7 +546,7 @@ const OrderManagement = () => {
                               onClick={() => {
                                 /* Handle delete */
                               }}
-                              className="text-red-600 hover:text-red-900 hover:bg-red-50 p-2 rounded-lg transition-all duration-200"
+                              className="text-green-700 hover:text-red-900 hover:bg-red-50 p-2 rounded-lg transition-all duration-200"
                               title="Delete Order"
                             >
                               <Trash2 className="h-4 w-4" />

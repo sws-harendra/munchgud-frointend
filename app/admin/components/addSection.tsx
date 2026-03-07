@@ -219,7 +219,7 @@ export default function AddSectionForm() {
                       }`}
                     >
                       {selectedProducts.includes(product.id) ? (
-                        <Trash2 className="text-red-600 h-5 w-5" />
+                        <Trash2 className="text-green-700 h-5 w-5" />
                       ) : (
                         <Plus className="text-gray-600 h-5 w-5" />
                       )}

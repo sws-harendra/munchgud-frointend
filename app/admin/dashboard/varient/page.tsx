@@ -226,7 +226,7 @@ export default function ProductVariantsPage() {
                 </div>
                 <button
                   onClick={() => handleDeleteCategory(cat.id)}
-                  className="p-1 text-red-500 hover:bg-red-50 rounded"
+                  className="p-1 text-green-600 hover:bg-red-50 rounded"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -261,7 +261,7 @@ export default function ProductVariantsPage() {
                 </div>
                 <button
                   onClick={() => handleDeleteOption(opt.id)}
-                  className="p-1 text-red-500 hover:bg-red-50 rounded"
+                  className="p-1 text-green-600 hover:bg-red-50 rounded"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -304,7 +304,7 @@ export default function ProductVariantsPage() {
                 </div>
                 <button
                   onClick={() => handleDeleteVariant(variant.id)}
-                  className="p-1 text-red-500 hover:bg-red-50 rounded"
+                  className="p-1 text-green-600 hover:bg-red-50 rounded"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -465,7 +465,7 @@ export default function ProductVariantsPage() {
             <form onSubmit={handleAddVariant} className="p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product <span className="text-red-500">*</span>
+                  Product <span className="text-green-600">*</span>
                 </label>
                 <div className="relative">
                   <div className="relative">
@@ -527,7 +527,7 @@ export default function ProductVariantsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Option <span className="text-red-500">*</span>
+                  Option <span className="text-green-600">*</span>
                 </label>
                 <select
                   required
@@ -577,7 +577,7 @@ export default function ProductVariantsPage() {
                     <button
                       type="button"
                       onClick={handleRemoveImage}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                      className="absolute -top-2 -right-2 bg-green-600 text-white rounded-full p-1"
                     >
                       <X size={16} />
                     </button>

@@ -128,7 +128,7 @@ const ArtistList = () => {
 
                   <button
                     onClick={() => setDeleteConfirm(artist.id)}
-                    className="bg-red-50 hover:bg-red-100 text-red-700 px-4 py-2 rounded-lg font-semibold flex items-center justify-center transition-colors duration-200"
+                    className="bg-red-50 hover:bg-red-100 text-green-700 px-4 py-2 rounded-lg font-semibold flex items-center justify-center transition-colors duration-200"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -168,7 +168,7 @@ const ArtistList = () => {
           <div className="bg-white p-8 rounded-2xl shadow-2xl w-96 mx-4">
             <div className="text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Trash2 size={32} className="text-red-600" />
+                <Trash2 size={32} className="text-green-700" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">
                 Delete Artist
@@ -186,7 +186,7 @@ const ArtistList = () => {
                 </button>
                 <button
                   onClick={() => handleDelete(deleteConfirm)}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors duration-200"
+                  className="flex-1 bg-green-700 hover:bg-green-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors duration-200"
                 >
                   Delete
                 </button>

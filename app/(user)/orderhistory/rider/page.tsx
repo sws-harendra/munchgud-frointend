@@ -166,15 +166,15 @@ const OrderHistoryRiderPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-green-50 to-lime-100 flex items-center justify-center">
         <div className="text-center bg-white rounded-2xl shadow-lg p-8 max-w-md">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <X className="w-8 h-8 text-red-500" />
+            <X className="w-8 h-8 text-green-600" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Error Loading Orders
           </h3>
-          <p className="text-red-600 mb-4">{error || "Something went wrong"}</p>
+          <p className="text-green-700 mb-4">{error || "Something went wrong"}</p>
           <button
             onClick={() => dispatch(fetchUserOrders())}
-            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-600 hover:scale-105 transition-all duration-300"
+            className="bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-700 hover:scale-105 transition-all duration-300"
           >
             Retry
           </button>

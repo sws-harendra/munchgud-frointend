@@ -230,7 +230,7 @@ const MediaCoveragePage = () => {
 
                           <button
                             onClick={() => handleDelete(coverage.id)}
-                            className="text-red-600 hover:text-red-900"
+                            className="text-green-700 hover:text-red-900"
                             title="Delete"
                           >
                             <Trash2 size={18} />

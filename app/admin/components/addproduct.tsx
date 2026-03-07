@@ -463,7 +463,7 @@ const AddProducts = () => {
                           <button
                             type="button"
                             onClick={() => handleRemoveMedia(idx)}
-                            className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transform hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                            className="absolute -top-2 -right-2 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transform hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
                           >
                             <X className="w-4 h-4" />
                           </button>

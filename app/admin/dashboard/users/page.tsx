@@ -179,7 +179,7 @@ export default function AdminUsersPage() {
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
             <div className="flex items-center gap-3">
               <svg
-                className="w-5 h-5 text-red-500"
+                className="w-5 h-5 text-green-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -191,7 +191,7 @@ export default function AdminUsersPage() {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span className="text-red-800 font-medium">
+              <span className="text-green-800 font-medium">
                 Failed to load users. Please try again.
               </span>
             </div>
@@ -357,7 +357,7 @@ export default function AdminUsersPage() {
                                 dispatch(deleteUser(u.id));
                               }
                             }}
-                            className="text-red-600 hover:text-red-900 hover:bg-red-50 p-2 rounded-lg transition-colors duration-200"
+                            className="text-green-700 hover:text-red-900 hover:bg-red-50 p-2 rounded-lg transition-colors duration-200"
                             title="Delete User"
                           >
                             <svg

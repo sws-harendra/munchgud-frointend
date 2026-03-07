@@ -61,14 +61,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Enhanced Discount Badge */}
         <div className="absolute top-4 left-4 z-20">
           <div className="relative">
-            <div className="bg-gradient-to-r from-[#E53935] via-[#D32F2F] to-[#B71C1C] text-white px-2 py-1.5 rounded-2xl text-xs font-bold shadow-lg transform -rotate-2 group-hover:rotate-0 transition-transform duration-500">
+            <div className="bg-gradient-to-r from-green-700  to-green-800 text-white px-2 py-1.5 rounded-2xl text-xs font-bold shadow-lg transform -rotate-2 group-hover:rotate-0 transition-transform duration-500">
               <span className="sm:text-base text-[10px] flex items-center gap-1">
                 <Zap size={10} className="text-yellow-300" />
                 {discount}% OFF
               </span>
             </div>
             {/* Glowing effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#E53935] via-[#D32F2F] to-[#B71C1C] rounded blur-sm opacity-50 -z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-green-700  to-green-800 rounded blur-sm opacity-50 -z-10" />
           </div>
         </div>
 
@@ -104,7 +104,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           {/* Premium Badge */}
           {Number(rating) >= 4.5 && (
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-700 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
               ⭐ Premium Choice
             </div>
           )}
@@ -146,7 +146,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="p-2 sm:p-3 space-y-0">
           {/* Product Name */}
           <div className="text-left  space-y-2">
-            <h3 className=" text-xs text-gray-900 group-hover:text-[#E53935] transition-colors duration-300 truncate sm:text-base leading-snug tracking-tight">
+            <h3 className=" text-xs text-gray-900 group-hover:text-green-700 transition-colors duration-300 truncate sm:text-base leading-snug tracking-tight">
               {name}
             </h3>
             {/* <p className="text-sm mb-1"> Lorem ipsum dolor sit amet, consectetur adipisicing</p> */}
@@ -163,9 +163,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     size={14}
                     className={`transition-all duration-300 ${
                       i < Math.floor(rating)
-                        ? "text-yellow-500 fill-yellow-500 drop-shadow-sm"
+                        ? "text-green-600 fill-green-600 drop-shadow-sm"
                         : i === Math.floor(rating) && rating % 1 >= 0.5
-                          ? "text-yellow-500 fill-yellow-500/50"
+                          ? "text-green-600 fill-green-600/50"
                           : "text-gray-300"
                     }`}
                   />

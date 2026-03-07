@@ -22,6 +22,7 @@ import "swiper/css/pagination";
 // Import Swiper components and modules
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import Description from "./Description";
 
 export default function VideoProduct() {
   const dispatch = useAppDispatch();
@@ -112,7 +113,7 @@ export default function VideoProduct() {
       {/* Header */}
       <div className="text-center mb-12 mt-8">
         <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 flex items-center justify-center gap-2">
-          WATCH AND  <span className="">SHOP</span>
+          WATCH AND SHOP
         </h2>
         <p className="mt-3 text-gray-600">
           Discover amazing products through immersive video experiences
@@ -182,7 +183,7 @@ export default function VideoProduct() {
                   <div className="absolute top-4 right-4 flex gap-2 z-20">
                     <button
                       onClick={(e) => toggleMute(video.id, e)}
-                      className="bg-black bg-opacity-60 text-[#E53935] p-2 rounded-full hover:bg-opacity-80 transition-all duration-200"
+                      className="bg-black bg-opacity-60 text-green-700 p-2 rounded-full hover:bg-opacity-80 transition-all duration-200"
                     >
                       {unmutedId === video.id ? (
                         <Volume2 className="h-4 w-4" />
@@ -217,19 +218,20 @@ export default function VideoProduct() {
 
                   {/* Product Information Overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
-                    <h3 className="font-bold text-xl md:text-2xl mb-3 leading-tight">
+                    <h3 className="font-bold text-xl md:text-sm mb-3 leading-tight">
                       {video.Product?.name || `Product #${video.productId}`}
                     </h3>
 
                     {video.Product?.description && (
                       <p className="text-white text-sm md:text-base mb-4 leading-relaxed line-clamp-2 opacity-90">
-                        {video.Product.description}
+                        <p className="line-clamp-2" dangerouslySetInnerHTML={{ __html: video.Product.description }}></p>
+                        {/* <Description description={video.Product.description} /> */}
                       </p>
                     )}
 
                     <div className="flex items-center justify-between">
                       {video.Product?.price && (
-                        <span className="text-2xl md:text-3xl font-bold text-yellow-400 drop-shadow-lg">
+                        <span className="text-2xl md:text-3xl font-bold text-green-700 drop-shadow-lg">
                           ${video.Product.price}
                         </span>
                       )}
@@ -239,7 +241,7 @@ export default function VideoProduct() {
                           video.Product?.name || "product"
                         )}/${video.productId}`}
                         onClick={handleShopNowClick}
-                        className="bg-red-500 hover:bg-[#E53935] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 text-sm  shadow-lg hover:shadow-xl transform hover:scale-105"
+                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 text-sm  shadow-lg hover:shadow-xl transform hover:scale-105"
                       >
                         Shop Now
                       </Link>

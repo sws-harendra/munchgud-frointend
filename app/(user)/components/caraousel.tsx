@@ -148,7 +148,7 @@ export default function BannerCarousel() {
                       </p>
                     )}
                     {banner.ctaText && (
-                      <button className="bg-[#E53935] text-white hover:from-green-700 hover:via-green-700 hover:to-green-700 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-bold text-sm sm:text-base md:text-lg transition-all duration-500 transform hover:scale-110 hover:shadow-2xl flex items-center space-x-3 group/btn">
+                      <button className="bg-green-700 text-white hover:from-green-700 hover:via-green-700 hover:to-green-700 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-bold text-sm sm:text-base md:text-lg transition-all duration-500 transform hover:scale-110 hover:shadow-2xl flex items-center space-x-3 group/btn">
                         <span className="drop-shadow-sm">{banner.ctaText}</span>
                         <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:translate-x-2 group-hover/btn:rotate-12 transition-all duration-300" />
                       </button>
@@ -162,13 +162,13 @@ export default function BannerCarousel() {
           {/* Enhanced navigation arrows */}
           <button
             onClick={prevSlide}
-            className="hidden md:flex absolute top-1/2 left-6 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-[#E53935] rounded-2xl p-3 transition-all duration-300 hover:scale-110 shadow-xl border border-[#E53935]/10 z-30 group/nav"
+            className="hidden md:flex absolute top-1/2 left-6 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-green-700 rounded-2xl p-3 transition-all duration-300 hover:scale-110 shadow-xl border border-green-700/10 z-30 group/nav"
           >
             <ChevronLeft className="w-6 h-6 group-hover/nav:-translate-x-0.5 transition-transform" />
           </button>
           <button
             onClick={nextSlide}
-            className="hidden md:flex absolute top-1/2 right-6 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-[#E53935] rounded-2xl p-3 transition-all duration-300 hover:scale-110 shadow-xl border border-[#E53935]/10 z-30 group/nav"
+            className="hidden md:flex absolute top-1/2 right-6 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-green-700 rounded-2xl p-3 transition-all duration-300 hover:scale-110 shadow-xl border border-green-700/10 z-30 group/nav"
           >
             <ChevronRight className="w-6 h-6 group-hover/nav:translate-x-0.5 transition-transform" />
           </button>
@@ -176,7 +176,7 @@ export default function BannerCarousel() {
           {/* Enhanced play/pause button */}
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="hidden md:flex absolute bottom-6 left-6 bg-white/20 hover:bg-white/30 backdrop-blur-md text-[#E53935] rounded-2xl p-3 transition-all duration-300 hover:scale-110 shadow-xl border border-[#E53935]/20 z-30 group/play"
+            className="hidden md:flex absolute bottom-6 left-6 bg-white/20 hover:bg-white/30 backdrop-blur-md text-green-700 rounded-2xl p-3 transition-all duration-300 hover:scale-110 shadow-xl border border-green-700/20 z-30 group/play"
           >
             {isPlaying ? (
               <Pause className="w-5 h-5 group-hover/play:scale-110 transition-transform" />
@@ -186,7 +186,7 @@ export default function BannerCarousel() {
           </button>
 
           {/* Enhanced counter */}
-          <div className="hidden md:flex absolute bottom-6 right-6 bg-white/20 backdrop-blur-md text-[#E53935] px-4 py-2 rounded-2xl text-sm font-semibold shadow-xl border border-white/20 z-30">
+          <div className="hidden md:flex absolute bottom-6 right-6 bg-white/20 backdrop-blur-md text-green-700 px-4 py-2 rounded-2xl text-sm font-semibold shadow-xl border border-white/20 z-30">
             <span className="drop-shadow-sm">
               {currentSlide + 1} / {banners.length}
             </span>
@@ -200,7 +200,7 @@ export default function BannerCarousel() {
                 onClick={() => goToSlide(index)}
                 className={`transition-all duration-300 rounded-full border-2 ${
                   currentSlide === index
-                    ? "w-8 h-3 bg-[#E53935] border-white shadow-lg"
+                    ? "w-8 h-3 bg-green-700 border-white shadow-lg"
                     : "w-3 h-3 bg-white/50 border-white/50 hover:bg-white/70 hover:scale-125"
                 }`}
               />
@@ -211,11 +211,11 @@ export default function BannerCarousel() {
         {/* Floating effect indicators */}
         <div className="hidden absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-60 animate-pulse" />
         <div
-          className=" hidden absolute -bottom-2 -left-2 w-3 h-3 bg-gradient-to-br from-pink-400 to-red-500 rounded-full opacity-60 animate-pulse"
+          className=" hidden absolute -bottom-2 -left-2 w-3 h-3 bg-gradient-to-br from-pink-400 to-green-600 rounded-full opacity-60 animate-pulse"
           style={{ animationDelay: "1s" }}
         />
         <div
-          className=" hidden absolute top-1/4 -right-1 w-2 h-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full opacity-60 animate-pulse"
+          className=" hidden absolute top-1/4 -right-1 w-2 h-2 bg-gradient-to-br from-green-700 to-orange-500 rounded-full opacity-60 animate-pulse"
           style={{ animationDelay: "2s" }}
         />
       </div>

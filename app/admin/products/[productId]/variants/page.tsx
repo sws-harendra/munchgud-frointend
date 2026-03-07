@@ -168,7 +168,7 @@ export default function ProductVariantsPage({ params }: { params: { productId: s
               </div>
               <button 
                 onClick={() => handleDeleteVariant(variant.id)}
-                className="p-2 text-red-500 hover:bg-red-50 rounded-full"
+                className="p-2 text-green-600 hover:bg-red-50 rounded-full"
                 aria-label="Delete variant"
               >
                 <Trash2 className="h-4 w-4" />

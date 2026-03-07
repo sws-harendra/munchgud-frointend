@@ -27,6 +27,7 @@ import { brandName } from "@/app/contants";
 import { fetchCategories } from "@/app/lib/store/features/categorySlice";
 import DropdownCategory from "@/app/commonComponents/renderCategory";
 import { link } from "fs";
+import { Cagliostro } from "next/font/google";
 
 export default function EcommerceNavbar() {
   const dispatch = useAppDispatch(); // ✅ typed dispatch
@@ -54,6 +55,7 @@ export default function EcommerceNavbar() {
     }
   };
   const { categories } = useAppSelector((state: RootState) => state.category);
+ const array = ["About Us", "Contact Us"];
   
   return (
     <nav className=" shadow-lg sticky top-0 z-50 border-b bg-white border-gray-100">
@@ -71,10 +73,10 @@ export default function EcommerceNavbar() {
           </div>
         </div>
       </div> */}
-      <div className="bg-[#E53935] text-white text-sm text-center  py-2">
+      <div className="bg-black text-yellow-400 text-sm text-center  py-2">
         <div className="mx-auto px-4 font-semibold ">
             <span >
-              VALENTINE'S SALE EXTRA FLAT 25% OFF on orders above Rs. 1000/ <span className="font-light">auto applied at checkout</span>
+              🚚 Free Shipping on All Orders | No COD Charges on Prepaid Payments/ 
             </span>
         </div>
       </div>
@@ -86,39 +88,38 @@ export default function EcommerceNavbar() {
 
       {/* Main Navbar */}
       <div className=" mx-auto py-2 px-2 md:px-4 drop-shadow-lg">
-        <div className="flex items-center justify-between h-16">
+        <div className=" flex items-center justify-between h-16">
+          
           {/* Logo */}
-          <div className="flex items-center space-x-1 md:space-x-8">
-            <div className="flex-shrink-0">  
-              <Link href="/">
-                {/* <img
-                  src="/logo.png"
-                  alt="Kishan Haat"
-                  className="w-32 h-auto"
-                /> */}
-                <h2 className=" text-2xl sm:text-5xl">
-                   <Image
-                    src="/logo.png"
-                    width={110}
-                    height={110}
-                    alt="Logo" />
-                </h2>
-                {/* <h1 className="text-2xl font-bold bg-gradient-to-r from-green-700 via-green-600 to-lime-500 bg-clip-text text-transparent">
-                 Kishan Haat
-                </h1> */}
-              </Link>
-            </div>
+          <div className="">
+            <Link href="/">
+              <Image
+                src="/logo.png"
+                width={210}
+                height={110}
+                alt="Logo"
+                priority
+              />
+            </Link>
+          </div>
 
-            {/* Desktop Categories */}
+          {/* Desktop Categories */}
             <div className="hidden lg:flex items-center space-x-8">
               {categories.map((category: any) => (
                 <DropdownCategory key={category.id} category={category} />
               ))}
+              {/* Additional AboutUs and ContactUs Links */}
+              {array.map((item) => (
+                <Link key={item} href={`/${item.replace(/\s+/g, '').toLowerCase()}`} className="text-black hover:text-green-700 transition-colors">
+                  {item}
+                </Link>
+              ))}
             </div>
-          </div>
+          
+          
 
           {/* Search Bar */}
-          {/* <div className="flex-1 max-w-2xl mx-8 hidden md:block">
+          <div className="flex-1 max-w-2xl mx-8 hidden md:block">
             <div className="relative">
               <input
                 type="text"
@@ -141,30 +142,31 @@ export default function EcommerceNavbar() {
                 Search
               </button>
             </div>
-          </div> */}
-                
+          </div>
+          
+          
 
           {/* Right Actions */}
           <div className="flex items-center space-x-6">
             {/* Mobile Search */}
-            <button className="flex items-center gap-1 text-gray-600 hover:text-red-500 transition-colors">
+            {/* <button className="flex items-center gap-1 text-gray-600 hover:text-green-600 transition-colors">
               {isSearchClicked ? <input
                 type="text"
                 placeholder="Search products..."
-                className="hidden lg:block w-full pl-10 pr-4 py-3 border border-gray-400 rounded-full focus:ring-2 focus:ring-[#E53935] focus:border-transparent"
+                className="hidden lg:block w-full pl-10 pr-4 py-3 border border-gray-400 rounded-full focus:ring-2 focus:ring-green-700 focus:border-transparent"
               /> : null}
               <Search className="w-6 h-6" onClick={() => {
                 setIsMenuOpen(!isMenuOpen)
                 setisSearchClicked(!isSearchClicked)
                 }} />
-            </button>
+            </button> */}
 
             {/* Wishlist */}
             {/* <div className="relative hidden sm:block">
-              <button className="text-gray-600 hover:text-red-500 transition-colors duration-200 group">
+              <button className="text-gray-600 hover:text-green-600 transition-colors duration-200 group">
                 <Heart className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" />
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
                     {wishlistCount}
                   </span>
                 )}
@@ -178,92 +180,95 @@ export default function EcommerceNavbar() {
                   <img src="/trolley.png" className="w-12 h-auto" />
                   {/* <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" /> */}
                   {cartCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-[#E53935] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce">
+                    <span className="absolute -top-2 -right-2 bg-green-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce">
                       {cartCount}
                     </span>
                   )}
                 </button>
               </Link>
             </div>
-
-            {/* Profile Dropdown */}
-            {isAuthenticated ? (
-              <div className="relative">
-                <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center space-x-2 text-gray-600 hover:text-[#E53935] transition-colors duration-200"
-                >
-                  <div className="w-8 h-8 bg-[#E53935] rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="hidden lg:block font-medium">
-                    {user?.fullname}
-                  </span>
-                  <ChevronDown
-                    className={`w-4 h-4 hidden lg:block transition-transform duration-200 ${
-                      isProfileOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                {/* Profile Dropdown Menu */}
-                {isProfileOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-2">
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-[#E53935] transition-colors"
-                    >
-                      My Account
-                    </a>
-                    <Link
-                      href="/orderhistory"
-                      onClick={() => setIsProfileOpen(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-[#E53935] transition-colors"
-                    >
-                      Order History
-                    </Link>
-
-                    {user?.role == "driver" && (
-                      <Link
-                        href="/orderhistory/rider"
-                        onClick={() => setIsProfileOpen(false)}
-                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-[#E53935] transition-colors"
-                      >
-                        Order for you (Associate)
-                      </Link>
-                    )}
-                    {/* <a
-                      href="#"
-                      onClick={() => setIsProfileOpen(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-lime-500 transition-colors"
-                    >
-                      Settings
-                    </a> */}
-                    <hr className="my-2" />
-                    <button
-                      onClick={() => dispatch(logout())}
-                      className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-[#E53935] transition-colors"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div>
-                {" "}
-                <Link href="/authentication/login">
-                  <button className="px-5 py-2 text-white bg-[#E53935] rounded-full">
-                    Login
+            
+            <div className="flex items-center space-x-1 md:space-x-8">
+              {/* Profile Dropdown */}
+              {isAuthenticated ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-green-700 transition-colors duration-200"
+                  >
+                    <div className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="hidden lg:block font-medium">
+                      {user?.fullname}
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 hidden lg:block transition-transform duration-200 ${
+                        isProfileOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
-                </Link>
-              </div>
-            )}
+
+                  {/* Profile Dropdown Menu */}
+                  {isProfileOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-2">
+                      <a
+                        href="#"
+                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-green-700 transition-colors"
+                      >
+                        My Account
+                      </a>
+                      <Link
+                        href="/orderhistory"
+                        onClick={() => setIsProfileOpen(false)}
+                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-green-700 transition-colors"
+                      >
+                        Order History
+                      </Link>
+
+                      {user?.role == "driver" && (
+                        <Link
+                          href="/orderhistory/rider"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-green-700 transition-colors"
+                        >
+                          Order for you (Associate)
+                        </Link>
+                      )}
+                      {/* <a
+                        href="#"
+                        onClick={() => setIsProfileOpen(false)}
+                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-lime-500 transition-colors"
+                      >
+                        Settings
+                      </a> */}
+                      <hr className="my-2" />
+                      <button
+                        onClick={() => dispatch(logout())}
+                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-green-700 transition-colors"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                    )}
+                  </div>
+                    ) : (
+                      <div>
+                        {" "}
+                        <Link href="/authentication/login">
+                          <button className="px-5 py-2 text-white bg-green-700 rounded-full">
+                            Login
+                          </button>
+                        </Link>
+                      </div>
+                    )}
+            </div>
+            
 
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden text-gray-600 hover:text-[#E53935] transition-colors"
+              className="lg:hidden text-gray-600 hover:text-green-700 transition-colors"
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6" />
@@ -284,7 +289,7 @@ export default function EcommerceNavbar() {
               <input
                 type="text"
                 placeholder="Search products..."
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#E53935] focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-700 focus:border-transparent"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"  />
             </div>
@@ -294,7 +299,7 @@ export default function EcommerceNavbar() {
               <div key={category.id} className="space-y-2">
                 <Link
                   href={`/products?category=${category.id}`}
-                  className="flex items-center space-x-3 py-3 text-gray-700 hover:text-[#E53935] transition-colors border-b border-gray-100"
+                  className="flex items-center space-x-3 py-3 text-gray-700 hover:text-green-700 transition-colors border-b border-gray-100"
                 >
                   <span className="font-medium">{category.name}</span>
                 </Link>
@@ -305,7 +310,7 @@ export default function EcommerceNavbar() {
                       <Link
                         key={sub.id}
                         href={`/products?category=${sub.id}`}
-                        className="block text-gray-600 hover:text-[#E53935]"
+                        className="block text-gray-600 hover:text-green-700"
                       >
                         {sub.name}
                       </Link>
@@ -318,7 +323,7 @@ export default function EcommerceNavbar() {
             {/* Mobile Wishlist */}
             {/* <a
               href="#"
-              className="flex items-center space-x-3 py-3 text-gray-700 hover:text-red-500 transition-colors"
+              className="flex items-center space-x-3 py-3 text-gray-700 hover:text-green-600 transition-colors"
             >
               <Heart className="w-5 h-5" />
               <span>Wishlist ({wishlistCount})</span>

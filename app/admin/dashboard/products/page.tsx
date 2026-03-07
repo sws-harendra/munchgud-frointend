@@ -256,7 +256,7 @@ export default function AdminProductsPage() {
                 <p className="text-slate-600 text-sm font-medium">
                   Out of Stock
                 </p>
-                <p className="text-2xl font-bold text-red-600">
+                <p className="text-2xl font-bold text-green-700">
                   {Array.isArray(products?.products)
                     ? products.products.filter((p) => (p.stock ?? 0) === 0)
                         .length
@@ -264,7 +264,7 @@ export default function AdminProductsPage() {
                 </p>
               </div>
               <div className="p-2 bg-red-100 rounded-lg">
-                <X className="w-5 h-5 text-red-600" />
+                <X className="w-5 h-5 text-green-700" />
               </div>
             </div>
           </div>
@@ -530,7 +530,7 @@ export default function AdminProductsPage() {
                       <span
                         className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${
                           (product.stock ?? 0) === 0
-                            ? "bg-red-100 text-red-800"
+                            ? "bg-red-100 text-green-800"
                             : (product.stock ?? 0) < 10
                             ? "bg-amber-100 text-amber-800"
                             : "bg-emerald-100 text-emerald-800"
@@ -548,7 +548,7 @@ export default function AdminProductsPage() {
                           product.status === "active"
                             ? "bg-emerald-100 text-emerald-800"
                             : product.status === "inactive"
-                            ? "bg-red-100 text-red-800"
+                            ? "bg-red-100 text-green-800"
                             : "bg-slate-100 text-slate-800"
                         }`}
                       >
@@ -593,7 +593,7 @@ export default function AdminProductsPage() {
                         <button
                           title="Delete"
                           onClick={() => handleDelete(product.id)}
-                          className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                          className="p-2 bg-red-100 text-green-700 rounded-lg hover:bg-red-200 transition-colors"
                         >
                           <Trash2 size={16} />
                         </button>

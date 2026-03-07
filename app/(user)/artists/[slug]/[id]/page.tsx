@@ -104,7 +104,7 @@ const ArtistDetailsProduct = () => {
                 {selectedArtist.name}
               </h1>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 mb-6">
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-600 rounded-full font-medium">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-green-700 rounded-full font-medium">
                   <StarIcon className="w-4 h-4" />
                   Featured Artist
                 </span>

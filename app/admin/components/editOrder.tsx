@@ -112,7 +112,7 @@ const EditOrder: React.FC<EditOrderProps> = ({ orderId, onClose }) => {
   }
 
   if (error) {
-    return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+    return <div className="p-8 text-center text-green-600">Error: {error}</div>;
   }
 
   if (!currentOrder || currentOrder.id !== parseInt(orderId)) {
@@ -169,7 +169,7 @@ const EditOrder: React.FC<EditOrderProps> = ({ orderId, onClose }) => {
                           e.stopPropagation(); // 🔥 IMPORTANT
                           selectDriver("");
                         }}
-                        className="text-red-600 h-5 w-5"
+                        className="text-green-700 h-5 w-5"
                       />
                     ) : (
                       <Plus className="text-gray-600 h-5 w-5" />
@@ -197,7 +197,7 @@ const EditOrder: React.FC<EditOrderProps> = ({ orderId, onClose }) => {
             </div> */}
           </div>
           {updateError && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div className="bg-red-100 border border-green-700 text-green-700 px-4 py-3 rounded">
               {updateError}
             </div>
           )}

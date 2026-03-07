@@ -120,7 +120,7 @@ const AdminDashboard = () => {
     return (
       <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600">Error loading dashboard data</p>
+          <p className="text-green-700">Error loading dashboard data</p>
           <button
             onClick={() => dispatch(fetchdashboard())}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
@@ -196,11 +196,11 @@ const AdminDashboard = () => {
               {trend === "up" ? (
                 <ArrowUpRight className="w-4 h-4 text-green-500 mr-1" />
               ) : (
-                <ArrowDownRight className="w-4 h-4 text-red-500 mr-1" />
+                <ArrowDownRight className="w-4 h-4 text-green-600 mr-1" />
               )}
               <span
                 className={`text-sm ${
-                  trend === "up" ? "text-green-600" : "text-red-600"
+                  trend === "up" ? "text-green-600" : "text-green-700"
                 }`}
               >
                 {trendValue}
@@ -243,10 +243,10 @@ const AdminDashboard = () => {
       pending: "bg-yellow-100 text-yellow-800",
       confirmed: "bg-blue-100 text-blue-800",
       ongoing: "bg-purple-100 text-purple-800",
-      canceled: "bg-red-100 text-red-800",
+      canceled: "bg-red-100 text-green-800",
       returned: "bg-orange-100 text-orange-800",
       shipped: "bg-purple-100 text-purple-800",
-      cancelled: "bg-red-100 text-red-800",
+      cancelled: "bg-red-100 text-green-800",
     };
     return colors[status] || "bg-gray-100 text-gray-800";
   };
@@ -324,7 +324,7 @@ const AdminDashboard = () => {
                 label="Pending"
                 value={orderStats.pending || 0}
                 icon={Clock}
-                color="text-yellow-600"
+                color="text-green-700"
               />
               <OrderStatCard
                 label="Confirmed"
@@ -348,7 +348,7 @@ const AdminDashboard = () => {
                 label="Canceled"
                 value={orderStats.cancelled || 0}
                 icon={XCircle}
-                color="text-red-600"
+                color="text-green-700"
               />
               <OrderStatCard
                 label="Returned"
@@ -360,7 +360,7 @@ const AdminDashboard = () => {
                 label="Rejected"
                 value={orderStats.rejected || 0}
                 icon={AlertCircle}
-                color="text-red-600"
+                color="text-green-700"
               />
             </div>
           </div>
@@ -409,7 +409,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-600 mr-2"></div>
                       <span className="text-sm text-gray-600">Canceled</span>
                     </div>
                     <span className="text-sm font-medium">
@@ -418,7 +418,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-600 mr-2"></div>
                       <span className="text-sm text-gray-600">Rejected</span>
                     </div>
                     <span className="text-sm font-medium">

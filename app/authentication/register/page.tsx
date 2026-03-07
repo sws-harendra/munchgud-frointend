@@ -140,7 +140,7 @@ export default function RegisterForm() {
         <div className="rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
           <div className="flex flex-col lg:flex-row">
             {/* Left Side - Profile Image */}
-            <div className="lg:w-1/3 bg-gradient-to-br from-[#E53935] via-[#E53935] to-red-800/90 p-8 flex flex-col items-center justify-center space-y-6 border-b lg:border-b-0 lg:border-r border-white/20">
+            <div className="lg:w-1/3 bg-gradient-to-br from-green-700 via-green-700 to-green-800/90 p-8 flex flex-col items-center justify-center space-y-6 border-b lg:border-b-0 lg:border-r border-white/20">
               <div className="text-center">
                 <h3 className="text-2xl font-semibold text-white mb-2">
                   Profile Photo
@@ -174,7 +174,7 @@ export default function RegisterForm() {
                   {profileImage && (
                     <button
                       onClick={removeImage}
-                      className="absolute -top-1 -right-1 w-8 h-8 bg-red-500 text-white rounded-full text-sm hover:bg-red-600 transition-colors flex items-center justify-center shadow-lg"
+                      className="absolute -top-1 -right-1 w-8 h-8 bg-green-600 text-white rounded-full text-sm hover:bg-green-700 transition-colors flex items-center justify-center shadow-lg"
                     >
                       ×
                     </button>
@@ -197,7 +197,7 @@ export default function RegisterForm() {
                 </label>
 
                 {errors.image && (
-                  <p className="text-red-400 text-sm text-center">
+                  <p className="text-green-700 text-sm text-center">
                     {errors.image}
                   </p>
                 )}
@@ -228,16 +228,16 @@ export default function RegisterForm() {
                       type="text"
                       value={fullname}
                       onChange={(e) => setFullName(e.target.value)}
-                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E53935] focus:border-transparent text-black ${
+                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${
                         errors.fullname
-                          ? "border-red-400"
+                          ? "border-green-700"
                           : "border-white/20 hover:border-white/30"
                       }`}
                       placeholder="Enter your full name"
                     />
                   </div>
                   {errors.fullname && (
-                    <p className="text-red-400 text-sm mt-1">
+                    <p className="text-green-700 text-sm mt-1">
                       {errors.fullname}
                     </p>
                   )}
@@ -260,9 +260,9 @@ export default function RegisterForm() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E53935] focus:border-transparent text-black ${
+                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${
                         errors.email
-                          ? "border-red-400"
+                          ? "border-green-700"
                           : "border-white/20 hover:border-white/30"
                       }`}
                       placeholder="Enter your email"
@@ -270,7 +270,7 @@ export default function RegisterForm() {
                   </div>
 
                   {errors.email && (
-                    <p className="text-red-400 text-sm mt-1">{errors.email}</p>
+                    <p className="text-green-700 text-sm mt-1">{errors.email}</p>
                   )}
                 </div>
 
@@ -291,9 +291,9 @@ export default function RegisterForm() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all text-black duration-200 focus:outline-none focus:ring-2 focus:ring-[#E53935] focus:border-transparent  ${
+                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all text-black duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent  ${
                         errors.password
-                          ? "border-red-400"
+                          ? "border-green-700"
                           : "border-white/20 hover:border-white/30"
                       }`}
                       placeholder="Enter your password"
@@ -311,7 +311,7 @@ export default function RegisterForm() {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-red-400 text-sm mt-1">
+                    <p className="text-green-700 text-sm mt-1">
                       {errors.password}
                     </p>
                   )}
@@ -322,7 +322,7 @@ export default function RegisterForm() {
                   <input
                     type="checkbox"
                     id="terms"
-                    className="h-4 w-4 text-[#E53935] focus:ring-[#E53935] border-gray-300 rounded bg-white/10"
+                    className="h-4 w-4 text-green-700 focus:ring-green-700 border-gray-300 rounded bg-white/10"
                   />
                   <label
                     htmlFor="terms"
@@ -331,14 +331,14 @@ export default function RegisterForm() {
                     I agree to the{" "}
                     <a
                       href="#"
-                      className="text-[#E53935] hover:text-[#E53935] font-medium"
+                      className="text-green-700 hover:text-green-700 font-medium"
                     >
                       Terms of Service
                     </a>{" "}
                     and{" "}
                     <a
                       href="#"
-                      className="text-[#E53935] hover:text-[#E53935] font-medium"
+                      className="text-green-700 hover:text-green-700 font-medium"
                     >
                       Privacy Policy
                     </a>
@@ -350,7 +350,7 @@ export default function RegisterForm() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-[#E53935] to-red-600 text-white py-4 px-6 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-green-700 to-green-700 text-white py-4 px-6 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
                 >
                   {isLoading ? (
                     <>
@@ -370,7 +370,7 @@ export default function RegisterForm() {
                   Already have an account?{" "}
                   <Link
                     href="/authentication/login"
-                    className="font-medium text-[#E53935] hover:text-[#E53935]"
+                    className="font-medium text-green-700 hover:text-green-700"
                   >
                     Sign in
                   </Link>
