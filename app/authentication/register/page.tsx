@@ -97,8 +97,15 @@ export default function RegisterForm() {
         hasErrors = true;
       }
 
+      // ✅ ADD THIS
+      if (!profileImage) {
+        newErrors.image = "Profile image is required";
+        hasErrors = true;
+      }
+
       if (hasErrors) {
         setErrors(newErrors);
+        setIsLoading(false);
         return;
       }
 
@@ -197,7 +204,7 @@ export default function RegisterForm() {
                 </label>
 
                 {errors.image && (
-                  <p className="text-green-700 text-sm text-center">
+                  <p className="text-white bg-red-400 py-1 px-4 rounded-3xl text-sm text-center">
                     {errors.image}
                   </p>
                 )}
@@ -270,7 +277,9 @@ export default function RegisterForm() {
                   </div>
 
                   {errors.email && (
-                    <p className="text-green-700 text-sm mt-1">{errors.email}</p>
+                    <p className="text-green-700 text-sm mt-1">
+                      {errors.email}
+                    </p>
                   )}
                 </div>
 

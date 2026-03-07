@@ -40,7 +40,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       "/cart",
       "/artists",
       "/products",
-      "/terms&conditions"
+      "/terms&conditions",
+      "/aboutus",
+      "/contactus",
+      "/refund-policy",
+      "/privacy-policy",
     ];
 
     // also allow dynamic product pages
