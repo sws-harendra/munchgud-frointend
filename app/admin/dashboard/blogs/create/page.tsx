@@ -7,10 +7,11 @@ import {
   addBlogPost,
   updateBlogPost,
 } from "@/app/lib/store/features/blogSlice";
+import { toast } from "sonner";
 
 const RichTextEditor = dynamic(
   () => import("@/app/commonComponents/RichTextEditor"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export default function BlogForm({ post }: { post?: any }) {
@@ -29,10 +30,12 @@ export default function BlogForm({ post }: { post?: any }) {
 
     if (post) {
       await dispatch(
-        updateBlogPost({ ...post, title, content, featuredImage })
+        updateBlogPost({ ...post, title, content, featuredImage }),
       );
+      toast.success("Blog updated successfully");
     } else {
       await dispatch(addBlogPost({ title, content, featuredImage }));
+      toast.success("Blog created successfully");
     }
   };
   return (
@@ -47,7 +50,6 @@ export default function BlogForm({ post }: { post?: any }) {
           required
         />
       </div>
-
 
       <div>
         <label className="block font-medium">Content</label>

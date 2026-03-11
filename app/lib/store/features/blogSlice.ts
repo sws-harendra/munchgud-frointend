@@ -49,7 +49,7 @@ export const fetchBlogPostById = createAsyncThunk(
   "blog/fetchPostById",
   async (id: string) => {
     return await blogService.getBlogById(id);
-  }
+  },
 );
 
 export const addBlogPost = createAsyncThunk(
@@ -57,7 +57,7 @@ export const addBlogPost = createAsyncThunk(
   async (postData: Omit<BlogPost, "id" | "createdAt" | "updatedAt">) => {
     const formData = createFormDataFromPost(postData);
     return await blogService.createBlog(formData);
-  }
+  },
 );
 
 export const updateBlogPost = createAsyncThunk(
@@ -66,7 +66,7 @@ export const updateBlogPost = createAsyncThunk(
     if (!postData.id) throw new Error("Post ID is required for update");
     const formData = createFormDataFromPost(postData);
     return await blogService.updateBlog(postData.id, formData);
-  }
+  },
 );
 
 export const deleteBlogPost = createAsyncThunk(
@@ -74,7 +74,7 @@ export const deleteBlogPost = createAsyncThunk(
   async (postId: string) => {
     await blogService.deleteBlog(postId);
     return postId;
-  }
+  },
 );
 
 const blogSlice = createSlice({
@@ -140,7 +140,7 @@ const blogSlice = createSlice({
     builder.addCase(updateBlogPost.fulfilled, (state, action) => {
       state.status = "succeeded";
       const index = state.posts.findIndex(
-        (post) => post.id === action.payload.id
+        (post) => post.id === action.payload.id,
       );
       if (index !== -1) {
         state.posts[index] = action.payload;

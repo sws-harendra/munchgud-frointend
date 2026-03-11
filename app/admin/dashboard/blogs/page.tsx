@@ -47,7 +47,7 @@ export default function BlogList() {
             className="border p-4 rounded shadow-sm flex justify-between items-center"
           >
             <div>
-              <Link href={`/admin/dashboard/blogs/${post.slug}`}>
+              <Link href={`/blogs/${post.slug}`}>
                 <h2 className="text-xl font-semibold hover:underline cursor-pointer">
                   {post.title}
                 </h2>
