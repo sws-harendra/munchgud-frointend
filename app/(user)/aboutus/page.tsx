@@ -19,34 +19,34 @@ export default function Page() {
       </section> */}
 
       <section className="relative bg-[url('/peri_peri.png')] bg-cover bg-center py-24">
-  <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/40"></div>
 
-  <div className="relative flex justify-center items-center">
-    <div className="bg-white/5 rounded-2xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[3.7px] border border-white/70 px-10 py-10 text-center max-w-2xl">
-      
-      <h1 className="text-4xl md:text-5xl font-bold text-white">
-        About {brandName}
-      </h1>
+        <div className="relative flex justify-center items-center">
+          <div className="bg-white/5 rounded-2xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[3.7px] border border-white/70 px-10 py-10 text-center max-w-2xl">
 
-      <p className="mt-6 text-lg text-gray-200 font-semibold text-shadow-lg text-shadow-black/40">
-        MunchGud offers premium makhana roasted to perfection and infused with
-        delicious flavors, delivering a crunchy, healthy, and guilt-free snacking experience.
-      </p>
+            <h1 className="text-4xl md:text-5xl font-bold text-white">
+              About {brandName}
+            </h1>
 
-    </div>
-  </div>
-</section>
-      
+            <p className="mt-6 text-lg text-gray-200 font-semibold text-shadow-lg text-shadow-black/40">
+              MunchGud™ offers premium makhana roasted to perfection and infused with
+              delicious flavors, delivering a crunchy, healthy, and guilt-free snacking experience.
+            </p>
 
+          </div>
+        </div>
+      </section>
 
 
 
-      
+
+
+
 
       {/* About Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          
+
           <div>
             <h2 className="text-3xl font-bold text-gray-800">
               Who We Are
@@ -88,7 +88,7 @@ export default function Page() {
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8 mt-10">
-            
+
             <div className="bg-white shadow-md rounded-lg p-6">
               <h3 className="text-xl font-semibold text-green-700">
                 Premium Makhana

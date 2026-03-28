@@ -25,11 +25,17 @@ export default function RegisterForm() {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [serverError, setServerError] = useState("");
   const [errors, setErrors] = useState({
     email: "",
     password: "",
     fullname: "",
     image: "",
+    confirmPassword: "",
+    terms: "",   // ✅ ADD THIS
   });
 
   const validateEmail = (email: string) => {
@@ -39,6 +45,7 @@ export default function RegisterForm() {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    if (!file) return;
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         setErrors((prev) => ({
@@ -67,39 +74,64 @@ export default function RegisterForm() {
   };
 
   const handleSubmit = async () => {
-    setErrors({ email: "", password: "", fullname: "", image: "" });
+    setErrors({
+      email: "",
+      password: "",
+      fullname: "",
+      image: "",
+      confirmPassword: "",
+      terms: "",   // ✅ ADD HERE ALSO
+    });
     setIsLoading(true);
     try {
       let hasErrors = false;
-      const newErrors = { email: "", password: "", fullname: "", image: "" };
+      const newErrors = {
+        email: "",
+        password: "",
+        fullname: "",
+        image: "",
+        confirmPassword: "",
+        terms: "",   // ✅ ADD THIS
+      };
 
       if (!fullname.trim()) {
-        newErrors.fullname = "Full name is required";
+        newErrors.fullname = "Full name is required!";
         hasErrors = true;
       } else if (fullname.trim().length < 2) {
-        newErrors.fullname = "Full name must be at least 2 characters";
+        newErrors.fullname = "Full name must be at least 2 characters!";
+        hasErrors = true;
+      } else if (/\d/.test(fullname)) {   // ✅ NO NUMBERS ALLOWED
+        newErrors.fullname = "Full name cannot contain numbers!";
         hasErrors = true;
       }
 
       if (!email) {
-        newErrors.email = "Email is required";
+        newErrors.email = "Email is required!";
         hasErrors = true;
       } else if (!validateEmail(email)) {
-        newErrors.email = "Please enter a valid email";
+        newErrors.email = "Please enter a valid email!";
         hasErrors = true;
       }
 
       if (!password) {
-        newErrors.password = "Password is required";
+        newErrors.password = "Password is required!";
         hasErrors = true;
       } else if (password.length < 6) {
-        newErrors.password = "Password must be at least 6 characters";
+        newErrors.password = "Password must be at least 6 characters!";
         hasErrors = true;
       }
 
-      // ✅ ADD THIS
-      if (!profileImage) {
-        newErrors.image = "Profile image is required";
+      // ✅ CONFIRM PASSWORD VALIDATION
+      if (!confirmPassword) {
+        newErrors.confirmPassword = "Password do not match!";
+        hasErrors = true;
+      } else if (password !== confirmPassword) {
+        newErrors.confirmPassword = "Passwords do not match!";
+        hasErrors = true;
+      }
+      // ✅ TERMS VALIDATION
+      if (!acceptTerms) {
+        newErrors.terms = "You must accept Terms & Conditions!";
         hasErrors = true;
       }
 
@@ -112,7 +144,7 @@ export default function RegisterForm() {
       const formData = new FormData();
       formData.append("email", email);
       formData.append("password", password);
-      formData.append("fullname", password);
+      formData.append("fullname", fullname);
       if (profileImage) formData.append("file", profileImage);
 
       const response = await dispatch(registerUser(formData)).unwrap();
@@ -123,10 +155,30 @@ export default function RegisterForm() {
         router.push("/");
       }
       setIsLoading(false);
-    } catch (err) {
-      setErrors(err as string);
+    } catch (err: any) {
+      console.log("FULL ERROR:", err);
 
-      console.log("errpr occured", err);
+      // ✅ RTK unwrap error comes directly like this
+      const message =
+        err?.message ||
+        err?.data?.message ||
+        err ||
+        "Something went wrong";
+
+      if (message.toLowerCase().includes("exists")) {
+        setServerError("User already exists!");
+      } else {
+        setServerError(message);
+      }
+
+      setErrors({
+        email: "",
+        password: "",
+        fullname: "",
+        image: "",
+        confirmPassword: "",
+        terms: "",
+      });
     } finally {
       setIsLoading(false); // ✅ only stop loader after request is done
     }
@@ -160,11 +212,10 @@ export default function RegisterForm() {
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative">
                   <div
-                    className={`w-32 h-32 rounded-full overflow-hidden border-4 border-white/30 shadow-xl ${
-                      profileImage
-                        ? ""
-                        : "bg-gradient-to-br from-gray-100 to-gray-200"
-                    }`}
+                    className={`w-32 h-32 rounded-full overflow-hidden border-4 border-white/30 shadow-xl ${profileImage
+                      ? ""
+                      : "bg-gradient-to-br from-gray-100 to-gray-200"
+                      }`}
                   >
                     {profileImage ? (
                       <img
@@ -214,10 +265,10 @@ export default function RegisterForm() {
                 </p>
               </div>
             </div>
-
             {/* Right Side - Form Fields */}
             <div className="lg:w-2/3 p-8">
               <div className="max-w-md mx-auto space-y-6">
+
                 {/* Full Name Field */}
                 <div className="space-y-2">
                   <label
@@ -235,16 +286,15 @@ export default function RegisterForm() {
                       type="text"
                       value={fullname}
                       onChange={(e) => setFullName(e.target.value)}
-                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${
-                        errors.fullname
-                          ? "border-green-700"
-                          : "border-white/20 hover:border-white/30"
-                      }`}
+                      className={`w-full pl-12 pr-4 py-3 border-2  rounded-xl bg-white/10 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${errors.fullname
+                        ? "border-red-400"
+                        : "border-green-500 hover:border-green-700"
+                        }`}
                       placeholder="Enter your full name"
                     />
                   </div>
                   {errors.fullname && (
-                    <p className="text-green-700 text-sm mt-1">
+                    <p className="text-red-500 text-sm mt-1">
                       {errors.fullname}
                     </p>
                   )}
@@ -267,17 +317,16 @@ export default function RegisterForm() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${
-                        errors.email
-                          ? "border-green-700"
-                          : "border-white/20 hover:border-white/30"
-                      }`}
+                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${errors.email
+                        ? "border-red-400"
+                        : "border-green-500 hover:border-green-700"
+                        }`}
                       placeholder="Enter your email"
                     />
                   </div>
 
                   {errors.email && (
-                    <p className="text-green-700 text-sm mt-1">
+                    <p className="text-red-500 text-sm mt-1">
                       {errors.email}
                     </p>
                   )}
@@ -300,11 +349,10 @@ export default function RegisterForm() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all text-black duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent  ${
-                        errors.password
-                          ? "border-green-700"
-                          : "border-white/20 hover:border-white/30"
-                      }`}
+                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all text-black duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent  ${errors.password
+                        ? "border-red-400"
+                        : "border-green-500 hover:border-green-700"
+                        }`}
                       placeholder="Enter your password"
                     />
                     <button
@@ -313,15 +361,64 @@ export default function RegisterForm() {
                       className="absolute inset-y-0 right-0 pr-4 flex items-center"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-700 hover:text-gray-600 transition-colors" />
+                        <EyeOff className="h-5 w-5 text-gray-700 hover:text-gray-600" />
                       ) : (
-                        <Eye className="h-5 w-5 text-gray-700 hover:text-gray-600 transition-colors" />
+                        <Eye className="h-5 w-5 text-gray-700 hover:text-gray-600" />
                       )}
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-green-700 text-sm mt-1">
+                    <p className="text-red-500 text-sm mt-1">
                       {errors.password}
+                    </p>
+                  )}
+                </div>
+                {/**confirm password */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="text-sm font-medium text-gray-700 block"
+                  >
+                    Confirm Password
+                  </label>
+
+                  <div className="relative">
+                    {/* 🔒 LOCK ICON (FIXED CENTER) */}
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                      <Lock className="h-5 w-5 text-gray-700" />
+                    </div>
+
+                    {/* INPUT */}
+                    <input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className={`w-full pl-12 pr-12 py-3 h-[48px] border-2 rounded-xl bg-white/10 backdrop-blur-sm transition-all text-black duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent ${errors.confirmPassword
+                        ? "border-red-400"
+                        : "border-green-500 hover:border-green-700"
+                        }`}
+                      placeholder="Confirm your password"
+                    />
+
+                    {/* 👁 EYE ICON */}
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-700" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-700" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* ❗ ERROR (NO SHIFT NOW) */}
+                  {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.confirmPassword}
                     </p>
                   )}
                 </div>
@@ -331,7 +428,12 @@ export default function RegisterForm() {
                   <input
                     type="checkbox"
                     id="terms"
-                    className="h-4 w-4 text-green-700 focus:ring-green-700 border-gray-300 rounded bg-white/10"
+                    checked={acceptTerms}
+                    onChange={(e) => setAcceptTerms(e.target.checked)}
+                    className={`h-4 w-4 rounded cursor-pointer ${errors.terms
+                      ? "ring-2 ring-red-500 border-red-500"
+                      : "border-gray-300"
+                      }`}
                   />
                   <label
                     htmlFor="terms"
@@ -339,14 +441,14 @@ export default function RegisterForm() {
                   >
                     I agree to the{" "}
                     <a
-                      href="#"
+                      href="/terms&conditions"
                       className="text-green-700 hover:text-green-700 font-medium"
                     >
                       Terms of Service
                     </a>{" "}
                     and{" "}
                     <a
-                      href="#"
+                      href="/privacy-policy"
                       className="text-green-700 hover:text-green-700 font-medium"
                     >
                       Privacy Policy
@@ -389,6 +491,28 @@ export default function RegisterForm() {
           </div>
         </div>
       </div>
+      {/*eroor popup */}
+      {serverError && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
+
+          <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-red-600 text-white shadow-lg">
+
+            {/* ICON */}
+            <span className="text-lg">⚠️</span>
+
+            {/* TEXT */}
+            <p className="text-sm font-medium">{serverError}</p>
+
+            {/* CLOSE */}
+            <button
+              onClick={() => setServerError("")}
+              className="ml-2 text-white hover:text-gray-200 text-lg font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

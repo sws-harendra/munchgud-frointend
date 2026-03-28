@@ -72,7 +72,8 @@ export default function Page() {
                 </div>
                 <div>
                   <p className="font-semibold">Email</p>
-                  <p className="text-gray-600">support@munchgud.com</p>
+                  <p className="text-gray-600">munchgud@gmail.com
+                  </p>
                 </div>
               </div>
 
@@ -82,7 +83,7 @@ export default function Page() {
                 </div>
                 <div>
                   <p className="font-semibold">Phone</p>
-                  <p className="text-gray-600">+91 98765 43210</p>
+                  <p className="text-gray-600">+91 84462 74791</p>
                 </div>
               </div>
 
@@ -93,7 +94,7 @@ export default function Page() {
                 <div>
                   <p className="font-semibold">Address</p>
                   <p className="text-gray-600">
-                    Patna, Bihar, India
+                    Kate wasti , Punawale, Pimpri-Chinchwad ,Pune ,411033
                   </p>
                 </div>
               </div>
@@ -128,7 +129,7 @@ export default function Page() {
               />
 
               <textarea
-                rows="4"
+                rows={4}
                 placeholder="Write your message..."
                 className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none"
               />
@@ -167,7 +168,9 @@ export default function Page() {
             <div className="bg-white p-5 rounded-lg shadow">
               <p className="font-semibold">Can I return a product?</p>
               <p className="text-gray-600 text-sm mt-2">
-                Yes, we offer an easy return policy within 7 days of delivery.
+                Due to the perishable nature of food products, MunchGud does not accept returns once the product has been delivered.However, we want you to have the best experience, so we will assist you in case of any issues.
+
+                Damaged or Incorrect Products
               </p>
             </div>
 

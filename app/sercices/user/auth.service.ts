@@ -9,9 +9,15 @@ export const authService = {
   },
 
   activateAccount: async (activation_token: any) => {
-    const response = await axiosInstance.post("/user/activation", {
-      activation_token: activation_token,
-    });
+    const response = await axiosInstance.post(
+      "/user/activation",
+      {
+        activation_token: activation_token,
+      },
+      {
+        withCredentials: true, // 🔥 MUST ADD
+      }
+    );
     return response.data;
   },
   // Send OTP to phone

@@ -12,11 +12,11 @@ export default function Footer() {
         <div>
           {/* {brandName} */}
           <Image
-              className=" bg-white px-2 py-1 rounded-lg"
-              src="/logo.png"
-              width={210}
-              height={110}
-              alt="Logo" />
+            className=" bg-white px-2 py-1 rounded-lg"
+            src="/logo.png"
+            width={210}
+            height={110}
+            alt="Logo" />
           <p className="mt-4 text-sm  max-w-xs text-white">
             Premium roasted makhana packed with bold flavors and irresistible crunch.
           </p>
@@ -95,13 +95,13 @@ export default function Footer() {
           </h3>
           <ul className="space-y-3 text-sm text-white">
             <li className="flex items-center gap-2">
-              <Mail size={16} /> munchgud@gmail.com 
+              <Mail size={16} /> munchgud@gmail.com
             </li>
             <li className="flex items-center gap-2">
-              <Phone size={16} /> 91 84462 74791
+              <Phone size={16} /> +91 84462 74791
             </li>
             <li className="flex items-center  gap-2">
-              <MapPin size={16} /> C-701, Venkatesh Imperia , Kate wasti , Punawale, Pimpri-Chinchwad ,Pune ,411033
+              <MapPin size={25} />  Kate wasti , Punawale, Pimpri-Chinchwad ,Pune ,411033
             </li>
           </ul>
         </div>

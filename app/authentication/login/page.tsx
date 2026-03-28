@@ -112,11 +112,10 @@ export default function LoginForm() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${
-                    errors.email
-                      ? "border-green-600"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${errors.email
+                    ? "border-green-700"
+                    : "border-green-500 hover:border-green-700"
+                    }`}
                   placeholder="Enter your email"
                 />
               </div>
@@ -142,11 +141,10 @@ export default function LoginForm() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${
-                    errors.password
-                      ? "border-green-600"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent text-black ${errors.password
+                    ? "border-green-700"
+                    : "border-green-500 hover:border-green-700"
+                    }`}
                   placeholder="Enter your password"
                 />
                 <button

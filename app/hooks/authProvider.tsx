@@ -37,6 +37,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       "/authentication/login",
       "/authentication/register",
       "/",
+      "/blogs",
       "/cart",
       "/artists",
       "/products",

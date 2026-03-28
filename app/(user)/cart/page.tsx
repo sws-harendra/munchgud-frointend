@@ -209,7 +209,7 @@ const CartPage = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
-              <Link href="/">
+              <Link href="/products">
                 <button className="group relative px-10 py-5 bg-green-600 text-white rounded-2xl font-bold text-lg shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 transition-all duration-300 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-green-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative flex items-center">
@@ -315,9 +315,8 @@ const CartPage = () => {
             {items.map((item, index) => (
               <div
                 key={item.id}
-                className={`group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 transform transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${
-                  animatingItems.has(item.id) ? "scale-105 shadow-xl" : ""
-                }`}
+                className={`group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 transform transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${animatingItems.has(item.id) ? "scale-105 shadow-xl" : ""
+                  }`}
                 style={{
                   animationDelay: `${index * 100}ms`,
                   animation: "slideInUp 0.8s ease-out forwards",
@@ -331,11 +330,11 @@ const CartPage = () => {
                         src={getImageUrl(item.imageUrl)}
                         alt={item.name}
                         className="w-full h-full object-cover group-hover/image:scale-110 transition-transform duration-500"
-                        // onError={(e) => {
-                        //   e.currentTarget.src = `https://via.placeholder.com/112x112/f3f4f6/9ca3af?text=${item.name.charAt(
-                        //     0
-                        //   )}`;
-                        // }}
+                      // onError={(e) => {
+                      //   e.currentTarget.src = `https://via.placeholder.com/112x112/f3f4f6/9ca3af?text=${item.name.charAt(
+                      //     0
+                      //   )}`;
+                      // }}
                       />
                     </div>
                     <button className="absolute -top-2 -right-2 w-8 h-8 bg-white hover:bg-red-50 rounded-full flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-all duration-300 shadow-md border border-gray-100">
@@ -570,9 +569,8 @@ const CartPage = () => {
                 </div>
               )} */}
               <Link
-                href={`${
-                  isAuthenticated ? "/checkout" : "/authentication/login"
-                }`}
+                href={`${isAuthenticated ? "/checkout" : "/authentication/login"
+                  }`}
               >
                 <button
                   // onClick={handleCheckout}
