@@ -66,7 +66,7 @@ const MediaCoveragePage = () => {
           <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {coverages.map((coverage) => (
+                {coverages?.map((coverage) => (
                   <a
                     key={coverage.id}
                     href={coverage.url}
