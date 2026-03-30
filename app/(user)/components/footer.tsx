@@ -1,10 +1,35 @@
 "use client";
 import { brandName } from "@/app/contants";
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin, LocateIcon, Mail, MapPin, Phone } from "lucide-react";
+import { Facebook, Instagram, Linkedin, LocateIcon, Mail, MapPin, Phone, X } from "lucide-react";
 import Image from "next/image";
+import { FaInstagram, FaFacebookF, FaXTwitter, FaTwitter } from "react-icons/fa6";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 
 export default function Footer() {
+  const [socialLinks, setSocialLinks] = useState({
+    instagram: "",
+    facebook: "",
+    twitter: "",
+  });
+
+  useEffect(() => {
+    const fetchLinks = async () => {
+      try {
+        const res = await axios.get("http://localhost:8008/social-links");
+        if (res.data) {
+          setSocialLinks(res.data);
+        }
+      } catch (err) {
+        console.log("Footer fetch error", err);
+      }
+    };
+
+    fetchLinks();
+  }, []);
+
   return (
     <footer className=" bg-green-700  ">
       <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -23,14 +48,38 @@ export default function Footer() {
 
           {/* Social Icons */}
           <div className="flex gap-4 mt-6">
-            <a className="w-9 h-9 rounded-full text-black flex items-center justify-center bg-white hover:text-blue-600 transition">
-              <Facebook size={16} />
+
+
+            {/* Instagram */}
+            <a
+              href={socialLinks?.instagram || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full flex items-center justify-center bg-white text-black hover:bg-gradient-to-tr hover:from-pink-500 hover:to-yellow-500 hover:text-white transition"
+            >
+              <FaInstagram size={16} />
             </a>
-            <a className="w-9 h-9 rounded-full text-black flex items-center justify-center bg-white hover:text-pink-600 transition">
-              <Instagram size={16} />
+
+            {/* Facebook */}
+            <a
+              href={socialLinks?.facebook || "#"}
+
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full flex items-center justify-center bg-white text-black hover:bg-blue-600 hover:text-white transition"
+            >
+              <FaFacebookF size={16} />
             </a>
-            <a className="w-9 h-9 rounded-full text-black flex items-center justify-center bg-white hover:text-blue-600 transition">
-              <Linkedin size={16} />
+
+            {/* Twitter */}
+
+            <a
+              href={socialLinks?.twitter || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full text-black flex items-center justify-center bg-white hover:bg-black hover:text-white transition"
+            >
+              <FaXTwitter size={16} />
             </a>
           </div>
         </div>
@@ -101,7 +150,7 @@ export default function Footer() {
               <Phone size={16} /> +91 84462 74791
             </li>
             <li className="flex items-center  gap-2">
-              <MapPin size={25} />  Kate wasti , Punawale, Pimpri-Chinchwad ,Pune ,411033
+              <MapPin size={25} />  Kate wasti, Punawale, Pimpri-Chinchwad, Pune-411033
             </li>
           </ul>
         </div>

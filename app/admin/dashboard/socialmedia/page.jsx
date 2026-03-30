@@ -1,0 +1,158 @@
+"use client";
+
+import React, { useState } from "react";
+import { FaInstagram, FaFacebookF, FaTwitter } from "react-icons/fa";
+import axios from "axios";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+const Page = () => {
+    const [links, setLinks] = useState({
+        instagram: "",
+        facebook: "",
+        twitter: "",
+    });
+
+    const handleChange = (e) => {
+        setLinks({ ...links, [e.target.name]: e.target.value });
+    };
+    useEffect(() => {
+        const fetchLinks = async () => {
+            try {
+                const res = await axios.get("http://localhost:8008/social-links");
+                if (res.data) {
+                    setLinks(res.data);
+                }
+            } catch (err) {
+                console.log("Fetch error", err);
+            }
+        };
+
+        fetchLinks();
+    }, []);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            await axios.post("http://localhost:8008/social-links", links);
+            toast.success("Links saved successfully 🚀");
+        } catch (err) {
+            console.log("Save error", err);
+            toast.error("Error saving links ❌");
+        }
+    };
+    return (
+        <div className="max-w-4xl mx-auto p-6">
+
+            <div className="w-full max-w-4xl bg-white shadow-2xl rounded-3xl p-8">
+
+                {/* Title */}
+                <h2 className="text-3xl font-bold text-center mb-8">
+                    Social Media Settings
+                </h2>
+
+                <div className="grid md:grid-cols-2 gap-8">
+
+                    {/* LEFT: FORM */}
+                    <div className="space-y-5">
+
+                        {/* Instagram */}
+                        <div>
+                            <label className="flex items-center gap-2 mb-1 font-medium">
+                                <FaInstagram className="text-pink-500" />
+                                Instagram
+                            </label>
+                            <input
+                                type="text"
+                                name="instagram"
+                                value={links.instagram}
+                                onChange={handleChange}
+                                placeholder="https://instagram.com/..."
+                                className="w-full border rounded-xl px-4 py-2 focus:ring-2 focus:ring-pink-500 outline-none"
+                            />
+                        </div>
+
+                        {/* Facebook */}
+                        <div>
+                            <label className="flex items-center gap-2 mb-1 font-medium">
+                                <FaFacebookF className="text-blue-600" />
+                                Facebook
+                            </label>
+                            <input
+                                type="text"
+                                name="facebook"
+                                value={links.facebook}
+                                onChange={handleChange}
+                                placeholder="https://facebook.com/..."
+                                className="w-full border rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                            />
+                        </div>
+
+                        {/* Twitter */}
+                        <div>
+                            <label className="flex items-center gap-2 mb-1 font-medium">
+                                <FaTwitter className="text-black" />
+                                Twitter / X
+                            </label>
+                            <input
+                                type="text"
+                                name="twitter"
+                                value={links.twitter}
+                                onChange={handleChange}
+                                placeholder="https://x.com/..."
+                                className="w-full border rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none"
+                            />
+                        </div>
+
+                        {/* Save Button */}
+                        <button
+                            onClick={handleSubmit}
+                            className="w-full mt-4 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition"
+                        >
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                    {/* RIGHT: PREVIEW */}
+                    <div className="flex flex-col items-center justify-center p-6">
+                        <h3 className="text-lg font-semibold mb-4">
+                            Live Preview
+                        </h3>
+
+                        <div className="flex gap-4">
+
+                            {/* Instagram */}
+                            <a
+                                href={links.instagram || "#"}
+                                className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow hover:scale-110 transition"
+                            >
+                                <FaInstagram className="text-pink-500 text-xl" />
+                            </a>
+
+                            {/* Facebook */}
+                            <a
+                                href={links.facebook || "#"}
+                                className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow hover:scale-110 transition"
+                            >
+                                <FaFacebookF className="text-blue-600 text-xl" />
+                            </a>
+
+                            {/* Twitter */}
+                            <a
+                                href={links.twitter || "#"}
+                                className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow hover:scale-110 transition"
+                            >
+                                <FaTwitter className="text-black text-xl" />
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Page;

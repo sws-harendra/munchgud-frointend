@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Edu_NSW_ACT_Foundation } from "next/font/google";
 import Sidebar from "../components/sidebar";
-
+import { Toaster } from "react-hot-toast";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,6 +32,7 @@ export default function AdminDashboardLayout({
     <div
       className={`h-screen overflow-hidden ${geistSans.variable} ${geistMono.variable} ${eduCursive.variable}`}
     >
+      <Toaster position="top-right" reverseOrder={false} />
       <main className="flex h-full">
         {/* Sidebar stays fixed height */}
         <Sidebar />

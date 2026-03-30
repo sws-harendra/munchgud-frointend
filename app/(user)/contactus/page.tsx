@@ -94,7 +94,7 @@ export default function Page() {
                 <div>
                   <p className="font-semibold">Address</p>
                   <p className="text-gray-600">
-                    Kate wasti , Punawale, Pimpri-Chinchwad ,Pune ,411033
+                    Kate wasti, Punawale, Pimpri-Chinchwad, Pune-411033
                   </p>
                 </div>
               </div>

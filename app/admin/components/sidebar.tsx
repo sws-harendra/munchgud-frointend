@@ -89,6 +89,11 @@ const menuItems = [
     href: "/admin/dashboard/testimonials",
   },
   {
+    name: "Social Media Management",
+    icon: Video,
+    href: "/admin/dashboard/socialmedia",
+  },
+  {
     name: "Varients",
     icon: ChartNoAxesGanttIcon,
     href: "/admin/dashboard/varient",
@@ -122,9 +127,8 @@ export default function Sidebar() {
     <div className="flex overflow-y-auto overflow-x-hidden h-full bg-gray-900">
       {/* Sidebar */}
       <div
-        className={`${
-          open ? "w-64" : "w-20"
-        } bg-gray-900 text-gray-100 h-screen p-4 pt-6 relative duration-300`}
+        className={`${open ? "w-64" : "w-20"
+          } bg-gray-900 text-gray-100 h-screen p-4 pt-6 relative duration-300`}
       >
         {/* Toggle Button */}
         <button
@@ -136,9 +140,8 @@ export default function Sidebar() {
 
         {/* Logo */}
         <h1
-          className={`text-xl font-bold mb-8 text-center duration-300 ${
-            !open && "scale-0"
-          }`}
+          className={`text-xl font-bold mb-8 text-center duration-300 ${!open && "scale-0"
+            }`}
         >
           {brandName}
         </h1>

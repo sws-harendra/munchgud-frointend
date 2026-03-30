@@ -20,7 +20,7 @@ const eduCursive = Edu_NSW_ACT_Foundation({
 });
 
 export const metadata: Metadata = {
-  title: "User Dashboard",
+  title: "Munchgud Makhana ",
   description: "Dashboard section for users",
 };
 
