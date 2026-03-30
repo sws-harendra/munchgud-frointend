@@ -49,14 +49,52 @@ export default function EcommerceNavbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [wishlistCount] = useState(7);
   const [searchInput, setSearchInput] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    if (searchInput.trim().length > 1) {
+      fetchSuggestions(searchInput);
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+  }, [searchInput]);
   const handleSearch = () => {
     if (searchInput.trim() !== "") {
       router.push(`/products?search=${encodeURIComponent(searchInput)}`);
     }
   };
   const { categories } = useAppSelector((state: RootState) => state.category);
- const array = ["About Us", "Contact Us"];
-  
+  const array = ["About Us", "Contact Us"];
+
+  const fetchSuggestions = async (query) => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        `http://localhost:8008/products?search=${query}`
+      );
+
+      const data = await res.json();
+
+      const products = data.products || [];
+
+      // 🔥 MATCH ANYWHERE LOGIC
+      const filtered = products.filter((item) =>
+        item.name.toLowerCase().includes(query.toLowerCase())
+      );
+
+      setSuggestions(filtered);
+    } catch (err) {
+      console.log("Suggestion error", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <nav className=" shadow-lg sticky top-0 z-50 border-b bg-white border-gray-100">
       {/* Top Bar */}
@@ -75,9 +113,9 @@ export default function EcommerceNavbar() {
       </div> */}
       <div className="bg-black text-yellow-400 text-sm text-center  py-2">
         <div className="mx-auto px-4 font-semibold ">
-            <span >
-              🚚 Free Shipping on All Orders | No COD Charges on Prepaid Payments/ 
-            </span>
+          <span >
+            🚚 Free Shipping on All Orders | No COD Charges on Prepaid Payments/
+          </span>
         </div>
       </div>
       {/* <div className="text-[13px]  flex gap-2 md:gap-4 px-4">
@@ -89,7 +127,7 @@ export default function EcommerceNavbar() {
       {/* Main Navbar */}
       <div className=" mx-auto py-2 px-2 md:px-4 drop-shadow-lg">
         <div className=" flex items-center justify-between h-16">
-          
+
           {/* Logo */}
           <div className="">
             <Link href="/">
@@ -104,19 +142,19 @@ export default function EcommerceNavbar() {
           </div>
 
           {/* Desktop Categories */}
-            <div className="hidden lg:flex items-center space-x-8">
-              {categories.map((category: any) => (
-                <DropdownCategory key={category.id} category={category} />
-              ))}
-              {/* Additional AboutUs and ContactUs Links */}
-              {array.map((item) => (
-                <Link key={item} href={`/${item.replace(/\s+/g, '').toLowerCase()}`} className="text-black hover:text-green-700 transition-colors">
-                  {item}
-                </Link>
-              ))}
-            </div>
-          
-          
+          <div className="hidden lg:flex items-center space-x-8">
+            {categories.map((category: any) => (
+              <DropdownCategory key={category.id} category={category} />
+            ))}
+            {/* Additional AboutUs and ContactUs Links */}
+            {array.map((item) => (
+              <Link key={item} href={`/${item.replace(/\s+/g, '').toLowerCase()}`} className="text-black hover:text-green-700 transition-colors">
+                {item}
+              </Link>
+            ))}
+          </div>
+
+
 
           {/* Search Bar */}
           <div className="flex-1 max-w-2xl mx-8 hidden md:block">
@@ -124,15 +162,75 @@ export default function EcommerceNavbar() {
               <input
                 type="text"
                 value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearchInput(value);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     handleSearch();
+                    setShowSuggestions(false);
                   }
+                }}
+                onFocus={() => {
+                  if (searchInput.trim().length > 1) {
+                    setShowSuggestions(true);
+                  }
+                }}
+                onBlur={() => {
+                  setTimeout(() => setShowSuggestions(false), 200);
                 }}
                 placeholder="Search for products, brands, categories..."
                 className="w-full pl-12 pr-4 py-3 border border-green-600 rounded-full focus:ring-2 focus:ring-lime-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
               />
+              {showSuggestions && (
+                <div className="absolute top-full left-0 w-full bg-white rounded-2xl shadow-2xl mt-3 z-50 max-h-72 overflow-y-auto border border-gray-100">
+
+                  {/* Loading */}
+                  {loading ? (
+                    <div className="p-4 text-gray-400 animate-pulse">
+                      Searching...
+                    </div>
+                  ) : suggestions.length === 0 ? (
+                    <div className="p-4 text-gray-400 text-sm">
+                      No results found
+                    </div>
+                  ) : (
+                    suggestions.slice(0, 6).map((item) => (
+                      <div
+                        key={item.id}
+                        onClick={() => {
+                          setSearchInput(item.name);
+                          setShowSuggestions(false);
+                          router.push(`/products?search=${item.name}`);
+                        }}
+                        className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-200 hover:bg-green-50 group border-b last:border-none"
+                      >
+
+                        {/* Content */}
+                        <div className="flex flex-col flex-1">
+                          <span className="text-sm font-medium text-gray-800 group-hover:text-green-700 transition-colors">
+                            {item.name}
+                          </span>
+
+                          {/* Optional category */}
+                          {item.category?.name && (
+                            <span className="text-xs text-gray-400">
+                              in {item.category.name}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Arrow */}
+                        <span className="text-gray-300 group-hover:text-green-600 transition">
+                          →
+                        </span>
+                      </div>
+                    ))
+                  )}
+
+                </div>
+              )}
 
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <button
@@ -143,8 +241,8 @@ export default function EcommerceNavbar() {
               </button>
             </div>
           </div>
-          
-          
+
+
 
           {/* Right Actions */}
           <div className="flex items-center space-x-6">
@@ -187,7 +285,7 @@ export default function EcommerceNavbar() {
                 </button>
               </Link>
             </div>
-            
+
             <div className="flex items-center space-x-1 md:space-x-8">
               {/* Profile Dropdown */}
               {isAuthenticated ? (
@@ -203,9 +301,8 @@ export default function EcommerceNavbar() {
                       {user?.fullname}
                     </span>
                     <ChevronDown
-                      className={`w-4 h-4 hidden lg:block transition-transform duration-200 ${
-                        isProfileOpen ? "rotate-180" : ""
-                      }`}
+                      className={`w-4 h-4 hidden lg:block transition-transform duration-200 ${isProfileOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -250,20 +347,20 @@ export default function EcommerceNavbar() {
                         Sign Out
                       </button>
                     </div>
-                    )}
-                  </div>
-                    ) : (
-                      <div>
-                        {" "}
-                        <Link href="/authentication/login">
-                          <button className="px-5 py-2 text-white bg-green-700 rounded-full">
-                            Login
-                          </button>
-                        </Link>
-                      </div>
-                    )}
+                  )}
+                </div>
+              ) : (
+                <div>
+                  {" "}
+                  <Link href="/authentication/login">
+                    <button className="px-5 py-2 text-white bg-green-700 rounded-full">
+                      Login
+                    </button>
+                  </Link>
+                </div>
+              )}
             </div>
-            
+
 
             {/* Mobile Menu Toggle */}
             <button
@@ -291,7 +388,7 @@ export default function EcommerceNavbar() {
                 placeholder="Search products..."
                 className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-700 focus:border-transparent"
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"  />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             </div>
 
             {/* Mobile Categories */}

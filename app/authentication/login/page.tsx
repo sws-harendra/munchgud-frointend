@@ -27,11 +27,8 @@ export default function LoginForm() {
   );
   const isLoading = status === "loading";
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error as string);
-    }
-  }, [error]);
+
+
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setErrors({ email: "", password: "" });
@@ -60,24 +57,28 @@ export default function LoginForm() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
-    const credentials = {
-      email: email,
-      password: password,
-    };
+    const credentials = { email, password };
 
-    const user = await dispatch(emailLogin(credentials)).unwrap();
-    console.log("user", user);
-    // ✅ redirect here
-    if (user?.user?.role === "admin") {
-      router.push("/admin/dashboard");
-    } else {
-      router.push("/");
+    try {
+      const user = await dispatch(emailLogin(credentials)).unwrap();
+
+      if (user?.user?.role === "admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/");
+      }
+
+    } catch (err: any) {
+      console.log("ERROR 👉", err);
+
+      const message =
+        typeof err === "string"
+          ? err
+          : err?.message || "Invalid credentials";
+
+      toast.error(message);
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-white to-cyan-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">

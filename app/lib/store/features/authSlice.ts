@@ -16,7 +16,7 @@ export const registerUser = createAsyncThunk(
       return await authService.registerUser(userData);
     } catch (err: any) {
       return rejectWithValue(
-        err.response?.data?.message || "Registration failed",
+        err?.message || "Invalid credentials"
       );
     }
   },
@@ -40,11 +40,10 @@ export const emailLogin = createAsyncThunk(
     try {
       const response = await authService.emailLogin(credentials);
       return response;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        return rejectWithValue(err.message);
-      }
-      return rejectWithValue("Email login failed");
+    } catch (err: any) {
+      return rejectWithValue(
+        err?.message || err?.response?.data?.message || "Invalid credentials"
+      );
     }
   },
 );
@@ -266,7 +265,10 @@ const authSlice = createSlice({
       })
       .addCase(emailLogin.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.payload;
+        state.error =
+          (action.payload as string) ||
+          action.error?.message ||
+          "Invalid credentials";
         state.isAuthenticated = false;
       })
 
@@ -430,6 +432,7 @@ const authSlice = createSlice({
         state.registerStatus = "failed";
         state.error = action.payload;
       });
+
   },
 });
 

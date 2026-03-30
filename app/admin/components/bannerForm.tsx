@@ -122,7 +122,7 @@ const BannerForm = ({
 
       {/* Title */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Title *</label>
+        <label className="text-sm font-medium text-gray-700">Title</label>
         <input
           name="title"
           value={form.title || ""}
@@ -192,14 +192,14 @@ const BannerForm = ({
       {/* Submit Button */}
       <button
         onClick={handleSave}
-        disabled={loading || !form.title}
+        disabled={loading}
         className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-600/25"
       >
         {loading
           ? "Saving..."
           : editingBanner
-          ? "Update Banner"
-          : "Create Banner"}
+            ? "Update Banner"
+            : "Create Banner"}
       </button>
     </div>
   );

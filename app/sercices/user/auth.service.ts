@@ -4,8 +4,21 @@ import axiosInstance from "@/app/utils/axiosinterceptor";
 export const authService = {
   // Email login
   emailLogin: async (credentials: EmailLoginRequest) => {
-    const response = await axiosInstance.post("/user/login-user", credentials);
-    return response.data;
+    try {
+      const response = await axiosInstance.post("/user/login-user", credentials);
+      return response.data;
+    } catch (error: any) {
+      console.log("SERVICE ERROR 👉", error);
+
+      // 🔥 FORCE EXTRACT MESSAGE
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "Invalid credentials";
+
+      throw { message };
+    }
   },
 
   activateAccount: async (activation_token: any) => {
