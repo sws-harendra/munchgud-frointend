@@ -35,8 +35,10 @@ export default function BlogList() {
   return (
     <div className="container mx-auto py-8 px-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Blogs</h1>
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-3xl md:text-4xl font-bold text-white md:text-gray-900">
+          All <span className="text-lime-300 md:text-lime-600">Blogs</span>
+        </h1>
       </div>
 
       {/* Blog cards grid */}
@@ -45,18 +47,24 @@ export default function BlogList() {
           <Link href={`/blogs/${post.id}/${post.slug}`} key={post.id}>
             <div
               key={post.id}
-              className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col"
+              className="bg-gradient-to-b from-green-200 via-green-50 to-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
             >
               {/* Featured image */}
-              {post.featuredImage && (
-                <Link href={`/blogs/${post.id}/${post.slug}`}>
-                  <img
-                    src={getImageUrl(post.featuredImage)}
-                    alt={post.title}
-                    className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </Link>
-              )}
+              <div className="p-3">
+                <div className="h-44 w-full overflow-hidden rounded-xl">
+                  {post.featuredImage ? (
+                    <img
+                      src={getImageUrl(post.featuredImage)}
+                      alt={post.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
+                      No Image
+                    </div>
+                  )}
+                </div>
+              </div>
 
               <div className="p-6 flex flex-col flex-1 justify-between">
                 <div>

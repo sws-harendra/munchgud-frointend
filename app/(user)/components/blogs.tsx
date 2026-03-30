@@ -31,7 +31,7 @@ const AllBlogsHomePage = () => {
   if (!posts || posts.length === 0) return null;
 
   return (
-    <section className=" px-6 md:px-12 py-6 bg-gradient-to-b from-gray-50 to-white">
+    <section className="px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32 py-6 bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
       <div className="relative mb-14">
         <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 text-center">
@@ -60,38 +60,40 @@ const AllBlogsHomePage = () => {
             href={`/blogs/${post.id}/${slugify(post.slug!)}`}
             className="group"
           >
-            <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col">
+            <div className="bg-gradient-to-b from-green-200 via-green-50 to-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col">
               {/* Image */}
-              <div className="h-48 w-full relative overflow-hidden">
-                {post.featuredImage ? (
-                  <img
-                    src={getImageUrl(post.featuredImage)}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400 font-medium">
-                    No Image
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-              </div>
+              <div className="p-3">
+                <div className="h-44 w-full relative overflow-hidden rounded-xl">
+                  {post.featuredImage ? (
+                    <img
+                      src={getImageUrl(post.featuredImage)}
+                      alt={post.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400 font-medium">
+                      No Image
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                </div>
 
-              {/* Content */}
-              <div className="p-5 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold mb-2 line-clamp-2 text-gray-900 group-hover:text-lime-600 transition-colors">
-                  {post.title}
-                </h3>
-                {post.excerpt && (
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                )}
+                {/* Content */}
+                <div className="p-5 flex flex-col flex-grow">
+                  <h3 className="text-lg font-semibold mb-2 line-clamp-2 text-gray-900 group-hover:text-lime-600 transition-colors">
+                    {post.title}
+                  </h3>
+                  {post.excerpt && (
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                      {post.excerpt}
+                    </p>
+                  )}
 
-                {/* CTA */}
-                <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-lime-600 group-hover:gap-2 transition-all">
-                  Read More <ArrowRight size={14} />
-                </span>
+                  {/* CTA */}
+                  <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-lime-600 group-hover:gap-2 transition-all">
+                    Read More <ArrowRight size={14} />
+                  </span>
+                </div>
               </div>
             </div>
           </Link>

@@ -46,6 +46,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       "/contactus",
       "/refund-policy",
       "/privacy-policy",
+      "/authentication/forgot-password",
+      "/authentication/reset-password",
     ];
 
     // also allow dynamic product pages
@@ -57,7 +59,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     ];
 
     const isPublic =
-      publicPages.includes(pathname) ||
+      publicPages.some((page) => pathname.startsWith(page)) ||
       publicPatterns.some((pattern) => pattern.test(pathname));
 
     if (isPublic) return;

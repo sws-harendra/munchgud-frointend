@@ -174,12 +174,12 @@ export default function LoginForm() {
                 />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
-              <a
-                href="#"
+              <Link
+                href="/authentication/forgot-password"
                 className="text-sm text-green-700 hover:text-green-600 font-medium"
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
             {/* Submit Button */}
