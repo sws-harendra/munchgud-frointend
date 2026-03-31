@@ -33,8 +33,7 @@ export default function BlogList() {
     }
   };
 
-  if (status === "loading") return <p>Loading blogs...</p>;
-  if (status === "failed") return <p>Failed to load blogs.</p>;
+
 
   return (
     <div className="container mx-auto py-6">
@@ -85,11 +84,10 @@ export default function BlogList() {
 
               {/* Delete */}
               <button
-                disabled={deleteStatus === "loading"}
-                className="px-3 py-1 border rounded bg-green-700 text-white disabled:opacity-50"
+                className="px-3 py-1 border rounded bg-green-700 text-white"
                 onClick={() => handleDelete(post.id!)}
               >
-                {deleteStatus === "loading" ? "Deleting..." : "Delete"}
+                Delete
               </button>
             </div>
           </li>

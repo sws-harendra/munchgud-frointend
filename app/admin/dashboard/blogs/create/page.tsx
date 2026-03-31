@@ -20,25 +20,46 @@ export default function BlogForm({ post }: { post?: any }) {
   const [title, setTitle] = useState(post?.title || "");
   const [content, setContent] = useState(post?.content || "");
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    if (featuredImage) formData.append("featuredImage", featuredImage);
+    if (loading) return; // prevent double click bug
 
-    if (post) {
-      await dispatch(
-        updateBlogPost({ ...post, title, content, featuredImage }),
-      );
-      toast.success("Blog updated successfully");
-    } else {
-      await dispatch(addBlogPost({ title, content, featuredImage }));
-      toast.success("Blog created successfully");
-      router.push("/admin/dashboard/blogs");
+    setLoading(true);
+
+    try {
+      if (post) {
+        await dispatch(
+          updateBlogPost({ ...post, title, content, featuredImage })
+        ).unwrap();
+
+        toast.success("Blog updated successfully");
+
+      } else {
+        await dispatch(
+          addBlogPost({ title, content, featuredImage })
+        ).unwrap();
+
+        toast.success("Blog created successfully");
+
+        // ✅ RESET FORM (IMPORTANT)
+        setTitle("");
+        setContent("");
+        setFeaturedImage(null);
+
+        // ✅ Redirect AFTER state settles
+        setTimeout(() => {
+          router.push("/admin/dashboard/blogs");
+        }, 300);
+      }
+
+    } catch (err) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -69,9 +90,10 @@ export default function BlogForm({ post }: { post?: any }) {
 
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded"
+        disabled={loading}
+        className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
       >
-        {post ? "Update Blog" : "Create Blog"}
+        {loading ? "Saving..." : post ? "Update Blog" : "Create Blog"}
       </button>
     </form>
   );
