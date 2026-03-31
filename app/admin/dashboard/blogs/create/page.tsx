@@ -8,6 +8,7 @@ import {
   updateBlogPost,
 } from "@/app/lib/store/features/blogSlice";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const RichTextEditor = dynamic(
   () => import("@/app/commonComponents/RichTextEditor"),
@@ -19,6 +20,7 @@ export default function BlogForm({ post }: { post?: any }) {
   const [title, setTitle] = useState(post?.title || "");
   const [content, setContent] = useState(post?.content || "");
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +38,7 @@ export default function BlogForm({ post }: { post?: any }) {
     } else {
       await dispatch(addBlogPost({ title, content, featuredImage }));
       toast.success("Blog created successfully");
+      router.push("/admin/dashboard/blogs");
     }
   };
   return (

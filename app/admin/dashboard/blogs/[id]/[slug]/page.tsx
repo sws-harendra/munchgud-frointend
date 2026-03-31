@@ -41,11 +41,11 @@ export default async function ViewBlog({ params }: Props) {
           <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
             {post.title}
           </h1>
-          <div className="text-gray-900 text-sm mb-6">
+          <div className="text-white text-sm mb-6">
             {/* Optional: Add date or author */}
             Published on: {post.createdAt}
           </div>
-          <div className="prose prose-lg dark:prose-invert max-w-full">
+          <div className="prose prose-lg dark:prose-invert text-white max-w-full">
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
         </div>

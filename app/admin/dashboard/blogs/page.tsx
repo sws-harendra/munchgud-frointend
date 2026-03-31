@@ -8,19 +8,28 @@ import {
   selectAllPosts,
   selectBlogStatus,
 } from "@/app/lib/store/features/blogSlice";
+import { toast } from "sonner";
 
 export default function BlogList() {
   const dispatch = useAppDispatch();
   const posts = useAppSelector(selectAllPosts);
   const status = useAppSelector(selectBlogStatus);
+  const deleteStatus = useAppSelector((state) => state.blog.deleteStatus);
 
   useEffect(() => {
     dispatch(fetchBlogPosts());
   }, [dispatch]);
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this blog?")) {
-      dispatch(deleteBlogPost(id));
+  const handleDelete = async (id: string) => {
+    const toastId = toast.loading("Deleting blog...");
+
+    try {
+      await dispatch(deleteBlogPost(id)).unwrap();
+
+      toast.success("Blog deleted successfully", { id: toastId });
+
+    } catch (err) {
+      toast.error("Failed to delete blog", { id: toastId });
     }
   };
 
@@ -76,10 +85,11 @@ export default function BlogList() {
 
               {/* Delete */}
               <button
-                className="px-3 py-1 border rounded bg-green-700 text-white hover:bg-green-700"
+                disabled={deleteStatus === "loading"}
+                className="px-3 py-1 border rounded bg-green-700 text-white disabled:opacity-50"
                 onClick={() => handleDelete(post.id!)}
               >
-                Delete
+                {deleteStatus === "loading" ? "Deleting..." : "Delete"}
               </button>
             </div>
           </li>

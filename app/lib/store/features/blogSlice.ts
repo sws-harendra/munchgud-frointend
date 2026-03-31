@@ -16,14 +16,16 @@ export interface BlogPost {
 interface BlogState {
   posts: BlogPost[];
   currentPost: BlogPost | null;
-  status: "idle" | "loading" | "succeeded" | "failed";
+  fetchStatus: "idle" | "loading" | "succeeded" | "failed";
+  deleteStatus: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
 
 const initialState: BlogState = {
   posts: [],
   currentPost: null,
-  status: "idle",
+  fetchStatus: "idle",
+  deleteStatus: "idle",
   error: null,
 };
 
@@ -91,54 +93,54 @@ const blogSlice = createSlice({
   extraReducers: (builder) => {
     // Fetch posts
     builder.addCase(fetchBlogPosts.pending, (state) => {
-      state.status = "loading";
+      state.fetchStatus = "loading";
       state.error = null;
     });
     builder.addCase(fetchBlogPosts.fulfilled, (state, action) => {
-      state.status = "succeeded";
+      state.fetchStatus = "succeeded";
       state.posts = action.payload;
     });
     builder.addCase(fetchBlogPosts.rejected, (state, action) => {
-      state.status = "failed";
+      state.fetchStatus = "failed";
       state.error = action.error.message || "Failed to fetch posts";
     });
 
     // Fetch single post
     builder.addCase(fetchBlogPostById.pending, (state) => {
-      state.status = "loading";
+      state.fetchStatus = "loading";
       state.error = null;
     });
     builder.addCase(fetchBlogPostById.fulfilled, (state, action) => {
-      state.status = "succeeded";
+      state.fetchStatus = "succeeded";
       state.currentPost = action.payload;
     });
     builder.addCase(fetchBlogPostById.rejected, (state, action) => {
-      state.status = "failed";
+      state.fetchStatus = "failed";
       state.error = action.error.message || "Failed to fetch post";
     });
 
     // Add post
     builder.addCase(addBlogPost.pending, (state) => {
-      state.status = "loading";
+      state.fetchStatus = "loading";
       state.error = null;
     });
     builder.addCase(addBlogPost.fulfilled, (state, action) => {
-      state.status = "succeeded";
+      state.fetchStatus = "succeeded";
       state.posts.unshift(action.payload);
       state.currentPost = action.payload;
     });
     builder.addCase(addBlogPost.rejected, (state, action) => {
-      state.status = "failed";
+      state.fetchStatus = "failed";
       state.error = action.error.message || "Failed to add post";
     });
 
     // Update post
     builder.addCase(updateBlogPost.pending, (state) => {
-      state.status = "loading";
+      state.fetchStatus = "loading";
       state.error = null;
     });
     builder.addCase(updateBlogPost.fulfilled, (state, action) => {
-      state.status = "succeeded";
+      state.fetchStatus = "succeeded";
       const index = state.posts.findIndex(
         (post) => post.id === action.payload.id,
       );
@@ -152,20 +154,21 @@ const blogSlice = createSlice({
 
     // Delete post
     builder.addCase(deleteBlogPost.fulfilled, (state, action) => {
+      state.deleteStatus = "succeeded";
       state.posts = state.posts.filter((post) => post.id !== action.payload);
       if (state.currentPost?.id === action.payload) {
         state.currentPost = null;
       }
     });
     builder.addCase(updateBlogPost.rejected, (state, action) => {
-      state.status = "failed";
+      state.fetchStatus = "failed";
       state.error = action.error.message || "Failed to update post";
     });
 
     // Delete post
-    builder.addCase(deleteBlogPost.pending, (state) => {
-      state.status = "loading";
-      state.error = null;
+    builder.addCase(deleteBlogPost.rejected, (state, action) => {
+      state.deleteStatus = "failed";
+      state.error = action.error.message || "Failed to delete post";
     });
   },
 });
@@ -178,5 +181,5 @@ export const selectAllPosts = (state: { blog: BlogState }) => state.blog.posts;
 export const selectCurrentPost = (state: { blog: BlogState }) =>
   state.blog.currentPost;
 export const selectBlogStatus = (state: { blog: BlogState }) =>
-  state.blog.status;
+  state.blog.fetchStatus;
 export const selectBlogError = (state: { blog: BlogState }) => state.blog.error;
