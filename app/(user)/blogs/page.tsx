@@ -68,7 +68,7 @@ export default function BlogList() {
 
               <div className="p-6 flex flex-col flex-1 justify-between">
                 <div>
-                  <Link href={`/admin/dashboard/blogs/${post.slug}`}>
+                  <Link href={`/blogs/${post.id}/${post.slug}`} key={post.id}>
                     <h2 className="text-xl font-semibold text-gray-800 hover:text-green-600 hover:underline transition">
                       {post.title}
                     </h2>
