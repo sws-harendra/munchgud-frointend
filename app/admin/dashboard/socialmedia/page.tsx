@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaInstagram, FaFacebookF, FaTwitter } from "react-icons/fa";
-import axios from "axios";
-import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { socialLinksService } from "@/app/sercices/user/social-media.service";
+
+
 const Page = () => {
     const [links, setLinks] = useState({
         instagram: "",
@@ -12,15 +13,17 @@ const Page = () => {
         twitter: "",
     });
 
-    const handleChange = (e) => {
+    const handleChange = (e: any) => {
         setLinks({ ...links, [e.target.name]: e.target.value });
     };
+
+    // Fetch links
     useEffect(() => {
         const fetchLinks = async () => {
             try {
-                const res = await axios.get("http://localhost:8008/social-links");
-                if (res.data) {
-                    setLinks(res.data);
+                const data = await socialLinksService.getLinks();
+                if (data) {
+                    setLinks(data);
                 }
             } catch (err) {
                 console.log("Fetch error", err);
@@ -29,20 +32,22 @@ const Page = () => {
 
         fetchLinks();
     }, []);
-    const handleSubmit = async (e) => {
+
+    // Save links
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            await axios.post("http://localhost:8008/social-links", links);
+            await socialLinksService.saveLinks(links);
             toast.success("Links saved successfully 🚀");
         } catch (err) {
             console.log("Save error", err);
             toast.error("Error saving links ❌");
         }
     };
+
     return (
         <div className="max-w-4xl mx-auto p-6">
-
             <div className="w-full max-w-4xl bg-white shadow-2xl rounded-3xl p-8">
 
                 {/* Title */}
@@ -121,32 +126,31 @@ const Page = () => {
 
                         <div className="flex gap-4">
 
-                            {/* Instagram */}
                             <a
                                 href={links.instagram || "#"}
+                                target="_blank"
                                 className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow hover:scale-110 transition"
                             >
                                 <FaInstagram className="text-pink-500 text-xl" />
                             </a>
 
-                            {/* Facebook */}
                             <a
                                 href={links.facebook || "#"}
+                                target="_blank"
                                 className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow hover:scale-110 transition"
                             >
                                 <FaFacebookF className="text-blue-600 text-xl" />
                             </a>
 
-                            {/* Twitter */}
                             <a
                                 href={links.twitter || "#"}
+                                target="_blank"
                                 className="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow hover:scale-110 transition"
                             >
                                 <FaTwitter className="text-black text-xl" />
                             </a>
 
                         </div>
-
                     </div>
 
                 </div>
