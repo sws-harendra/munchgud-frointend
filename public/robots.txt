@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /authentication/
+
+Sitemap: https://munchgud.com/sitemap.xml
