@@ -20,8 +20,30 @@ const eduCursive = Edu_NSW_ACT_Foundation({
 });
 
 export const metadata: Metadata = {
-  title: "Munchgud Makhana ",
+  title: "MunchGud Makhana",
   description: "Dashboard section for users",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    url: "https://munchgud.com",
+    siteName: "MunchGud",
+    title: "MunchGud Makhana",
+    description: "Dashboard section for users",
+    images: [
+      {
+        url: "/logo.png",
+        width: 210,
+        height: 110,
+        alt: "MunchGud logo",
+      },
+    ],
+  },
 };
 
 export default function DashboardLayout({

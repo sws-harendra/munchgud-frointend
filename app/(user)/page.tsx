@@ -13,18 +13,67 @@ import TestimonialCarousel from "./components/testimonials";
 import FeaturedArtists from "./components/featuredArtists";
 import InstagramSection from "./components/InstagramSection";
 import ChooseYourMakhana from "./components/ChooseYourMakhana";
+import { Banner } from "../lib/store/features/bannerSlice";
+import { serverurl } from "../contants";
 
-const HomePage = () => {
+const getInitialBanners = async (): Promise<Banner[]> => {
+  if (!serverurl) return [];
+
+  try {
+    const response = await fetch(`${serverurl}/banners`, {
+      next: { revalidate: 300 },
+    });
+
+    if (!response.ok) return [];
+
+    return response.json();
+  } catch {
+    return [];
+  }
+};
+
+const HomePage = async () => {
+  const initialBanners = await getInitialBanners();
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    name: "MunchGud",
+    url: "https://munchgud.com",
+    logo: "https://munchgud.com/logo.png",
+    description: "Dashboard section for users",
+    image: "https://munchgud.com/logo.png",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Kate wasti, Punawale",
+      addressLocality: "Pimpri-Chinchwad",
+      addressRegion: "Maharashtra",
+      postalCode: "411033",
+      addressCountry: "IN",
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+91-84462-74791",
+      contactType: "customer support",
+      email: "munchgud@gmail.com",
+    },
+    sameAs: ["https://munchgud.com"],
+  };
+
   return (
     <div>
-      <BannerCarousel />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <h1 className="sr-only">MunchGud Makhana</h1>
+      <BannerCarousel initialBanners={initialBanners} />
       <div className="lg:px-20">
         <VideoProduct />
 
         <TrendingProducts />
         <AllSections />
         <FeaturedArtists />
-        <ChooseYourMakhana/>
+        <ChooseYourMakhana />
         <InstagramSection />
         <TestimonialCarousel />
         <AllBlogsHomePage />

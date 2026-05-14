@@ -274,8 +274,14 @@ export default function EcommerceNavbar() {
             {/* Cart */}
             <div className="relative">
               <Link href={"/cart"}>
-                <button className="text-gray-600 hover:text-lime-500 transition-colors duration-200 group">
-                  <img src="/trolley.png" className="w-12 h-auto" />
+                <button
+                  aria-label="View cart"
+                  className="text-gray-600 hover:text-lime-500 transition-colors duration-200 group"
+                >
+                  <img
+                    src="/trolley.png"
+                    alt="Shopping cart"
+                    className="w-12 h-auto" />
                   {/* <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform duration-200" /> */}
                   {cartCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-green-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce">

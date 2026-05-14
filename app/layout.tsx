@@ -5,6 +5,8 @@ import { StoreProvider } from "./lib/provider/StoreProvider";
 import AuthProvider from "./hooks/authProvider";
 import { Toaster } from "sonner";
 
+const siteUrl = "https://munchgud.com";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -20,11 +22,51 @@ const eduCursive = Edu_NSW_ACT_Foundation({
   weight: ["400", "500", "600", "700"], // optional
 });
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "MunchGud Makhana",
+    template: "%s | MunchGud",
+  },
+  description: "Dashboard section for users",
+  applicationName: "MunchGud",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: siteUrl,
+    siteName: "MunchGud",
+    title: "MunchGud Makhana",
+    description: "Dashboard section for users",
+    images: [
+      {
+        url: "/logo.png",
+        width: 210,
+        height: 110,
+        alt: "MunchGud logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MunchGud Makhana",
+    description: "Dashboard section for users",
+    images: ["/logo.png"],
   },
 };
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
-import { fetchBanners } from "@/app/lib/store/features/bannerSlice";
+import { Banner, fetchBanners } from "@/app/lib/store/features/bannerSlice";
 import {
   ChevronLeft,
   ChevronRight,
@@ -14,9 +14,16 @@ import { toast } from "sonner";
 import Loader from "@/app/commonComponents/loader";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 
-export default function BannerCarousel() {
+type BannerCarouselProps = {
+  initialBanners?: Banner[];
+};
+
+export default function BannerCarousel({
+  initialBanners = [],
+}: BannerCarouselProps) {
   const dispatch = useAppDispatch();
   const { banners, error, status } = useAppSelector((state) => state.banners);
+  const displayBanners = initialBanners.length > 0 ? initialBanners : banners;
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -26,8 +33,10 @@ export default function BannerCarousel() {
   );
 
   useEffect(() => {
-    dispatch(fetchBanners());
-  }, [dispatch]);
+    if (initialBanners.length === 0) {
+      dispatch(fetchBanners());
+    }
+  }, [dispatch, initialBanners.length]);
 
   useEffect(() => {
     if (error) toast.error(error as string);
@@ -35,18 +44,20 @@ export default function BannerCarousel() {
 
   // autoplay
   useEffect(() => {
-    if (isPlaying && !isHovered && banners.length > 0) {
+    if (isPlaying && !isHovered && displayBanners.length > 0) {
       const interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % banners.length);
+        setCurrentSlide((prev) => (prev + 1) % displayBanners.length);
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [isPlaying, isHovered, banners.length]);
+  }, [isPlaying, isHovered, displayBanners.length]);
 
   const nextSlide = () =>
-    setCurrentSlide((prev) => (prev + 1) % banners.length);
+    setCurrentSlide((prev) => (prev + 1) % displayBanners.length);
   const prevSlide = () =>
-    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
+    setCurrentSlide(
+      (prev) => (prev - 1 + displayBanners.length) % displayBanners.length,
+    );
 
   const goToSlide = (index: number) => setCurrentSlide(index);
 
@@ -57,10 +68,14 @@ export default function BannerCarousel() {
     if (banner.link) window.location.href = banner.link;
   };
 
+  const previousSlide =
+    (currentSlide - 1 + displayBanners.length) % displayBanners.length;
+  const nextSlideIndex = (currentSlide + 1) % displayBanners.length;
+
   const isLoading = status === "loading";
   if (isLoading) return <Loader />;
 
-  if (!banners.length) {
+  if (!displayBanners.length) {
     return (
       <div className="p-4 sm:p-6 md:p-8 lg:p-12">
         <div className="h-64 flex items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-lg border border-gray-200">
@@ -95,24 +110,30 @@ export default function BannerCarousel() {
             className="flex transition-transform duration-700 ease-in-out h-full"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
-            {banners.map((banner, index) => (
+            {displayBanners.map((banner, index) => (
               <div
                 key={banner.id}
                 className="min-w-full h-full relative cursor-pointer group overflow-hidden"
                 onClick={() => handleBannerClick(banner)}
               >
-                <Image
-                  src={getImageUrl(banner.imageUrl)}
-                  // src={banner.imageUrl}
-                  alt={banner.title}
-                  fill
-                  className={`w-full h-full object-cover  ${
-                    imageLoaded[index] ? "opacity-100" : "opacity-0"
-                  }`}
-                  unoptimized
-                  onLoad={() => handleImageLoad(index)}
-                  loading={index === 0 ? "eager" : "lazy"}
-                />
+                {index === currentSlide ||
+                index === previousSlide ||
+                index === nextSlideIndex ? (
+                  <Image
+                    src={getImageUrl(banner.imageUrl)}
+                    // src={banner.imageUrl}
+                    alt={banner.title || "MunchGud banner"}
+                    fill
+                    className={`w-full h-full object-cover  ${
+                      imageLoaded[index] ? "opacity-100" : "opacity-0"
+                    }`}
+                    sizes="100vw"
+                    priority={index === 0}
+                    quality={75}
+                    onLoad={() => handleImageLoad(index)}
+                    loading={index === 0 ? undefined : "lazy"}
+                  />
+                ) : null}
 
                 {!imageLoaded[index] && (
                   <div className="absolute inset-0  animate-pulse flex items-center justify-center">
@@ -188,13 +209,13 @@ export default function BannerCarousel() {
           {/* Enhanced counter */}
           <div className="hidden md:flex absolute bottom-6 right-6 bg-white/20 backdrop-blur-md text-green-700 px-4 py-2 rounded-2xl text-sm font-semibold shadow-xl border border-white/20 z-30">
             <span className="drop-shadow-sm">
-              {currentSlide + 1} / {banners.length}
+              {currentSlide + 1} / {displayBanners.length}
             </span>
           </div>
 
           {/* Enhanced dots indicator */}
           <div className="hidden md:flex absolute bottom-6 left-1/2 -translate-x-1/2 space-x-3 z-30">
-            {banners.map((_, index) => (
+            {displayBanners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
