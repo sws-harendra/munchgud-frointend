@@ -9,7 +9,6 @@ import {
   Pause,
   ExternalLink,
 } from "lucide-react";
-import Image from "next/image";
 import { toast } from "sonner";
 import Loader from "@/app/commonComponents/loader";
 import { getImageUrl } from "@/app/utils/getImageUrl";
@@ -119,19 +118,18 @@ export default function BannerCarousel({
                 {index === currentSlide ||
                 index === previousSlide ||
                 index === nextSlideIndex ? (
-                  <Image
+                  <img
                     src={getImageUrl(banner.imageUrl)}
-                    // src={banner.imageUrl}
                     alt={banner.title || "MunchGud banner"}
-                    fill
-                    className={`w-full h-full object-cover  ${
+                    className={`absolute inset-0 w-full h-full object-cover  ${
                       imageLoaded[index] ? "opacity-100" : "opacity-0"
                     }`}
-                    sizes="100vw"
-                    priority={index === 0}
-                    quality={75}
                     onLoad={() => handleImageLoad(index)}
-                    loading={index === 0 ? undefined : "lazy"}
+                    onError={(event) => {
+                      event.currentTarget.src = "/hero2.jpg";
+                      handleImageLoad(index);
+                    }}
+                    loading={index === 0 ? "eager" : "lazy"}
                   />
                 ) : null}
 

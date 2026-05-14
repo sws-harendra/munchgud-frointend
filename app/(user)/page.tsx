@@ -15,19 +15,30 @@ import InstagramSection from "./components/InstagramSection";
 import ChooseYourMakhana from "./components/ChooseYourMakhana";
 import { Banner } from "../lib/store/features/bannerSlice";
 import { serverurl } from "../contants";
+import Script from "next/script";
 
 const getInitialBanners = async (): Promise<Banner[]> => {
   if (!serverurl) return [];
 
   try {
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 5000);
+
     const response = await fetch(`${serverurl}/banners`, {
       next: { revalidate: 300 },
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     if (!response.ok) return [];
 
     return response.json();
-  } catch {
+  } catch (error) {
+    console.log("Banner fetch error:", error);
     return [];
   }
 };
@@ -61,9 +72,13 @@ const HomePage = async () => {
 
   return (
     <div>
-      <script
+      <Script
+        id="schema"
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
       />
       <h1 className="sr-only">MunchGud Makhana</h1>
       <BannerCarousel initialBanners={initialBanners} />
