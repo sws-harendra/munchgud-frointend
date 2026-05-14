@@ -67,11 +67,10 @@ const ArtistDetailsProduct = () => {
     <a
       key={pageNum}
       href={`?page=${pageNum}`}
-      className={`inline-flex items-center justify-center w-10 h-10 rounded-lg font-medium transition-all duration-200 ${
-        isActive
+      className={`inline-flex items-center justify-center w-10 h-10 rounded-lg font-medium transition-all duration-200 ${isActive
           ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
           : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400"
-      }`}
+        }`}
     >
       {pageNum}
     </a>
@@ -89,6 +88,7 @@ const ArtistDetailsProduct = () => {
                 <div className="w-48 h-48 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-2xl flex items-center justify-center shadow-xl">
                   <img
                     src={`${getImageUrl(selectedArtist.image)}`}
+                    alt={selectedArtist.name}
                     className=" text-blue-600"
                   />
                 </div>
