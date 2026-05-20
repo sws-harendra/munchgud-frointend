@@ -52,7 +52,7 @@ export const orderService = {
     receipt: string;
   }) => {
     const response = await axiosInstance.post(
-      "/razorpay/create_order",
+      "/razorpay/order",
       orderData
     );
     return response.data;

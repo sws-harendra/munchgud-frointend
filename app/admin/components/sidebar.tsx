@@ -13,7 +13,6 @@ import {
   LogOut,
   PackagePlusIcon,
   Video,
-  PaintBucket,
   Pen,
   Camera,
   Star,
@@ -62,11 +61,6 @@ const menuItems = [
     name: "Service Area",
     icon: LocateIcon,
     href: "/admin/dashboard/service-area",
-  },
-  {
-    name: "Artist",
-    icon: PaintBucket,
-    href: "/admin/dashboard/artist",
   },
   {
     name: "Add Pages",

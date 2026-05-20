@@ -179,10 +179,13 @@ export const logout = createAsyncThunk(
 
       return response;
     } catch (err: unknown) {
+      if (typeof window !== "undefined") {
+        window.location.href = "/authentication/login";
+      }
       if (err instanceof Error) {
         return rejectWithValue(err.message);
       }
-      return rejectWithValue("Email login failed");
+      return rejectWithValue("Logout failed");
     }
   },
 );
@@ -396,8 +399,13 @@ const authSlice = createSlice({
         state.otpSent = false;
       })
       .addCase(logout.rejected, (state, action) => {
-        state.status = "failed";
+        state.status = "idle";
+        state.user = null;
+        state.isAuthenticated = false;
         state.error = action.payload;
+        state.loginMethod = "email";
+        state.phoneNumber = "";
+        state.otpSent = false;
       })
       .addCase(registerUser.pending, (state) => {
         state.registerStatus = "loading";

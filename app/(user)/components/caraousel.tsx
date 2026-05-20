@@ -64,7 +64,11 @@ export default function BannerCarousel({
     setImageLoaded((prev) => ({ ...prev, [index]: true }));
 
   const handleBannerClick = (banner: any) => {
-    if (banner.link) window.location.href = banner.link;
+    if (banner.link && banner.link.trim() !== "") {
+      window.location.href = banner.link;
+    } else {
+      window.location.href = "/products";
+    }
   };
 
   const previousSlide =
