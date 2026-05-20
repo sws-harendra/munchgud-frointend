@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 import { Lock, Eye, EyeOff } from "lucide-react";
+import { serverurl } from "@/app/contants";
 
 export default function ResetPassword() {
     const { token } = useParams();
@@ -31,7 +32,7 @@ export default function ResetPassword() {
             setLoading(true);
 
             const res = await axios.put(
-                `http://localhost:8008/reset-password/reset/${token}`, // ✅ FIXED URL
+                `${serverurl}/reset-password/reset/${token}`, // ✅ FIXED URL
                 {
                     password,
                     confirmPassword,

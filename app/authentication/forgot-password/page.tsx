@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Mail } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import { serverurl } from "@/app/contants";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ export default function ForgotPassword() {
             setLoading(true);
 
             const res = await axios.post(
-                "http://localhost:8008/forget-password/forgot",
+                `${serverurl}/forget-password/forgot`,
                 { email }
             );
 
