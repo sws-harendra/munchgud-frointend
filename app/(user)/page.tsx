@@ -82,7 +82,7 @@ const HomePage = async () => {
       />
       <h1 className="sr-only">MunchGud Makhana</h1>
       <BannerCarousel initialBanners={initialBanners} />
-      <div className="lg:px-20">
+      <div className="px-4 sm:px-6 md:px-12 lg:px-20 space-y-12 md:space-y-20 py-8">
         <VideoProduct />
 
         <TrendingProducts />

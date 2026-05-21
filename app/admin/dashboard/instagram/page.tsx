@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Script from "next/script";
+import { toast } from "react-hot-toast";
 
 export default function InstagramAdmin() {
   const [url, setUrl] = useState("");
@@ -16,26 +17,42 @@ export default function InstagramAdmin() {
   };
 
   const handleAdd = async () => {
-    if (!url) return alert("Enter Instagram URL");
+    if (!url) {
+      toast.error("Please enter an Instagram URL");
+      return;
+    }
 
-    await axios.post(
-      `${process.env.NEXT_PUBLIC_serverurl}/instagram/add`,
-      { url },
-      { withCredentials: true }
-    );
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_serverurl}/instagram/add`,
+        { url },
+        { withCredentials: true }
+      );
 
-    setUrl("");
-    fetchPosts();
+      setUrl("");
+      toast.success("Instagram post added successfully!");
+      fetchPosts();
+    } catch (error: any) {
+      console.error("Error adding instagram post:", error);
+      toast.error(error?.response?.data?.message || "Failed to add Instagram post");
+    }
   };
 
   const handleDelete = async (id: number) => {
-    await axios.delete(
+    if (!confirm("Are you sure you want to delete this Instagram post?")) return;
+    try {
+      await axios.delete(
         `${process.env.NEXT_PUBLIC_serverurl}/instagram/delete/${id}`,
         { withCredentials: true }
-    );
+      );
 
-    fetchPosts();
-    };
+      toast.success("Instagram post deleted successfully!");
+      fetchPosts();
+    } catch (error: any) {
+      console.error("Error deleting instagram post:", error);
+      toast.error(error?.response?.data?.message || "Failed to delete Instagram post");
+    }
+  };
 
   useEffect(() => {
     fetchPosts();

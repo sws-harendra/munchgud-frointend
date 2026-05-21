@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { useAppDispatch } from "@/app/lib/store/store";
 import { registerUser } from "@/app/lib/store/features/authSlice";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -151,7 +152,7 @@ export default function RegisterForm() {
       console.log("hererer", response);
       if (response.success) {
         // ✅ redirect here
-
+        toast.success("Account created successfully! Welcome to Munchgud Makhana.");
         router.push("/");
       }
       setIsLoading(false);
@@ -167,8 +168,10 @@ export default function RegisterForm() {
 
       if (message.toLowerCase().includes("exists")) {
         setServerError("User already exists!");
+        toast.error("User already exists!");
       } else {
         setServerError(message);
+        toast.error(message);
       }
 
       setErrors({

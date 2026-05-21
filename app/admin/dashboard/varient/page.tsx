@@ -18,7 +18,7 @@ import {
 import { Plus, Search, Trash2, X } from "lucide-react";
 import { AppDispatch, RootState } from "@/app/lib/store/store";
 import { fetchProducts } from "@/app/lib/store/features/productSlice";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 interface Product {
   id: number;
@@ -100,59 +100,94 @@ export default function ProductVariantsPage() {
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCategory.name) return;
-    await dispatch(addVariantCategory(newCategory));
-    setNewCategory({ name: "", description: "" });
-    setShowAddCategory(false);
+    try {
+      await dispatch(addVariantCategory(newCategory)).unwrap();
+      toast.success("Category added successfully!");
+      setNewCategory({ name: "", description: "" });
+      setShowAddCategory(false);
+    } catch (err: any) {
+      console.error("Failed to add category:", err);
+      toast.error(err?.message || "Failed to add category.");
+    }
   };
 
   const handleAddOption = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newOption.name || !newOption.categoryId) return;
-    await dispatch(
-      addVariantOption({
-        ...newOption,
-        categoryId: parseInt(newOption.categoryId),
-      })
-    );
-    setNewOption({ name: "", categoryId: "" });
-    setShowAddOption(false);
+    try {
+      await dispatch(
+        addVariantOption({
+          ...newOption,
+          categoryId: parseInt(newOption.categoryId),
+        })
+      ).unwrap();
+      toast.success("Option added successfully!");
+      setNewOption({ name: "", categoryId: "" });
+      setShowAddOption(false);
+    } catch (err: any) {
+      console.error("Failed to add option:", err);
+      toast.error(err?.message || "Failed to add option.");
+    }
   };
 
   const handleAddVariant = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newVariant.optionId || !selectedProduct) {
-      alert("Please fill in all required fields and select a product");
+      toast.error("Please fill in all required fields and select a product");
       return;
     }
-    await dispatch(
-      createProductVariant({
-        productId: selectedProduct.id,
-        data: { ...newVariant, optionId: parseInt(newVariant.optionId) },
-      })
-    );
-    toast.success("Added Varient Successfully");
-    resetVariantForm();
-    setShowAddVariant(false);
+    try {
+      await dispatch(
+        createProductVariant({
+          productId: selectedProduct.id,
+          data: { ...newVariant, optionId: parseInt(newVariant.optionId) },
+        })
+      ).unwrap();
+      toast.success("Added Variant Successfully");
+      resetVariantForm();
+      setShowAddVariant(false);
+    } catch (err: any) {
+      console.error("Failed to add variant:", err);
+      toast.error(err?.message || "Failed to add variant.");
+    }
   };
 
   // =========================
   // Delete Handlers
   // =========================
-  const handleDeleteCategory = (id: number) => {
+  const handleDeleteCategory = async (id: number) => {
     if (window.confirm("Delete this category?")) {
-      dispatch(deleteVariantCategory(id));
+      try {
+        await dispatch(deleteVariantCategory(id)).unwrap();
+        toast.success("Category deleted successfully!");
+      } catch (err: any) {
+        console.error("Failed to delete category:", err);
+        toast.error(err?.message || "Failed to delete category.");
+      }
     }
   };
 
-  const handleDeleteOption = (id: number) => {
+  const handleDeleteOption = async (id: number) => {
     if (window.confirm("Delete this option?")) {
-      dispatch(deleteVariantOption(id));
+      try {
+        await dispatch(deleteVariantOption(id)).unwrap();
+        toast.success("Option deleted successfully!");
+      } catch (err: any) {
+        console.error("Failed to delete option:", err);
+        toast.error(err?.message || "Failed to delete option.");
+      }
     }
   };
 
-  const handleDeleteVariant = (variantId: number) => {
+  const handleDeleteVariant = async (variantId: number) => {
     if (window.confirm("Delete this variant?")) {
-      dispatch(deleteProductVariant(variantId));
+      try {
+        await dispatch(deleteProductVariant(variantId)).unwrap();
+        toast.success("Variant deleted successfully!");
+      } catch (err: any) {
+        console.error("Failed to delete variant:", err);
+        toast.error(err?.message || "Failed to delete variant.");
+      }
     }
   };
 

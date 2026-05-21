@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Save, ArrowLeft, Search, Trash2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import {
   fetchOrderById,
@@ -93,15 +94,18 @@ const EditOrder: React.FC<EditOrderProps> = ({ orderId, onClose }) => {
           }),
         ).unwrap();
 
+        toast.success("Order updated successfully!");
+
         // Call onClose if provided, otherwise navigate back
-        // if (onClose) {
-        //   onClose();
-        // } else {
-        //   router.push("/admin/orders");
-        // }
+        if (onClose) {
+          onClose();
+        } else {
+          router.push("/admin/dashboard/orders");
+        }
       }
     } catch (err: any) {
       setUpdateError(err.message || "Failed to update order");
+      toast.error(err.message || "Failed to update order");
     } finally {
       setIsSubmitting(false);
     }

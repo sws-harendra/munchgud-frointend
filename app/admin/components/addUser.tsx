@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Mail, Lock, User, ImagePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 import { useAppDispatch } from "@/app/lib/store/store";
 import {
   registerUser,
@@ -27,6 +28,8 @@ const AddUsers = ({ onSuccess }: any) => {
     try {
       if (!fullname || !email || !password) {
         setError("All fields are required");
+        toast.error("All fields are required");
+        setLoading(false);
         return;
       }
 
@@ -45,11 +48,14 @@ const AddUsers = ({ onSuccess }: any) => {
       const response = await dispatch(registerUserbyAdmin(formData)).unwrap();
 
       if (response?.success) {
+        toast.success("User created successfully!");
         onSuccess?.();
         router.refresh();
       }
     } catch (err: any) {
-      setError(err?.message || "Something went wrong");
+      const msg = err?.message || err?.data?.message || "Something went wrong";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

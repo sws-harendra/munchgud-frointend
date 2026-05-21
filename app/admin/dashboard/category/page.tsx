@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
+import { toast } from "react-hot-toast";
 import {
   createCategory,
   deleteCategory,
@@ -68,15 +69,22 @@ const Category = () => {
     return result;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editId) {
-      dispatch(updateCategory({ id: editId, data: form }));
-      setEditId(null);
-    } else {
-      dispatch(createCategory(form));
+    try {
+      if (editId) {
+        await dispatch(updateCategory({ id: editId, data: form })).unwrap();
+        toast.success("Category updated successfully!");
+        setEditId(null);
+      } else {
+        await dispatch(createCategory(form)).unwrap();
+        toast.success("Category created successfully!");
+      }
+      setForm({ name: "", description: "", parentId: null });
+    } catch (error: any) {
+      console.error("Failed to save category:", error);
+      toast.error(error?.message || error?.data?.message || "Failed to save category");
     }
-    setForm({ name: "", description: "", parentId: null });
   };
 
   const handleEdit = (cat: any) => {
@@ -88,9 +96,15 @@ const Category = () => {
     });
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
-      dispatch(deleteCategory(id));
+      try {
+        await dispatch(deleteCategory(id)).unwrap();
+        toast.success("Category deleted successfully!");
+      } catch (error: any) {
+        console.error("Failed to delete category:", error);
+        toast.error(error?.message || error?.data?.message || "Failed to delete category");
+      }
     }
   };
 

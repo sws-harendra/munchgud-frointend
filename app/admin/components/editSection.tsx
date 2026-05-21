@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { fetchProducts } from "@/app/lib/store/features/productSlice";
 import { updateSection } from "@/app/lib/store/features/sectionSlice";
+import { toast } from "react-hot-toast";
 import {
   Search,
   Plus,
@@ -44,21 +45,28 @@ export default function EditSectionForm({ section }: { section: any }) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(
-      updateSection({
-        id: section.id,
-        data: {
-          title,
-          description,
-          type,
-          order,
-          isActive,
-          productIds: selectedProducts,
-        },
-      }),
-    );
+    try {
+      await dispatch(
+        updateSection({
+          id: section.id,
+          data: {
+            title,
+            description,
+            type,
+            order,
+            isActive,
+            productIds: selectedProducts,
+          },
+        }),
+      ).unwrap();
+
+      toast.success("Section updated successfully!");
+    } catch (error: any) {
+      console.error("Failed to update section:", error);
+      toast.error(error?.message || error?.data?.message || "Failed to update section");
+    }
   };
 
   return (

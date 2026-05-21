@@ -24,6 +24,7 @@ import {
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import Link from "next/link";
 import { RootState, useAppSelector } from "@/app/lib/store/store";
+import { toast } from "sonner";
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -89,18 +90,22 @@ const CartPage = () => {
     const code = promoCode.toUpperCase().trim();
     if (code === "SAVE10") {
       setAppliedPromo({ code: "SAVE10", discount: 0.1 });
+      toast.success("Promo code applied successfully!");
     } else if (code === "WELCOME15") {
       setAppliedPromo({ code: "WELCOME15", discount: 0.15 });
+      toast.success("Promo code applied successfully!");
     } else if (code === "FIRST20") {
       setAppliedPromo({ code: "FIRST20", discount: 0.2 });
+      toast.success("Promo code applied successfully!");
     } else {
-      alert("Invalid promo code. Try SAVE10, WELCOME15, or FIRST20");
+      toast.error("Invalid promo code. Try SAVE10, WELCOME15, or FIRST20");
     }
   };
 
   const handleRemovePromo = () => {
     setAppliedPromo(null);
     setPromoCode("");
+    toast.success("Promo code removed.");
   };
 
   const handleCheckout = async () => {
@@ -109,9 +114,9 @@ const CartPage = () => {
     setIsCheckingOut(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert("Order placed successfully! Redirecting to payment...");
+      toast.success("Order placed successfully! Redirecting to payment...");
     } catch (error) {
-      alert("Checkout failed. Please try again.");
+      toast.error("Checkout failed. Please try again.");
     } finally {
       setIsCheckingOut(false);
     }
