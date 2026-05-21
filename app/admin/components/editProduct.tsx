@@ -91,7 +91,20 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
       });
 
       // Set existing media (both images and videos)
-      setExistingMedia(product.images || []);
+      let mediaArray: string[] = [];
+      if (Array.isArray(product.images)) {
+        mediaArray = product.images;
+      } else if (typeof product.images === "string") {
+        try {
+          const parsed = JSON.parse(product.images);
+          mediaArray = Array.isArray(parsed) ? parsed : [];
+        } catch {
+          if (product.images.trim()) {
+            mediaArray = product.images.split(",").map((item: string) => item.trim());
+          }
+        }
+      }
+      setExistingMedia(mediaArray);
       setRemovedMedia([]);
       setNewMedia([]);
       setNewMediaPreviews([]);

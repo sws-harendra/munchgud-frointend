@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
+import { toast } from "react-hot-toast";
 import {
   fetchBlogPostById,
   selectCurrentPost,
@@ -54,25 +55,31 @@ export default function EditBlog() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    let uploadedImageUrl = imagePreview;
-    if (featuredImage) {
-      const uploadResult = await blogService.uploadImage(featuredImage);
-      uploadedImageUrl = uploadResult.url;
+    try {
+      let uploadedImageUrl = imagePreview;
+      if (featuredImage) {
+        const uploadResult = await blogService.uploadImage(featuredImage);
+        uploadedImageUrl = uploadResult.url;
+      }
+      console.log(uploadedImageUrl, ";;;;;");
+
+      await dispatch(
+        updateBlogPost({
+          id,
+          title,
+          slug,
+          excerpt,
+          content,
+          featuredImage: uploadedImageUrl || "",
+        })
+      ).unwrap();
+
+      toast.success("Blog updated successfully!");
+      router.push("/admin/dashboard/blogs"); // go back to blog list after update
+    } catch (error: any) {
+      console.error("Failed to update blog:", error);
+      toast.error(error?.message || error?.data?.message || "Failed to update blog");
     }
-    console.log(uploadedImageUrl, ";;;;;");
-
-    dispatch(
-      updateBlogPost({
-        id,
-        title,
-        slug,
-        excerpt,
-        content,
-        featuredImage: uploadedImageUrl || "",
-      })
-    );
-
-    router.push("/admin/dashboard/blogs"); // go back to blog list after update
   };
 
   if (!currentPost) return <p>Loading blog...</p>;

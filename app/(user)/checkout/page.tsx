@@ -277,12 +277,14 @@ const CheckoutPage = () => {
                 ...updates,
               }),
             ).unwrap();
+            toast.success("Profile details updated successfully!");
           }
         }
 
         setActiveStep(activeStep + 1);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Update failed:", err);
+        toast.error(err?.message || "Failed to update profile details. Please try again.");
       }
     }
   };
@@ -401,9 +403,10 @@ const CheckoutPage = () => {
 
       setOrderSuccess(true);
       dispatch(clearCart());
-    } catch (error) {
+      toast.success("Order placed successfully!");
+    } catch (error: any) {
       console.error("Order placement failed:", error);
-      alert("Order placement failed. Please try again.");
+      toast.error(error?.message || "Order placement failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -426,9 +429,9 @@ const CheckoutPage = () => {
       // ).unwrap();
 
       // ✅ Order will now be placed only after payment success
-    } catch (error) {
+    } catch (error: any) {
       console.error("Order placement failed:", error);
-      alert("Order placement failed. Please try again.");
+      toast.error(error?.message || "Order placement failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -450,8 +453,10 @@ const CheckoutPage = () => {
         ).unwrap();
 
         setShowAddressForm(false);
-      } catch (err) {
+        toast.success("New address added successfully!");
+      } catch (err: any) {
         console.error("Failed to add address:", err);
+        toast.error(err?.message || "Failed to add address. Please try again.");
       }
     }
   };

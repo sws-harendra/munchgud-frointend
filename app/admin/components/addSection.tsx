@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { createSection } from "@/app/lib/store/features/sectionSlice";
+import { toast } from "react-hot-toast";
 
 export default function AddSectionForm() {
   const dispatch = useAppDispatch();
@@ -40,18 +41,31 @@ export default function AddSectionForm() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(
-      createSection({
-        title,
-        description,
-        type,
-        order,
-        isActive,
-        productIds: selectedProducts,
-      }),
-    );
+    try {
+      await dispatch(
+        createSection({
+          title,
+          description,
+          type,
+          order,
+          isActive,
+          productIds: selectedProducts,
+        }),
+      ).unwrap();
+
+      toast.success("Section created successfully!");
+      setTitle("");
+      setDescription("");
+      setType("manual");
+      setOrder(0);
+      setIsActive(true);
+      setSelectedProducts([]);
+    } catch (error: any) {
+      console.error("Failed to create section:", error);
+      toast.error(error?.message || error?.data?.message || "Failed to create section");
+    }
   };
 
   return (

@@ -127,6 +127,71 @@ export const getTrendingProduct = createAsyncThunk(
   }
 );
 
+const normalizeProduct = (product: any): any => {
+  if (!product) return product;
+  
+  let images = product.images;
+  if (typeof images === "string") {
+    try {
+      const parsed = JSON.parse(images);
+      images = Array.isArray(parsed) ? parsed : [images];
+    } catch {
+      if (images.trim()) {
+        images = images.split(",").map((img: string) => img.trim());
+      } else {
+        images = [];
+      }
+    }
+  } else if (!images) {
+    images = [];
+  }
+  
+  let tags = product.tags;
+  if (typeof tags === "string") {
+    try {
+      const parsed = JSON.parse(tags);
+      tags = Array.isArray(parsed) ? parsed : [tags];
+    } catch {
+      if (tags.trim()) {
+        tags = tags.split(",").map((tag: string) => tag.trim());
+      } else {
+        tags = [];
+      }
+    }
+  } else if (!tags) {
+    tags = [];
+  }
+
+  return {
+    ...product,
+    images,
+    tags,
+  };
+};
+
+const normalizePayload = (payload: any): any => {
+  if (!payload) return payload;
+  if (Array.isArray(payload)) {
+    return payload.map(normalizeProduct);
+  }
+  if (payload.products && Array.isArray(payload.products)) {
+    return {
+      ...payload,
+      products: payload.products.map(normalizeProduct),
+    };
+  }
+  if (payload.product) {
+    return {
+      ...payload,
+      product: normalizeProduct(payload.product),
+    };
+  }
+  if (payload.id) {
+    return normalizeProduct(payload);
+  }
+  return payload;
+};
+
 // Initial State
 const initialState: ProductState = {
   products: [],
@@ -155,7 +220,7 @@ const productSlice = createSlice({
         console.log(action.payload);
 
         state.status = "succeeded";
-        state.products = action.payload;
+        state.products = normalizePayload(action.payload);
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.status = "failed";
@@ -168,7 +233,7 @@ const productSlice = createSlice({
         console.log(action.payload);
 
         state.status = "succeeded";
-        state.products = action.payload;
+        state.products = normalizePayload(action.payload);
       })
       .addCase(fetchProductsforadmin.rejected, (state, action) => {
         state.status = "failed";
@@ -180,7 +245,7 @@ const productSlice = createSlice({
       })
       .addCase(getTrendingProduct.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.trendingProducts = action.payload.products;
+        state.trendingProducts = normalizePayload(action.payload.products);
       })
       .addCase(getTrendingProduct.rejected, (state, action) => {
         state.status = "failed";
@@ -193,7 +258,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductById.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.product = action.payload;
+        state.product = normalizePayload(action.payload);
       })
       .addCase(fetchProductById.rejected, (state, action) => {
         state.status = "failed";
@@ -206,7 +271,7 @@ const productSlice = createSlice({
       })
       .addCase(createProduct.fulfilled, (state, action) => {
         state.status = "succeeded";
-        const newProduct = action.payload.product;
+        const newProduct = normalizeProduct(action.payload.product);
 
         if (Array.isArray(state.products)) {
           // case: state.products is just an array
@@ -228,16 +293,17 @@ const productSlice = createSlice({
       // ✅ Update
       .addCase(updateProduct.fulfilled, (state, action) => {
         state.status = "succeeded";
+        const updatedProduct = normalizeProduct(action.payload);
 
         if (Array.isArray(state.products)) {
           // case: products is just an array
           state.products = state.products.map((p) =>
-            p.id === action.payload.id ? action.payload : p
+            p.id === updatedProduct.id ? updatedProduct : p
           );
         } else if (state.products && Array.isArray(state.products.products)) {
           // case: products is object { products: [], total: X }
           state.products.products = state.products.products.map((p) =>
-            p.id === action.payload.id ? action.payload : p
+            p.id === updatedProduct.id ? updatedProduct : p
           );
         }
       })

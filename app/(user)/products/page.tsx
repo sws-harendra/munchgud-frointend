@@ -233,8 +233,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 const FilterSidebar = ({
   isOpen,
   onClose,
-  category,
-  setCategory,
+  categoryId,
+  setCategoryId,
   priceRange,
   setPriceRange,
   sortBy,
@@ -298,9 +298,9 @@ const FilterSidebar = ({
                     <input
                       type="radio"
                       name="category"
-                      value={cat.name.toLowerCase()}
-                      checked={category === cat.name.toLowerCase()}
-                      onChange={(e) => setCategory(e.target.value)}
+                      value={cat.id.toString()}
+                      checked={categoryId.toString() === cat.id.toString()}
+                      onChange={(e) => setCategoryId(e.target.value)}
                       className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                     />
                     <span className="ml-3 text-gray-700 group-hover:text-green-600 transition-colors">
@@ -409,7 +409,7 @@ const FilterSidebar = ({
           {/* Clear Filters Button */}
           <button
             onClick={() => {
-              setCategory("");
+              setCategoryId("");
               setPriceRange([0, 100000]);
               setSortBy("");
               setRating(0);
@@ -434,17 +434,18 @@ function AllProducts() {
   const isLoading = status === "loading";
 
   // State
+  const [searchInput, setSearchInput] = useState(querySearch);
   const [search, setSearch] = useState(querySearch);
   const [categoryId, setCategoryId] = useState(queryCategory);
   const [page, setPage] = useState(1);
   const [limit] = useState(12);
-  const [category, setCategory] = useState("");
   const [priceRange, setPriceRange] = useState([0, 100000]);
   const [sortBy, setSortBy] = useState("");
   const [rating, setRating] = useState(0);
   const [viewMode, setViewMode] = useState("grid");
   const [filterOpen, setFilterOpen] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
+
   useEffect(() => {
     if (queryCategory !== categoryId) {
       setCategoryId(queryCategory);
@@ -453,10 +454,9 @@ function AllProducts() {
   }, [queryCategory]);
 
   useEffect(() => {
-    if (querySearch !== search) {
-      setSearch(querySearch);
-      setPage(1);
-    }
+    setSearch(querySearch);
+    setSearchInput(querySearch);
+    setPage(1);
   }, [querySearch]);
 
   // Effects
@@ -469,49 +469,14 @@ function AllProducts() {
       page,
       limit,
       search,
-      categoryId,
+      categoryId: categoryId ? Number(categoryId) : undefined,
     };
-
-    if (category) {
-      const categoryMap: { [key: string]: number } = {
-        electronics: 1,
-        fashion: 2,
-        books: 3,
-      };
-      params.categoryId = categoryMap[category];
-    }
 
     if (priceRange[0] > 0) params.minPrice = priceRange[0];
     if (priceRange[1] < 100000) params.maxPrice = priceRange[1];
 
     dispatch(fetchProducts(params));
-  }, [dispatch, page, limit, search, category, priceRange]);
-
-  const handleSearch = useCallback(
-    (searchTerm: string) => {
-      setPage(1);
-      const params: any = {
-        page: 1,
-        limit,
-        search: searchTerm,
-      };
-
-      if (category) {
-        const categoryMap: { [key: string]: number } = {
-          electronics: 1,
-          fashion: 2,
-          books: 3,
-        };
-        params.categoryId = categoryMap[category];
-      }
-
-      if (priceRange[0] > 0) params.minPrice = priceRange[0];
-      if (priceRange[1] < 100000) params.maxPrice = priceRange[1];
-
-      dispatch(fetchProducts(params));
-    },
-    [category, priceRange, limit, dispatch]
-  );
+  }, [dispatch, page, limit, search, categoryId, priceRange]);
 
   // Filter and sort products locally
   const filteredProducts = products?.products
@@ -588,8 +553,11 @@ function AllProducts() {
           <FilterSidebar
             isOpen={filterOpen}
             onClose={() => setFilterOpen(false)}
-            category={category}
-            setCategory={setCategory}
+            categoryId={categoryId}
+            setCategoryId={(id) => {
+              setCategoryId(id);
+              setPage(1);
+            }}
             priceRange={priceRange}
             setPriceRange={setPriceRange}
             sortBy={sortBy}
@@ -616,22 +584,29 @@ function AllProducts() {
                 </div>
               </div>
               <div className="flex-1 max-w-md">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setSearch(searchInput);
+                    setPage(1);
+                  }}
+                  className="relative"
+                >
+                  <Search
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 cursor-pointer hover:text-green-600 transition-colors"
+                    onClick={() => {
+                      setSearch(searchInput);
+                      setPage(1);
+                    }}
+                  />
                   <input
                     type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleSearch(search);
-                      }
-                    }}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Search products..."
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300"
                   />
-                </div>
+                </form>
               </div>
               {/* View Toggle and Sort */}
               <div className="flex items-center gap-4">
@@ -721,7 +696,8 @@ function AllProducts() {
                 <button
                   onClick={() => {
                     setSearch("");
-                    setCategory("");
+                    setSearchInput("");
+                    setCategoryId("");
                     setPriceRange([0, 100000]);
                     setRating(0);
                     setSortBy("");

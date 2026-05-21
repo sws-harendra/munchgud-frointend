@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { fetchProducts } from "@/app/lib/store/features/productSlice";
+import { toast } from "react-hot-toast";
 import {
   Search,
   Plus,
@@ -52,7 +53,7 @@ export default function VideoManager() {
 
   const handleUpload = async () => {
     if (!videoFile || !selectedProductId) {
-      alert("Please select both a product and video file");
+      toast.error("Please select both a product and a video file");
       return;
     }
 
@@ -60,9 +61,15 @@ export default function VideoManager() {
     formData.append("video", videoFile);
     formData.append("productId", selectedProductId.toString());
 
-    await dispatch(createVideo(formData));
-    setVideoFile(null);
-    setSelectedProductId(null);
+    try {
+      await dispatch(createVideo(formData)).unwrap();
+      toast.success("Video uploaded successfully!");
+      setVideoFile(null);
+      setSelectedProductId(null);
+    } catch (err: any) {
+      console.error("Failed to upload video:", err);
+      toast.error(err?.message || "Failed to upload video. Please try again.");
+    }
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -352,13 +359,19 @@ export default function VideoManager() {
                                   </>
                                 ) : (
                                   <button
-                                    onClick={() => {
+                                    onClick={async () => {
                                       if (
                                         window.confirm(
                                           "Are you sure you want to delete this video?"
                                         )
                                       ) {
-                                        dispatch(deleteVideo(video.id));
+                                        try {
+                                          await dispatch(deleteVideo(video.id)).unwrap();
+                                          toast.success("Video deleted successfully!");
+                                        } catch (err: any) {
+                                          console.error("Failed to delete video:", err);
+                                          toast.error(err?.message || "Failed to delete video. Please try again.");
+                                        }
                                       }
                                     }}
                                     className="p-2 bg-red-100 text-green-700 rounded-lg hover:bg-red-200 transition-colors"

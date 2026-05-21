@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { deleteUser, fetchUsers } from "@/app/lib/store/features/userSlice";
 import { getImageUrl } from "@/app/utils/getImageUrl";
+import { toast } from "react-hot-toast";
 import SidebarForm from "../../components/SidebarForm";
 import AddUsers from "../../components/addUser";
 import EditUser from "../../components/editUser";
@@ -348,13 +349,19 @@ export default function AdminUsersPage() {
                             <EditUser user={u} onSuccess={handleClose} />
                           </SidebarForm>
                           <button
-                            onClick={() => {
+                            onClick={async () => {
                               if (
                                 window.confirm(
                                   "Are you sure you want to delete this user?",
                                 )
                               ) {
-                                dispatch(deleteUser(u.id));
+                                try {
+                                  await dispatch(deleteUser(u.id)).unwrap();
+                                  toast.success("User deleted successfully!");
+                                } catch (error: any) {
+                                  console.error("Failed to delete user:", error);
+                                  toast.error(error?.message || error?.data?.message || "Failed to delete user");
+                                }
                               }
                             }}
                             className="text-green-700 hover:text-red-900 hover:bg-red-50 p-2 rounded-lg transition-colors duration-200"

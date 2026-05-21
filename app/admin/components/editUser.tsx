@@ -4,7 +4,7 @@ import { Mail, User, ImagePlus, Phone } from "lucide-react";
 import { useAppDispatch } from "@/app/lib/store/store";
 import { updateUser } from "@/app/lib/store/features/userSlice";
 import { getImageUrl } from "@/app/utils/getImageUrl";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 interface EditUserProps {
   user: {

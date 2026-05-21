@@ -23,6 +23,10 @@ import {
   Copy,
   Star,
   MessageSquareDot,
+  ZoomIn,
+  ChevronLeft,
+  ChevronRight,
+  X,
 } from "lucide-react";
 import { addToCart } from "@/app/lib/store/features/cartSlice";
 import { RootState, useAppDispatch, useAppSelector } from "@/app/lib/store/store";
@@ -64,6 +68,7 @@ export default function ProductDetailClient({
 
   const [mounted, setMounted] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const dispatch = useAppDispatch(); // ✅ typed dispatch
 
@@ -161,10 +166,24 @@ export default function ProductDetailClient({
   }
 
   // Get images to display - either variant image or product images
-  const displayImages =
+  // product.images may be a JSON string from the DB driver, so we always normalize to an array
+  const rawImages =
     selectedVariant && selectedVariant.image
-      ? [selectedVariant.image] // Convert single image to array
+      ? [selectedVariant.image]
       : product.images;
+
+  const displayImages: string[] = Array.isArray(rawImages)
+    ? rawImages
+    : typeof rawImages === "string"
+    ? (() => {
+        try {
+          const parsed = JSON.parse(rawImages);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      })()
+    : [];
 
   const shareUrl = `${clienturl}/products/${slugify(product.name)}/${
     product.id
@@ -219,106 +238,154 @@ export default function ProductDetailClient({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Product Images Section */}
-          <div className="space-y-6 animate-fade-in-left">
-            {displayImages && displayImages.length > 0 && (
+          {/* ===== PRODUCT IMAGES - FLIPKART STYLE ===== */}
+          <div className="animate-fade-in-left lg:sticky lg:top-4">
+            {displayImages.length > 0 ? (
+              <div className="space-y-3">
 
-            displayImages.length === 1 ? (
+                {/* === MAIN IMAGE - CLICK TO OPEN LIGHTBOX === */}
+                <div
+                  className="relative overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-lg select-none cursor-zoom-in group"
+                  style={{ height: "460px" }}
+                  onClick={() => {
+                    if (getFileType(displayImages[selectedImage]) !== "video")
+                      setLightboxOpen(true);
+                  }}
+                >
+                  {/* Image or Video */}
+                  {getFileType(displayImages[selectedImage]) === "video" ? (
+                    <video
+                      src={getImageUrl(displayImages[selectedImage])}
+                      className="w-full h-full object-contain"
+                      controls
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : (
+                    <Image
+                      src={getImageUrl(displayImages[selectedImage])}
+                      alt={product.name}
+                      fill
+                      unoptimized
+                      className="object-contain transition-transform duration-500 group-hover:scale-105"
+                      priority
+                    />
+                  )}
 
-              /* ===== SINGLE IMAGE (BIG) ===== */
-              <div className="group relative h-[400px] lg:h-[550px] overflow-hidden rounded-2xl bg-gray-100 shadow-xl">
-                <Image
-                  src={getImageUrl(displayImages[0])}
-                  alt={product.name}
-                  fill
-                  unoptimized
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  priority
-                />
+                  {/* Zoom hint */}
+                  {getFileType(displayImages[selectedImage]) !== "video" && (
+                    <div className="absolute top-3 right-3 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-md text-gray-500 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ZoomIn size={18} />
+                    </div>
+                  )}
+
+                  {/* Prev Arrow */}
+                  {displayImages.length > 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedImage(
+                          (prev) =>
+                            (prev - 1 + displayImages.length) % displayImages.length
+                        );
+                      }}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-md rounded-full p-2 z-10 transition-all duration-200 hover:scale-110 border border-gray-100"
+                    >
+                      <ChevronLeft size={20} className="text-gray-700" />
+                    </button>
+                  )}
+
+                  {/* Next Arrow */}
+                  {displayImages.length > 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedImage(
+                          (prev) => (prev + 1) % displayImages.length
+                        );
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-md rounded-full p-2 z-10 transition-all duration-200 hover:scale-110 border border-gray-100"
+                    >
+                      <ChevronRight size={20} className="text-gray-700" />
+                    </button>
+                  )}
+
+                  {/* Image counter */}
+                  {displayImages.length > 1 && (
+                    <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs font-medium px-2.5 py-1 rounded-full pointer-events-none">
+                      {selectedImage + 1} / {displayImages.length}
+                    </div>
+                  )}
+
+                  {/* Dot indicators */}
+                  {displayImages.length > 1 && (
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 pointer-events-none">
+                      {displayImages.map((_, i) => (
+                        <div
+                          key={i}
+                          className={`rounded-full transition-all duration-300 ${
+                            i === selectedImage
+                              ? "w-4 h-2 bg-green-500"
+                              : "w-2 h-2 bg-white/60"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* === THUMBNAIL STRIP === */}
+                {displayImages.length > 1 && (
+                  <div className="flex gap-2 overflow-x-auto pb-1 px-0.5" style={{ scrollbarWidth: "thin" }}>
+                    {displayImages.map((file, index) => {
+                      const ft = getFileType(file);
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setSelectedImage(index);
+                            setIsZoomed(false);
+                          }}
+                          className={`flex-shrink-0 relative w-[72px] h-[72px] rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                            selectedImage === index
+                              ? "border-green-500 shadow-md scale-105"
+                              : "border-gray-200 hover:border-green-300 hover:scale-105"
+                          }`}
+                        >
+                          {ft === "image" ? (
+                            <Image
+                              src={getImageUrl(file)}
+                              alt={`${product.name}-thumb-${index + 1}`}
+                              fill
+                              unoptimized
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="relative w-full h-full bg-gray-800 flex items-center justify-center">
+                              <video
+                                src={getImageUrl(file)}
+                                className="w-full h-full object-cover opacity-80"
+                                muted
+                                playsInline
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="bg-white/80 rounded-full p-1">
+                                  <ChevronRight size={14} className="text-gray-700" />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
               </div>
-
             ) : (
-
-              /* ===== MULTIPLE IMAGES (2x2 GRID) ===== */
-              <div className="grid grid-cols-2 gap-2 md:gap-4">
-                {displayImages.map((file, index) => {
-                  const fileType = getFileType(file);
-
-                  return (
-                    <div
-                      key={index}
-                      className="group relative h-[200px] md:h-[360px] overflow-hidden rounded-xl bg-gray-100 cursor-pointer"
-                      onClick={() => setSelectedImage(index)}
-                    >
-                      {fileType === "image" ? (
-                        <Image
-                          src={getImageUrl(file)}
-                          alt={`${product.name}-${index}`}
-                          fill
-                          unoptimized
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                      ) : fileType === "video" ? (
-                        <video
-                          src={getImageUrl(file)}
-                          className="w-full h-full object-cover"
-                          muted
-                        />
-                      ) : null}
-
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
-                    </div>
-                  );
-                })}
+              <div className="h-[460px] bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
+                No image available
               </div>
-
-            )
-          )}
-
-
-
-            {/* Thumbnail Gallery */}
-
-            {/* {displayImages && displayImages.length > 1 && (
-              <div className="grid grid-cols-4 gap-2 mt-3">
-                {displayImages.slice(0, 8).map((file, index) => {
-                  const fileType = getFileType(file);
-
-                  return (
-                    <div
-                      key={index}
-                      className={`group aspect-square  relative overflow-hidden rounded-xl bg-gray-100 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in-up ${
-                        selectedImage === index ? "ring-2 ring-green-500" : ""
-                      }`}
-                      style={{ animationDelay: `${index * 100}ms` }}
-                      onClick={() => setSelectedImage(index)}
-                    >
-                      {fileType === "image" ? (
-                        <Image
-                          unoptimized
-                          src={getImageUrl(file)}
-                          alt={`${product.name} ${index + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
-                      ) : fileType === "video" ? (
-                        <video
-                          src={getImageUrl(file)}
-                          className="w-full h-full object-cover"
-                          muted
-                          playsInline
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center h-full text-sm text-gray-500">
-                          Unsupported
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
-                    </div>
-                  );
-                })}
-              </div>
-            )} */}
+            )}
           </div>
 
           {/* Product Information Section */}
@@ -434,7 +501,7 @@ export default function ProductDetailClient({
 
             {/* Action Buttons */}
             <div className="space-y-4 mt-7  ">
-              <div className="flex flex-col gap-4 md:flex-row md:gap-12 md:justify-center md:items-center">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={async () => {
                     await dispatch(
@@ -460,7 +527,7 @@ export default function ProductDetailClient({
                     );
                     router.push("/cart");
                   }}
-                  className=" group relative bg-green-700 hover:bg-green-700 text-white font-semibold py-4 px-16  rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl overflow-hidden"
+                  className="flex-1 group relative bg-green-700 hover:bg-green-800 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"></div>
                   <div className="relative flex items-center justify-center space-x-2">
@@ -492,7 +559,7 @@ export default function ProductDetailClient({
                       }),
                     );
                   }}
-                  className=" group bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-gray-200 hover:border-green-600 text-gray-700 hover:text-green-700 font-semibold py-4 px-16 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                  className="flex-1 group bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-gray-200 hover:border-green-600 text-gray-700 hover:text-green-700 font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                 >
                   <div className="flex items-center justify-center space-x-2">
                     <ShoppingCart /> <span>Add to cart</span>
@@ -573,11 +640,11 @@ export default function ProductDetailClient({
                       setReviewComment("");
                       setReviewRating(0);
 
-                      alert("Review added successfully ✅");
+                      toast.success("Review added successfully! ✅");
 
                     } catch (error:any) {
                       setReviewOpen(false);
-                      alert(error.response?.data?.message || "Error adding review");
+                      toast.error(error.response?.data?.message || "Error adding review");
                     }
                   }}
                   className="w-full bg-green-700 hover:bg-green-700 text-white py-2 rounded-lg"
@@ -795,6 +862,110 @@ export default function ProductDetailClient({
         </div>
       )
       }
+
+      {/* ===== LIGHTBOX / ZOOM MODAL ===== */}
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 bg-black/95 z-[300] flex items-center justify-center p-3 md:p-6"
+          onClick={() => setLightboxOpen(false)}
+        >
+          {/* Close button */}
+          <button
+            className="absolute top-4 right-4 text-white bg-white/20 hover:bg-white/40 rounded-full p-2.5 transition-colors z-20"
+            onClick={() => setLightboxOpen(false)}
+          >
+            <X size={22} />
+          </button>
+
+          {/* Image counter */}
+          {displayImages.length > 1 && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-full pointer-events-none">
+              {selectedImage + 1} / {displayImages.length}
+            </div>
+          )}
+
+          {/* Prev Arrow */}
+          {displayImages.length > 1 && (
+            <button
+              className="absolute left-2 md:left-5 top-1/2 -translate-y-1/2 text-white bg-white/20 hover:bg-white/40 rounded-full p-3 transition-colors z-20"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage(
+                  (prev) => (prev - 1 + displayImages.length) % displayImages.length
+                );
+              }}
+            >
+              <ChevronLeft size={28} />
+            </button>
+          )}
+
+          {/* Main lightbox image */}
+          <div
+            className="relative w-full max-w-4xl mx-12 md:mx-20"
+            style={{ height: "75vh" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={getImageUrl(displayImages[selectedImage])}
+              alt={product.name}
+              fill
+              unoptimized
+              className="object-contain"
+              priority
+            />
+          </div>
+
+          {/* Next Arrow */}
+          {displayImages.length > 1 && (
+            <button
+              className="absolute right-2 md:right-5 top-1/2 -translate-y-1/2 text-white bg-white/20 hover:bg-white/40 rounded-full p-3 transition-colors z-20"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage((prev) => (prev + 1) % displayImages.length);
+              }}
+            >
+              <ChevronRight size={28} />
+            </button>
+          )}
+
+          {/* Thumbnail strip inside lightbox */}
+          {displayImages.length > 1 && (
+            <div
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 max-w-[90vw] overflow-x-auto pb-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {displayImages.map((file, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSelectedImage(i)}
+                  className={`flex-shrink-0 relative w-12 h-12 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                    i === selectedImage
+                      ? "border-white scale-110"
+                      : "border-white/30 opacity-60 hover:opacity-100"
+                  }`}
+                >
+                  {getFileType(file) === "image" ? (
+                    <Image
+                      src={getImageUrl(file)}
+                      alt={`thumb-${i}`}
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  ) : (
+                    <video
+                      src={getImageUrl(file)}
+                      className="w-full h-full object-cover"
+                      muted
+                      playsInline
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
     </div>
 

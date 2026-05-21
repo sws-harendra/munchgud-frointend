@@ -23,7 +23,7 @@ import Image from 'next/image'
 import { logout } from "@/app/lib/store/features/authSlice";
 import { useRouter } from "next/navigation";
 import { selectCartItemsCount } from "@/app/lib/store/features/cartSlice";
-import { brandName } from "@/app/contants";
+import { brandName, serverurl } from "@/app/contants";
 import { fetchCategories } from "@/app/lib/store/features/categorySlice";
 import DropdownCategory from "@/app/commonComponents/renderCategory";
 import { link } from "fs";
@@ -73,8 +73,9 @@ export default function EcommerceNavbar() {
     try {
       setLoading(true);
 
+      const BASE_URL = serverurl || "http://localhost:5000";
       const res = await fetch(
-        `http://localhost:8008/products?search=${query}`
+        `${BASE_URL}/products?search=${query}`
       );
 
       const data = await res.json();

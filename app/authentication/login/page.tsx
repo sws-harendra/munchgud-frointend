@@ -61,7 +61,7 @@ export default function LoginForm() {
 
     try {
       const user = await dispatch(emailLogin(credentials)).unwrap();
-
+      toast.success("Logged in successfully!");
       if (user?.user?.role === "admin") {
         router.push("/admin/dashboard");
       } else {
