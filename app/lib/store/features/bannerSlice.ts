@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface Banner {
+  createdAt: any;
   id: number;
   categoryId: number;
   title: string;

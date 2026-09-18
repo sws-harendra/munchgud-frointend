@@ -1,3 +1,6 @@
 export const brandName = "MunchGud™";
-export const serverurl = process.env.NEXT_PUBLIC_serverurl;
-export const clienturl = process.env.CLIENT_URL;
+export const serverurl =
+  typeof window === "undefined"
+    ? (process.env.INTERNAL_SERVER_URL || process.env.NEXT_PUBLIC_serverurl || "http://localhost:8008")
+    : (process.env.NEXT_PUBLIC_serverurl || "http://localhost:8008");
+export const clienturl = process.env.CLIENT_URL || "http://localhost:3000";
