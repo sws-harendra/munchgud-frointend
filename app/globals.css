@@ -21,10 +21,30 @@
   }
 } */
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom Sleek Gold Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+::-webkit-scrollbar-thumb {
+  background: #E5C158;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
 }
 
 /* Add basic typography styles for Tiptap editor */
@@ -104,3 +124,239 @@ body {
 .animate-slide-up {
   animation: slide-up 0.3s ease;
 }
+
+/* Luxury Golden & White Theme Utilities */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #996515 0%, #D4AF37 40%, #F5DE98 65%, #AA7C11 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #D4AF37 0%, #E5C158 45%, #B8860B 100%);
+}
+
+.gold-border-glow {
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.12);
+}
+
+.gold-glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(229, 193, 88, 0.3);
+  box-shadow: 0 10px 30px rgba(184, 134, 11, 0.06);
+}
+
+@keyframes soundwave {
+  0%, 100% {
+    height: 6px;
+  }
+  50% {
+    height: 28px;
+  }
+}
+
+.animate-soundwave-1 {
+  animation: soundwave 1s ease-in-out infinite;
+}
+
+.animate-soundwave-2 {
+  animation: soundwave 1.2s ease-in-out infinite 0.15s;
+}
+
+.animate-soundwave-3 {
+  animation: soundwave 0.8s ease-in-out infinite 0.3s;
+}
+
+.animate-soundwave-4 {
+  animation: soundwave 1.1s ease-in-out infinite 0.45s;
+}
+
+.animate-soundwave-5 {
+  animation: soundwave 0.9s ease-in-out infinite 0.2s;
+}
+
+/* ==========================================================================
+   High-End Audiophile Motion & Animation Keyframes
+   ========================================================================== */
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1.2deg);
+  }
+}
+
+@keyframes float-fast {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(-1.2deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer-light {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+@keyframes sonic-ripple {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+/* Motion Utilities */
+.animate-float-slow {
+  animation: float-slow 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-fast {
+  animation: float-fast 3.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+
+.animate-spin-reverse {
+  animation: spin-reverse 20s linear infinite;
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 26s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-sonic-ripple-1 {
+  animation: sonic-ripple 2.5s ease-out infinite;
+}
+
+.animate-sonic-ripple-2 {
+  animation: sonic-ripple 2.5s ease-out infinite 0.8s;
+}
+
+.animate-sonic-ripple-3 {
+  animation: sonic-ripple 2.5s ease-out infinite 1.6s;
+}
+
+/* Interactive Shimmer on Buttons & Badges */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-150%) skewX(-20deg);
+}
+
+.btn-shimmer:hover::after {
+  animation: shimmer-light 1.2s ease-in-out infinite;
+}
+
+/* Card 3D Lift & Gold Glow */
+.card-lift {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px -8px rgba(212, 175, 55, 0.22), 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: rgba(212, 175, 55, 0.7);
+}
+
+.gold-glow-hover {
+  transition: all 0.3s ease;
+}
+
+.gold-glow-hover:hover {
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
+}
+

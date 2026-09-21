@@ -20,8 +20,8 @@ const eduCursive = Edu_NSW_ACT_Foundation({
 });
 
 export const metadata: Metadata = {
-  title: "MunchGud Makhana",
-  description: "Dashboard section for users",
+  title: "Flazo™ | Luxury Wireless Earbuds & Audio",
+  description: "Immerse yourself in signature gold acoustics with Flazo flagship earbuds.",
   alternates: {
     canonical: "/",
   },
@@ -31,20 +31,21 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    url: "https://munchgud.com",
-    siteName: "MunchGud",
-    title: "MunchGud Makhana",
-    description: "Dashboard section for users",
+    url: "https://flazo.com",
+    siteName: "Flazo",
+    title: "Flazo™ | Luxury Wireless Earbuds & Audio",
+    description: "Immerse yourself in signature gold acoustics with Flazo flagship earbuds.",
     images: [
       {
-        url: "/logo.png",
-        width: 210,
-        height: 110,
-        alt: "MunchGud logo",
+        url: "/images/hero-earbuds.jpg",
+        width: 1200,
+        height: 675,
+        alt: "Flazo Luxury Earbuds",
       },
     ],
   },
 };
+
 
 export default function DashboardLayout({
   children,

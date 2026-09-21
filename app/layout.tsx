@@ -25,11 +25,11 @@ const eduCursive = Edu_NSW_ACT_Foundation({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "MunchGud Makhana",
-    template: "%s | MunchGud",
+    default: "Flazo™ | Premium Wireless Earbuds & Luxury Audio",
+    template: "%s | Flazo™",
   },
-  description: "Dashboard section for users",
-  applicationName: "MunchGud",
+  description: "Experience acoustic perfection with Flazo wireless earbuds. Featuring 50dB Hybrid ANC, 70H battery life, and signature gold acoustics.",
+  applicationName: "Flazo",
   alternates: {
     canonical: "/",
   },
@@ -50,25 +50,26 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: siteUrl,
-    siteName: "MunchGud",
-    title: "MunchGud Makhana",
-    description: "Dashboard section for users",
+    siteName: "Flazo",
+    title: "Flazo™ | Premium Wireless Earbuds & Luxury Audio",
+    description: "Experience acoustic perfection with Flazo wireless earbuds. Featuring 50dB Hybrid ANC, 70H battery life, and signature gold acoustics.",
     images: [
       {
-        url: "/logo.png",
-        width: 210,
-        height: 110,
-        alt: "MunchGud logo",
+        url: "/images/hero-earbuds.jpg",
+        width: 1200,
+        height: 675,
+        alt: "Flazo Wireless Earbuds",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MunchGud Makhana",
-    description: "Dashboard section for users",
-    images: ["/logo.png"],
+    title: "Flazo™ | Premium Wireless Earbuds & Luxury Audio",
+    description: "Experience acoustic perfection with Flazo wireless earbuds.",
+    images: ["/images/hero-earbuds.jpg"],
   },
 };
+
 
 export default function RootLayout({
   children,

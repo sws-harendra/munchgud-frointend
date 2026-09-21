@@ -1,167 +1,257 @@
 "use client";
-import { brandName } from "@/app/contants";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin, LocateIcon, Mail, MapPin, Phone, X } from "lucide-react";
-import Image from "next/image";
-import { FaInstagram, FaFacebookF, FaXTwitter, FaTwitter } from "react-icons/fa6";
-import axios from "axios";
-import { useEffect, useState } from "react";
-
+import {
+  Headphones,
+  Mail,
+  ShieldCheck,
+  Truck,
+  RotateCcw,
+  Sparkles,
+  ArrowRight,
+  Send,
+} from "lucide-react";
+import { FaInstagram, FaFacebookF, FaXTwitter, FaYoutube } from "react-icons/fa6";
+import { toast } from "sonner";
 
 export default function Footer() {
-  const [socialLinks, setSocialLinks] = useState({
-    instagram: "",
-    facebook: "",
-    twitter: "",
-  });
+  const [newsletterEmail, setNewsletterEmail] = useState("");
 
-  useEffect(() => {
-    const fetchLinks = async () => {
-      try {
-        const res = await axios.get("http://localhost:8008/social-links");
-        if (res.data) {
-          setSocialLinks(res.data);
-        }
-      } catch (err) {
-        console.log("Footer fetch error", err);
-      }
-    };
-
-    fetchLinks();
-  }, []);
+  const handleNewsletter = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newsletterEmail.trim()) {
+      toast.success("Golden Discount Unlocked!", {
+        description: "Use coupon code 'FLAZOGOLD' for instant ₹300 OFF on your first earbuds order.",
+      });
+      setNewsletterEmail("");
+    }
+  };
 
   return (
-    <footer className=" bg-green-700  ">
-      <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
-        {/* Brand */}
-        <div>
-          {/* {brandName} */}
-          <Image
-            className=" bg-white px-2 py-1 rounded-lg"
-            src="/logo.png"
-            width={210}
-            height={110}
-            alt="Logo" />
-          <p className="mt-4 text-sm  max-w-xs text-white">
-            Premium roasted makhana packed with bold flavors and irresistible crunch.
-          </p>
+    <footer className="bg-white border-t border-amber-200/80 text-neutral-800">
+      
+      {/* Top Value Assurance Ribbon (boAt & Boult Style) */}
+      <div className="bg-amber-50/70 border-b border-amber-100 py-8">
+        <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
+            
+            <div className="flex flex-col md:flex-row items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-neutral-900">1-Year Warranty</h4>
+                <p className="text-[11px] text-neutral-500">Doorstep instant swap</p>
+              </div>
+            </div>
 
-          {/* Social Icons */}
-          <div className="flex gap-4 mt-6">
+            <div className="flex flex-col md:flex-row items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
+                <Truck className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-neutral-900">Free Express Delivery</h4>
+                <p className="text-[11px] text-neutral-500">Fast 48h India dispatch</p>
+              </div>
+            </div>
 
+            <div className="flex flex-col md:flex-row items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
+                <RotateCcw className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-neutral-900">7 Days Return</h4>
+                <p className="text-[11px] text-neutral-500">No hassle guarantee</p>
+              </div>
+            </div>
 
-            {/* Instagram */}
-            <a
-              href={socialLinks?.instagram || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full flex items-center justify-center bg-white text-black hover:bg-gradient-to-tr hover:from-pink-500 hover:to-yellow-500 hover:text-white transition"
-            >
-              <FaInstagram size={16} />
-            </a>
+            <div className="flex flex-col md:flex-row items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-neutral-900">24K Gold Accents</h4>
+                <p className="text-[11px] text-neutral-500">Luxury audio design</p>
+              </div>
+            </div>
 
-            {/* Facebook */}
-            <a
-              href={socialLinks?.facebook || "#"}
-
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full flex items-center justify-center bg-white text-black hover:bg-blue-600 hover:text-white transition"
-            >
-              <FaFacebookF size={16} />
-            </a>
-
-            {/* Twitter */}
-
-            <a
-              href={socialLinks?.twitter || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full text-black flex items-center justify-center bg-white hover:bg-black hover:text-white transition"
-            >
-              <FaXTwitter size={16} />
-            </a>
           </div>
-        </div>
-
-        {/* Shop */}
-        <div>
-          <h3 className="text-sm font-semibold uppercase mb-4 text-white">
-            Shop
-          </h3>
-          <ul className="space-y-2 text-sm text-white">
-            <li>
-              <Link href="/products" className="hover:text-white">
-                All Products
-              </Link>
-            </li>
-            <li>
-              <Link href="/products" className="hover:text-white">
-                Categories
-              </Link>
-            </li>
-            <li>
-              <Link href="#" className="hover:text-white">
-                Offers
-              </Link>
-            </li>
-            <li>
-              <Link href="#" className="hover:text-white">
-                New Arrivals
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* Company */}
-        <div>
-          <h3 className="text-sm font-semibold uppercase mb-4 text-white">
-            Company
-          </h3>
-          <ul className="space-y-2 text-sm text-white">
-            <li>
-              <Link href="/refund-policy" className="hover:text-white">
-                Refund Policy{" "}
-              </Link>
-            </li>
-            <li>
-              <Link href="terms&conditions" className="hover:text-white">
-                Terms & Conditions
-              </Link>
-            </li>
-            <li>
-              <Link href="privacy-policy" className="hover:text-white">
-                Privacy Policy
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* Contact */}
-        <div>
-          <h3 className="text-sm font-semibold uppercase mb-4 text-white">
-            Contact
-          </h3>
-          <ul className="space-y-3 text-sm text-white">
-            <li className="flex items-center gap-2">
-              <Mail size={16} /> munchgud@gmail.com
-            </li>
-            <li className="flex items-center gap-2">
-              <Phone size={16} /> +91 84462 74791
-            </li>
-            <li className="flex items-center  gap-2">
-              <MapPin size={25} />  Kate wasti, Punawale, Pimpri-Chinchwad, Pune-411033
-            </li>
-          </ul>
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-white py-4 text-center text-sm text-white">
-        © {new Date().getFullYear()}{" "}
-        <span className="font-semibold text-white">{brandName}</span>. All
-        rights reserved.
-        <span className="font-bold"> Design by Startup Web Support</span>
+      {/* Main Footer Links */}
+      <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-8 lg:px-12 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+          
+          {/* Column 1: Brand Info */}
+          <div className="lg:col-span-4 space-y-4">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 flex items-center justify-center text-neutral-950 font-black text-sm shadow-xs">
+                <Headphones className="w-4 h-4" />
+              </div>
+              <span className="text-2xl font-black tracking-widest text-neutral-950">
+                FLAZO<span className="text-amber-500">.</span>
+              </span>
+            </Link>
+            
+            <p className="text-xs text-neutral-600 leading-relaxed max-w-sm">
+              Flazo is redefining consumer sound through gold-standard acoustic drivers, precision active noise cancellation, and uncompromising luxury wearability.
+            </p>
+
+            {/* Social Links */}
+            <div className="flex items-center gap-3 pt-2">
+              <a
+                href="#"
+                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-all shadow-2xs"
+                aria-label="Instagram"
+              >
+                <FaInstagram size={14} />
+              </a>
+              <a
+                href="#"
+                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-all shadow-2xs"
+                aria-label="Facebook"
+              >
+                <FaFacebookF size={14} />
+              </a>
+              <a
+                href="#"
+                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-all shadow-2xs"
+                aria-label="X (Twitter)"
+              >
+                <FaXTwitter size={14} />
+              </a>
+              <a
+                href="#"
+                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-all shadow-2xs"
+                aria-label="YouTube"
+              >
+                <FaYoutube size={14} />
+              </a>
+            </div>
+          </div>
+
+          {/* Column 2: Audio Lineup */}
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900">
+              Audio Series
+            </h4>
+            <ul className="space-y-2 text-xs text-neutral-600">
+              <li>
+                <a href="#flagship-series" className="hover:text-amber-600 transition-colors">
+                  Flazo Nirvana Pro ANC
+                </a>
+              </li>
+              <li>
+                <a href="#flagship-series" className="hover:text-amber-600 transition-colors">
+                  Flazo BassPod Extreme
+                </a>
+              </li>
+              <li>
+                <a href="#flagship-series" className="hover:text-amber-600 transition-colors">
+                  Flazo Aerobeat Sport
+                </a>
+              </li>
+              <li>
+                <a href="#acoustic-tech" className="hover:text-amber-600 transition-colors">
+                  BoomBass™ Tech
+                </a>
+              </li>
+              <li>
+                <a href="#reviews" className="hover:text-amber-600 transition-colors">
+                  Customer Reviews
+                </a>
+              </li>
+              <li>
+                <a href="#faq" className="hover:text-amber-600 transition-colors">
+                  Acoustic FAQs
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Support & Policy */}
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900">
+              Customer Care
+            </h4>
+            <ul className="space-y-2 text-xs text-neutral-600">
+              <li>
+                <Link href="/orderhistory" className="hover:text-amber-600 transition-colors">
+                  Track Your Order
+                </Link>
+              </li>
+              <li>
+                <span className="hover:text-amber-600 transition-colors cursor-pointer">
+                  Warranty Claim
+                </span>
+              </li>
+              <li>
+                <Link href="/refund-policy" className="hover:text-amber-600 transition-colors">
+                  Refund & Swap Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms&conditions" className="hover:text-amber-600 transition-colors">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy-policy" className="hover:text-amber-600 transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Newsletter & Exclusive Codes */}
+          <div className="lg:col-span-4 space-y-4">
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900">
+                Join the Flazo Golden Club
+              </h4>
+              <p className="text-xs text-neutral-500 mt-1">
+                Subscribe for secret drop alerts and unlock an instant ₹300 coupon code.
+              </p>
+            </div>
+
+            <form onSubmit={handleNewsletter} className="flex gap-2">
+              <input
+                type="email"
+                required
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                placeholder="Your email address..."
+                className="flex-1 px-4 py-2.5 rounded-full border border-amber-300 text-xs bg-amber-50/30 focus:outline-hidden focus:ring-1 focus:ring-amber-500 text-neutral-800"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-neutral-950 font-bold text-xs hover:from-amber-500 hover:to-yellow-300 transition-all shadow-xs shrink-0 cursor-pointer"
+              >
+                Join
+              </button>
+            </form>
+
+            <div className="text-[11px] text-neutral-500 flex items-center gap-1.5">
+              <span>Customer Care:</span>
+              <strong className="text-neutral-900">support@flazo.com</strong>
+              <span>•</span>
+              <strong className="text-neutral-900">1800-FLAZO-IN</strong>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Bottom Copyright */}
+        <div className="mt-12 pt-6 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-neutral-400 gap-4">
+          <p>© {new Date().getFullYear()} Flazo Technologies Pvt. Ltd. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <span>Designed in Golden & White</span>
+            <span>•</span>
+            <span>Crafted for Audiophiles</span>
+          </div>
+        </div>
+
       </div>
     </footer>
   );
