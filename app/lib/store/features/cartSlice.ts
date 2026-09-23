@@ -21,11 +21,8 @@ interface CartState {
   error: string | null;
 }
 
-const localCart =
-  typeof window !== "undefined" ? localStorage.getItem("cart") : null;
-
 const initialState: CartState = {
-  items: localCart ? JSON.parse(localCart) : [],
+  items: [],
   status: "idle",
   error: null,
 };
@@ -46,6 +43,18 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    hydrateCart: (state) => {
+      if (typeof window !== "undefined") {
+        try {
+          const localCart = localStorage.getItem("cart");
+          if (localCart) {
+            state.items = JSON.parse(localCart);
+          }
+        } catch (e) {
+          console.error("Failed to load cart from localStorage", e);
+        }
+      }
+    },
     addToCart: (state, action: PayloadAction<CartItem>) => {
       const existing = state.items.find(
         (i) =>
@@ -97,7 +106,7 @@ const cartSlice = createSlice({
 export const selectCartItemsCount = (state: RootState) =>
   state.cart.items.reduce((total, item) => total + item.quantity, 0);
 
-export const { addToCart, removeFromCart, updateQuantity, clearCart } =
+export const { hydrateCart, addToCart, removeFromCart, updateQuantity, clearCart } =
   cartSlice.actions;
 export const selectCart = (state: RootState) => state.cart;
 export default cartSlice.reducer;

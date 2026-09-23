@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Search,
   ShoppingCart,
@@ -28,17 +28,21 @@ export default function EcommerceNavbar() {
   const cartCount = useAppSelector(selectCartItemsCount);
   const router = useRouter();
 
+  const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const navLinks = [
-    { name: "Earbuds", href: "#flagship-series" },
-    { name: "Acoustic Tech", href: "#acoustic-tech" },
-    { name: "Why Flazo", href: "#why-flazo" },
-    { name: "Reviews", href: "#reviews" },
-    { name: "FAQs", href: "#faq" },
+    { name: "Earbuds", href: "/earbuds" },
+    { name: "Support & Warranty", href: "/support-warranty" },
+    { name: "Blogs", href: "/blogs" },
+    { name: "Flazo Community", href: "/community" },
   ];
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -59,9 +63,9 @@ export default function EcommerceNavbar() {
             <span>FLAZO SIGNATURE GOLD SERIES • 13mm BoomBass™ Drivers • Free Express Delivery in India</span>
           </div>
           <div className="hidden md:flex items-center gap-4 text-neutral-400 text-xs">
-            <span className="hover:text-amber-300 transition-colors cursor-pointer">1-Year Flazo Warranty</span>
+            <Link href="/support-warranty" className="hover:text-amber-300 transition-colors cursor-pointer">1-Year Flazo Warranty</Link>
             <span>•</span>
-            <span className="hover:text-amber-300 transition-colors cursor-pointer">Track Order</span>
+            <Link href="/support-warranty" className="hover:text-amber-300 transition-colors cursor-pointer">Customer Support</Link>
           </div>
         </div>
       </div>
@@ -87,15 +91,15 @@ export default function EcommerceNavbar() {
           </Link>
 
           {/* Simple Desktop Nav Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-7 lg:space-x-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
                 href={link.href}
                 className="text-sm font-semibold text-neutral-700 hover:text-amber-600 transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-amber-500 hover:after:w-full after:transition-all after:duration-300"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -136,7 +140,7 @@ export default function EcommerceNavbar() {
             {/* Cart with Golden Badge */}
             <Link href="/cart" className="relative p-2 text-neutral-700 hover:text-amber-600 transition-colors rounded-full hover:bg-amber-50 group">
               <ShoppingCart className="w-5 h-5 group-hover:scale-105 transition-transform" />
-              {cartCount > 0 ? (
+              {mounted && cartCount > 0 ? (
                 <span className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-neutral-950 font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-xs">
                   {cartCount}
                 </span>
@@ -148,7 +152,7 @@ export default function EcommerceNavbar() {
             </Link>
 
             {/* Auth / Profile */}
-            {isAuthenticated ? (
+            {mounted && isAuthenticated ? (
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -213,14 +217,14 @@ export default function EcommerceNavbar() {
         <div className="md:hidden bg-white border-t border-amber-100 px-6 py-5 space-y-4 shadow-xl animate-in slide-in-from-top-2">
           <div className="space-y-3">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
                 className="block text-base font-semibold text-neutral-800 hover:text-amber-600 transition-colors py-2 border-b border-neutral-100"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -231,10 +235,10 @@ export default function EcommerceNavbar() {
               className="flex items-center gap-2 text-sm font-semibold text-neutral-800"
             >
               <ShoppingCart className="w-4 h-4 text-amber-600" />
-              <span>Cart ({cartCount})</span>
+              <span>Cart ({mounted ? cartCount : 0})</span>
             </Link>
 
-            {!isAuthenticated && (
+            {(!mounted || !isAuthenticated) && (
               <Link
                 href="/authentication/login"
                 onClick={() => setIsMenuOpen(false)}

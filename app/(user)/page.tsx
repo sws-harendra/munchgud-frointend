@@ -4,11 +4,8 @@ import FlazoHero from "./components/FlazoHero";
 import FlazoMarqueeTicker from "./components/FlazoMarqueeTicker";
 import FlazoBrandSpotlight from "./components/FlazoBrandSpotlight";
 import FlazoSaleIsLive from "./components/FlazoSaleIsLive";
-import FlazoFlagshipShowcase from "./components/FlazoFlagshipShowcase";
-import FlazoTechAcoustics from "./components/FlazoTechAcoustics";
 import FlazoComparison from "./components/FlazoComparison";
 import FlazoLifestyleStory from "./components/FlazoLifestyleStory";
-import FlazoReviews from "./components/FlazoReviews";
 import FlazoFAQ from "./components/FlazoFAQ";
 import FlazoFutureTeaser from "./components/FlazoFutureTeaser";
 
@@ -42,31 +39,22 @@ export default function HomePage() {
       {/* 1. Flazo Flagship Hero Section (boAt Style Sliding Carousel) */}
       <FlazoHero />
 
+      {/* 2. Flagship Brand Spotlight Banner (Matches Exact Requested UI) */}
+      <FlazoBrandSpotlight />
+
       {/* Signature Continuous Marquee Motion Ticker */}
       <FlazoMarqueeTicker />
-
-      {/* 2. EarFun Style Brand Spotlight Banner & Sub-Spotlight Tiles */}
-      <FlazoBrandSpotlight />
 
       {/* 3. boAt Style "Sale Is Live" Section with Value Assurance Strip */}
       <FlazoSaleIsLive />
 
-      {/* 4. Flagship Earbuds Spotlight (Interactive Switcher) */}
-      <FlazoFlagshipShowcase />
-
-      {/* 5. boAt & Boult Inspired Acoustic Tech & Sound Deconstruction */}
-      <FlazoTechAcoustics />
-
-      {/* 6. Why Flazo vs Ordinary Buds Comparison */}
+      {/* 5. Why Flazo vs Ordinary Buds Comparison */}
       <FlazoComparison />
 
-      {/* 7. Editorial Lifestyle Story & Doorstep Replacement Guarantee */}
+      {/* 6. Editorial Lifestyle Story & Doorstep Replacement Guarantee */}
       <FlazoLifestyleStory />
 
-      {/* 8. Authentic Verified Customer Reviews & Social Proof */}
-      <FlazoReviews />
-
-      {/* 9. Acoustic FAQs & Buyer Assurance Accordion */}
+      {/* 7. Acoustic FAQs & Buyer Assurance Accordion */}
       <FlazoFAQ />
 
       {/* 10. Upcoming Electronics Horizon Teaser (Smartwatches & Audio Tech) */}

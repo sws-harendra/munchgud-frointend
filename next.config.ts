@@ -6,7 +6,19 @@ const imageRemotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] =
     hostname: "images.pexels.com",
   },
   {
+    protocol: "https",
+    hostname: "images.unsplash.com",
+  },
+  {
+    protocol: "https",
+    hostname: "plus.unsplash.com",
+  },
+  {
     protocol: "http",
+    hostname: "localhost",
+  },
+  {
+    protocol: "https",
     hostname: "localhost",
   },
 ];
