@@ -27,6 +27,7 @@ import {
   Sparkles,
   Flame,
   FolderTree,
+  MessagesSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -116,6 +117,11 @@ const menuItems: MenuItem[] = [
     name: "Blogs",
     icon: Pen,
     href: "/admin/dashboard/blogs",
+  },
+  {
+    name: "Community",
+    icon: MessagesSquare,
+    href: "/admin/dashboard/community",
   },
   {
     name: "Testimonial",

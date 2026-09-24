@@ -20,6 +20,7 @@ import testimonialReducer from "./features/testimonialSlice";
 import varientReducer from "./features/variantSlice";
 
 import relatedProductReducer from "./features/relatedProductSlice";
+import communityReducer from "./features/communitySlice";
 export const store = configureStore({
   reducer: {
     relatedProducts: relatedProductReducer,
@@ -37,6 +38,7 @@ export const store = configureStore({
     video: videoReducer,
     artist: artistReducer,
     blog: blogReducer,
+    community: communityReducer,
     mediaCoverages: mediaCoveragesReducer,
     testimonial: testimonialReducer,
     variants: varientReducer,
