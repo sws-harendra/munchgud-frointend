@@ -7,7 +7,6 @@ import FlazoSaleIsLive from "./components/FlazoSaleIsLive";
 import FlazoComparison from "./components/FlazoComparison";
 import FlazoLifestyleStory from "./components/FlazoLifestyleStory";
 import FlazoFAQ from "./components/FlazoFAQ";
-import FlazoFutureTeaser from "./components/FlazoFutureTeaser";
 
 export default function HomePage() {
   const structuredData = {
@@ -56,9 +55,6 @@ export default function HomePage() {
 
       {/* 7. Acoustic FAQs & Buyer Assurance Accordion */}
       <FlazoFAQ />
-
-      {/* 10. Upcoming Electronics Horizon Teaser (Smartwatches & Audio Tech) */}
-      <FlazoFutureTeaser />
     </div>
   );
 }
