@@ -1,149 +1,76 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
-import { toast } from "react-hot-toast";
-import {
-  fetchBlogPostById,
-  selectCurrentPost,
-  updateBlogPost,
-  clearCurrentPost,
-} from "@/app/lib/store/features/blogSlice";
-import RichTextEditor from "@/app/commonComponents/RichTextEditor";
-import { blogService } from "@/app/sercices/user/blog.service";
-import { getImageUrl } from "@/app/utils/getImageUrl";
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import BlogEditorForm from "@/app/admin/components/BlogEditorForm";
+import { blogService, BlogPostItem } from "@/app/sercices/user/blog.service";
+import Link from "next/link";
+import { ArrowLeft, BookOpen } from "lucide-react";
 
-export default function EditBlog() {
-  const { id } = useParams();
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-  const currentPost = useAppSelector(selectCurrentPost);
+export default function EditBlogPage() {
+  const params = useParams();
+  const id = params?.id as string;
 
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [excerpt, setExcerpt] = useState("");
-  const [content, setContent] = useState("");
-  const [featuredImage, setFeaturedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [post, setPost] = useState<BlogPostItem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    dispatch(fetchBlogPostById(id));
-
-    return () => {
-      dispatch(clearCurrentPost());
-    };
-  }, [dispatch, id]);
-
-  useEffect(() => {
-    if (currentPost) {
-      setTitle(currentPost.title);
-      setSlug(currentPost.slug || "");
-      setExcerpt(currentPost.excerpt || "");
-      setContent(currentPost.content);
-      setImagePreview(currentPost.featuredImage || null);
-    }
-  }, [currentPost]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFeaturedImage(e.target.files[0]);
-      setImagePreview(URL.createObjectURL(e.target.files[0]));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      let uploadedImageUrl = imagePreview;
-      if (featuredImage) {
-        const uploadResult = await blogService.uploadImage(featuredImage);
-        uploadedImageUrl = uploadResult.url;
+    if (!id) return;
+    const load = async () => {
+      try {
+        setLoading(true);
+        const data = await blogService.getBlogById(id);
+        setPost(data);
+      } catch (err: any) {
+        console.error(err);
+        setError("Failed to load blog post for editing.");
+      } finally {
+        setLoading(false);
       }
-      console.log(uploadedImageUrl, ";;;;;");
+    };
+    load();
+  }, [id]);
 
-      await dispatch(
-        updateBlogPost({
-          id,
-          title,
-          slug,
-          excerpt,
-          content,
-          featuredImage: uploadedImageUrl || "",
-        })
-      ).unwrap();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900/10 p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-semibold text-gray-500">
+            Loading publication data...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-      toast.success("Blog updated successfully!");
-      router.push("/admin/dashboard/blogs"); // go back to blog list after update
-    } catch (error: any) {
-      console.error("Failed to update blog:", error);
-      toast.error(error?.message || error?.data?.message || "Failed to update blog");
-    }
-  };
-
-  if (!currentPost) return <p>Loading blog...</p>;
+  if (error || !post) {
+    return (
+      <div className="min-h-screen bg-slate-900/10 p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+        <div className="max-w-md bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-4">
+          <BookOpen className="w-12 h-12 text-gray-400 mx-auto" />
+          <h2 className="text-xl font-bold text-gray-900">
+            Article Not Found
+          </h2>
+          <p className="text-sm text-gray-500">
+            The article with ID #{id} could not be retrieved from the server.
+          </p>
+          <Link
+            href="/admin/dashboard/blogs"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-2xl hover:bg-amber-700 transition"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Articles List
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold mb-4">Edit Blog</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-medium mb-1">Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Slug</label>
-          <input
-            type="text"
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Excerpt</label>
-          <textarea
-            value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            rows={3}
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Featured Image</label>
-          <input type="file" onChange={handleImageChange} />
-          {imagePreview && (
-            <img
-              src={getImageUrl(imagePreview)}
-              alt="Preview"
-              className="mt-2 w-64 h-40 object-cover rounded"
-            />
-          )}
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Content</label>
-          <RichTextEditor value={content} onChange={setContent} />
-        </div>
-
-        <button
-          type="submit"
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          Update Blog
-        </button>
-      </form>
+    <div className="min-h-screen bg-slate-900/10 p-4 sm:p-6 lg:p-8">
+      <BlogEditorForm initialData={post} isEdit={true} />
     </div>
   );
 }

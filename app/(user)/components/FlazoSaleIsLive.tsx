@@ -16,116 +16,21 @@ import {
   Zap,
   Timer,
 } from "lucide-react";
-import { useAppDispatch } from "@/app/lib/store/store";
+import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { addToCart } from "@/app/lib/store/features/cartSlice";
+import { fetchActiveTrendingImages } from "@/app/lib/store/features/trendingImageSlice";
+import { TrendingImageItem } from "@/app/sercices/user/trendingImage.service";
+import { getImageUrl } from "@/app/utils/getImageUrl";
 import { toast } from "sonner";
-
-interface SaleProduct {
-  id: number;
-  name: string;
-  badge: string;
-  badgeBg: string;
-  image: string;
-  featureBar: string;
-  rating: number;
-  price: number;
-  originalPrice: number;
-  discount: string;
-  colors: string[];
-  extraColorsCount?: number;
-}
-
-const saleProducts: SaleProduct[] = [
-  {
-    id: 201,
-    name: "Flazo Nirvana Ion ANC",
-    badge: "✨ Engraving Available",
-    badgeBg: "bg-amber-950 text-amber-300",
-    image: "/images/hero-earbuds.jpg",
-    featureBar: "120 Hours Playback",
-    rating: 4.9,
-    price: 2399,
-    originalPrice: 9990,
-    discount: "76% off",
-    colors: ["#FFFFFF", "#D4AF37", "#1A1A1A"],
-    extraColorsCount: 2,
-  },
-  {
-    id: 202,
-    name: "Flazo Airdopes 181 Pro",
-    badge: "🎁 Free Spotify",
-    badgeBg: "bg-neutral-900 text-yellow-300",
-    image: "/images/spotlight-earbud.jpg",
-    featureBar: "100 Hours Playback",
-    rating: 4.8,
-    price: 1499,
-    originalPrice: 4990,
-    discount: "70% off",
-    colors: ["#F5DE98", "#FFFFFF"],
-    extraColorsCount: 2,
-  },
-  {
-    id: 203,
-    name: "Flazo Wave Fury Gold",
-    badge: "🚀 Bestseller",
-    badgeBg: "bg-neutral-950 text-white",
-    image: "/images/watch-gold.jpg",
-    featureBar: "BT Calling & AMOLED",
-    rating: 4.9,
-    price: 2299,
-    originalPrice: 6999,
-    discount: "67% off",
-    colors: ["#E5C158", "#1A1A1A"],
-    extraColorsCount: 3,
-  },
-  {
-    id: 204,
-    name: "Flazo Rockerz 110 Gold",
-    badge: "🔥 New Launch",
-    badgeBg: "bg-neutral-950 text-amber-300",
-    image: "/images/neckband-gold.jpg",
-    featureBar: "40 Hours Playback",
-    rating: 4.8,
-    price: 999,
-    originalPrice: 2490,
-    discount: "60% off",
-    colors: ["#F5DE98", "#2D2D2D"],
-    extraColorsCount: 1,
-  },
-  {
-    id: 205,
-    name: "Flazo BassPod Extreme",
-    badge: "⚡ 35ms Beast™",
-    badgeBg: "bg-amber-900 text-amber-300",
-    image: "/images/lineup-showcase.jpg",
-    featureBar: "13.4mm Titanium Bass",
-    rating: 4.8,
-    price: 1899,
-    originalPrice: 4999,
-    discount: "62% off",
-    colors: ["#D4AF37", "#FFFFFF"],
-    extraColorsCount: 2,
-  },
-  {
-    id: 206,
-    name: "Flazo Acoustic Labs Pro",
-    badge: "✨ Studio Tuned",
-    badgeBg: "bg-neutral-900 text-white",
-    image: "/images/driver-tech.jpg",
-    featureBar: "24K Gold Acoustic Diaphragm",
-    rating: 4.9,
-    price: 2499,
-    originalPrice: 6999,
-    discount: "64% off",
-    colors: ["#F5DE98", "#FFFFFF"],
-    extraColorsCount: 1,
-  },
-];
 
 export default function FlazoSaleIsLive() {
   const dispatch = useAppDispatch();
-  const [activeCardId, setActiveCardId] = useState<number | null>(null);
+  const { items, status } = useAppSelector((state) => state.trendingImages);
   const [timeLeft, setTimeLeft] = useState({ hours: 6, minutes: 42, seconds: 19 });
+
+  useEffect(() => {
+    dispatch(fetchActiveTrendingImages());
+  }, [dispatch]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -139,18 +44,28 @@ export default function FlazoSaleIsLive() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleQuickAdd = (product: SaleProduct) => {
+  const handleQuickAdd = (product: TrendingImageItem) => {
     dispatch(
       addToCart({
-        id: product.id,
+        id: product.productId || product.id,
         name: product.name,
         price: product.price,
-        imageUrl: product.image,
+        imageUrl: getImageUrl(product.imageUrl),
         quantity: 1,
         paymentMethods: "Prepaid, COD",
       })
     );
     toast.success(`${product.name} added to cart!`);
+  };
+
+  const parseColors = (colorsStr?: string): string[] => {
+    if (!colorsStr) return ["#FFFFFF", "#D4AF37"];
+    try {
+      const parsed = JSON.parse(colorsStr);
+      return Array.isArray(parsed) ? parsed : [colorsStr];
+    } catch {
+      return ["#FFFFFF", "#D4AF37"];
+    }
   };
 
   return (
@@ -265,105 +180,133 @@ export default function FlazoSaleIsLive() {
           </a>
         </div>
 
-        {/* 6 Product Cards Grid / Spacious Layout with card-lift */}
+        {/* Product Cards Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-5">
-          {saleProducts.map((p) => (
-            <div
-              key={p.id}
-              onMouseEnter={() => setActiveCardId(p.id)}
-              onMouseLeave={() => setActiveCardId(null)}
-              className="card-lift rounded-2xl border border-neutral-200/80 bg-white overflow-hidden shadow-xs hover:shadow-xl flex flex-col justify-between group relative"
-            >
-              
-              {/* Product Top: Image with Corner Tag */}
-              <div className="relative w-full aspect-square bg-gradient-to-b from-neutral-50 to-white flex items-center justify-center p-4 overflow-hidden">
-                
-                {/* boAt Style Top-Left Tag */}
-                <div className="absolute top-2.5 left-2.5 z-10">
-                  <span className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-sm shadow-xs ${p.badgeBg}`}>
-                    {p.badge}
-                  </span>
+          {status === "loading" && items.length === 0
+            ? Array.from({ length: 6 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="rounded-2xl border border-neutral-200/80 bg-white overflow-hidden shadow-xs p-4 space-y-3 animate-pulse"
+                >
+                  <div className="w-full aspect-square bg-gray-200 rounded-xl" />
+                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+                  <div className="h-4 bg-gray-200 rounded w-1/2" />
+                  <div className="h-8 bg-gray-200 rounded w-full" />
                 </div>
+              ))
+            : items.map((p) => {
+                const colorList = parseColors(p.colors);
+                const targetLink =
+                  p.link ||
+                  (p.productId ? `/products/${p.productId}` : "#bestsellers");
 
-                {/* Product Image */}
-                <Image
-                  src={p.image}
-                  alt={p.name}
-                  width={280}
-                  height={280}
-                  className="object-contain w-full h-full max-h-[160px] drop-shadow-md group-hover:scale-110 group-hover:-translate-y-1 transition-transform duration-500"
-                />
-
-                {/* Quick Add Overlay on Hover */}
-                {activeCardId === p.id && (
-                  <button
-                    onClick={() => handleQuickAdd(p)}
-                    className="btn-shimmer absolute bottom-2.5 inset-x-2.5 py-2.5 rounded-xl bg-neutral-950 text-amber-300 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-xl hover:bg-black transition-all cursor-pointer animate-in fade-in slide-in-from-bottom-2"
+                return (
+                  <div
+                    key={p.id}
+                    className="card-lift rounded-2xl border border-neutral-200/80 bg-white overflow-hidden shadow-xs hover:shadow-xl flex flex-col justify-between group relative"
                   >
-                    <ShoppingCart className="w-4 h-4 text-amber-400" />
-                    <span>Add to Cart</span>
-                  </button>
-                )}
-              </div>
+                    {/* Product Top: Image with Corner Tag */}
+                    <div className="relative w-full aspect-square bg-gradient-to-b from-neutral-50 to-white flex items-center justify-center p-4 overflow-hidden">
+                      {/* boAt Style Top-Left Tag */}
+                      <div className="absolute top-2.5 left-2.5 z-10">
+                        <span
+                          className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-sm shadow-xs ${p.badgeBg}`}
+                        >
+                          {p.badge}
+                        </span>
+                      </div>
 
-              {/* Distinctive Yellow/Golden Feature Bar (Exact boAt signature design) */}
-              <div className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 px-3 py-1.5 flex items-center justify-between text-neutral-950 font-bold text-[11px] sm:text-xs">
-                <span className="truncate pr-1">{p.featureBar}</span>
-                <span className="flex items-center gap-0.5 bg-white/90 px-1.5 py-0.5 rounded-sm text-[10px] shrink-0 font-black shadow-2xs">
-                  <Star className="w-2.5 h-2.5 fill-amber-500 text-amber-500" />
-                  {p.rating}
-                </span>
-              </div>
+                      {/* Product Image */}
+                      <Link
+                        href={targetLink}
+                        className="w-full h-full flex items-center justify-center"
+                      >
+                        <img
+                          src={getImageUrl(p.imageUrl)}
+                          alt={p.name}
+                          className="object-contain w-full h-full max-h-[160px] drop-shadow-md group-hover:scale-110 group-hover:-translate-y-1 transition-transform duration-500"
+                        />
+                      </Link>
+                    </div>
 
-              {/* Product Details & Price */}
-              <div className="p-3.5 space-y-2.5 text-left bg-white flex-1 flex flex-col justify-between">
-                
-                <h3 className="font-extrabold text-xs sm:text-sm text-neutral-900 group-hover:text-amber-700 transition-colors line-clamp-2 h-9 leading-snug">
-                  {p.name}
-                </h3>
-
-                {/* Price & Color Preview Row */}
-                <div className="flex items-end justify-between gap-1 pt-1 border-t border-neutral-100">
-                  <div>
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-base sm:text-lg font-black text-neutral-950">
-                        ₹{p.price.toLocaleString("en-IN")}
-                      </span>
-                      <span className="text-xs text-neutral-400 line-through font-medium">
-                        ₹{p.originalPrice.toLocaleString("en-IN")}
+                    {/* Distinctive Yellow/Golden Feature Bar */}
+                    <div className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 px-3 py-1.5 flex items-center justify-between text-neutral-950 font-bold text-[11px] sm:text-xs">
+                      <span className="truncate pr-1">{p.featureBar}</span>
+                      <span className="flex items-center gap-0.5 bg-white/90 px-1.5 py-0.5 rounded-sm text-[10px] shrink-0 font-black shadow-2xs">
+                        <Star className="w-2.5 h-2.5 fill-amber-500 text-amber-500" />
+                        {p.rating}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="text-[11px] font-extrabold text-emerald-600 block">
-                        {p.discount}
-                      </span>
-                      <span className="text-[10px] font-extrabold text-amber-900 bg-amber-100/90 px-1.5 py-0.5 rounded-sm">
-                        Save ₹{(p.originalPrice - p.price).toLocaleString("en-IN")}
-                      </span>
+
+                    {/* Product Details & Price & Clean Bottom Add to Cart Button */}
+                    <div className="p-3.5 flex-1 flex flex-col justify-between text-left bg-white">
+                      <div className="space-y-2">
+                        <Link href={targetLink}>
+                          <h3 className="font-extrabold text-xs sm:text-sm text-neutral-900 group-hover:text-amber-700 transition-colors line-clamp-2 min-h-[36px] leading-snug">
+                            {p.name}
+                          </h3>
+                        </Link>
+
+                        {/* Price & Color Preview Row */}
+                        <div className="flex items-end justify-between gap-1 pt-2 border-t border-neutral-100">
+                          <div>
+                            <div className="flex items-baseline gap-1.5">
+                              <span className="text-base sm:text-lg font-black text-neutral-950">
+                                ₹{p.price.toLocaleString("en-IN")}
+                              </span>
+                              {p.originalPrice && p.originalPrice > p.price && (
+                                <span className="text-xs text-neutral-400 line-through font-medium">
+                                  ₹{p.originalPrice.toLocaleString("en-IN")}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              {p.discount && (
+                                <span className="text-[11px] font-extrabold text-emerald-600 block">
+                                  {p.discount}
+                                </span>
+                              )}
+                              {p.originalPrice && p.originalPrice > p.price && (
+                                <span className="text-[10px] font-extrabold text-amber-900 bg-amber-100/90 px-1.5 py-0.5 rounded-sm">
+                                  Save ₹
+                                  {(p.originalPrice - p.price).toLocaleString(
+                                    "en-IN"
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Circular Color Swatches Preview */}
+                          <div className="flex items-center -space-x-1 shrink-0 pb-1">
+                            {colorList.map((c, idx) => (
+                              <span
+                                key={idx}
+                                className="w-3 h-3 rounded-full border border-white shadow-2xs"
+                                style={{ backgroundColor: c }}
+                              />
+                            ))}
+                            {p.extraColorsCount ? (
+                              <span className="text-[10px] text-neutral-500 font-bold pl-1.5">
+                                +{p.extraColorsCount}
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Professional Bottom Add to Cart Button */}
+                      <button
+                        onClick={() => handleQuickAdd(p)}
+                        className="w-full mt-3.5 py-2.5 px-3 rounded-xl bg-neutral-950 hover:bg-amber-400 text-amber-300 hover:text-neutral-950 border border-amber-400/40 hover:border-amber-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer active:scale-[0.98] group/btn"
+                      >
+                        <ShoppingCart className="w-3.5 h-3.5 text-amber-400 group-hover/btn:text-neutral-950 transition-colors" />
+                        <span>Add to Cart</span>
+                      </button>
                     </div>
                   </div>
-
-                  {/* Circular Color Swatches Preview */}
-                  <div className="flex items-center -space-x-1 shrink-0 pb-1">
-                    {p.colors.map((c, idx) => (
-                      <span
-                        key={idx}
-                        className="w-3 h-3 rounded-full border border-white shadow-2xs"
-                        style={{ backgroundColor: c }}
-                      />
-                    ))}
-                    {p.extraColorsCount && (
-                      <span className="text-[10px] text-neutral-500 font-bold pl-1.5">
-                        +{p.extraColorsCount}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-          ))}
+                );
+              })}
         </div>
 
 

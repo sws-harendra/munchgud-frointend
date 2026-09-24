@@ -23,51 +23,6 @@ export default function FlazoBrandSpotlight() {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
-  const subSpotlights = [
-    {
-      id: 201,
-      badge: "Best Seller",
-      badgeColor: "bg-amber-100 text-amber-900 border border-amber-300",
-      series: "Flazo BassPod Extreme",
-      title: "13.4mm Titanium Club Bass & 35ms Beast™ Gaming",
-      price: 1899,
-      originalPrice: 4999,
-      discount: "62% OFF",
-      rating: 4.9,
-      reviews: "14.8K",
-      image: "/images/lineup-showcase.jpg",
-      link: "#flagship-series",
-    },
-    {
-      id: 202,
-      badge: "Gym Ready",
-      badgeColor: "bg-emerald-100 text-emerald-900 border border-emerald-300",
-      series: "Flazo Aerobeat Ultralight",
-      title: "3.6g Featherweight Fit with IPX7 Complete Sweatproof",
-      price: 1499,
-      originalPrice: 3999,
-      discount: "62% OFF",
-      rating: 4.8,
-      reviews: "11.2K",
-      image: "/images/hero-earbuds.jpg",
-      link: "#flagship-series",
-    },
-    {
-      id: 203,
-      badge: "Acoustic Lab Edition",
-      badgeColor: "bg-amber-100 text-amber-900 border border-amber-300",
-      series: "Flazo Acoustic Labs Pro",
-      title: "Exploded 24K Gold Titanium Dual-Diaphragm Architecture",
-      price: 2499,
-      originalPrice: 6999,
-      discount: "64% OFF",
-      rating: 5.0,
-      reviews: "8.6K",
-      image: "/images/driver-tech.jpg",
-      link: "#acoustic-tech",
-    },
-  ];
-
   const handleSpotlightAddToCart = () => {
     setIsAdding(true);
     dispatch(
@@ -82,20 +37,6 @@ export default function FlazoBrandSpotlight() {
     );
     toast.success("Flazo Nirvana Gold Pro X added to your cart!");
     setTimeout(() => setIsAdding(false), 600);
-  };
-
-  const handleSubCardAddToCart = (card: (typeof subSpotlights)[0]) => {
-    dispatch(
-      addToCart({
-        id: card.id,
-        name: card.series,
-        price: card.price,
-        imageUrl: card.image,
-        quantity: 1,
-        paymentMethods: "Prepaid, COD Available",
-      })
-    );
-    toast.success(`${card.series} added to your cart!`);
   };
 
   return (
@@ -242,71 +183,6 @@ export default function FlazoBrandSpotlight() {
             </div>
 
           </div>
-        </div>
-
-        {/* =========================================================================
-            3 COMPANION SPOTLIGHT TILES (Styled in Matching Luxury Gold & Ivory Theme)
-           ========================================================================= */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-          {subSpotlights.map((card) => (
-            <div
-              key={card.id}
-              className="card-lift relative rounded-2xl bg-white border border-[#EADBBD]/80 hover:border-[#D4AF37] p-5 pt-8 flex flex-col justify-between shadow-2xs hover:shadow-xl transition-all duration-300 group"
-            >
-              {/* Corner Badge */}
-              <div className="absolute top-0 left-0">
-                <span className={`inline-block font-black text-[10px] px-3.5 py-1.5 rounded-br-xl rounded-tl-2xl shadow-2xs tracking-wider uppercase ${card.badgeColor}`}>
-                  {card.badge}
-                </span>
-              </div>
-
-              {/* Top Rating Pill */}
-              <div className="absolute top-3 right-4 flex items-center gap-1 text-[11px] font-black text-neutral-800 bg-[#FCF8EE] px-2 py-0.5 rounded-md border border-[#EADBBD]">
-                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                <span>{card.rating}</span>
-                <span className="text-neutral-400 font-normal">({card.reviews})</span>
-              </div>
-
-              {/* Card Image with Hover Zoom */}
-              <div className="relative w-full aspect-4/3 rounded-xl bg-gradient-to-b from-[#FDFBF7] to-[#F7F2E6] flex items-center justify-center overflow-hidden border border-[#EFE8D8] mb-4 group-hover:border-[#E5C158] transition-colors">
-                <Image
-                  src={card.image}
-                  alt={card.series}
-                  fill
-                  className="object-contain p-4 group-hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-
-              {/* Card Details */}
-              <div className="space-y-2 text-left">
-                <h3 className="text-xs font-black uppercase tracking-wider text-[#A07020]">
-                  {card.series}
-                </h3>
-                <p className="text-sm font-bold text-neutral-900 leading-snug line-clamp-2">
-                  {card.title}
-                </p>
-
-                {/* Price and Add Button */}
-                <div className="pt-3 border-t border-[#F0E6D2] flex items-center justify-between">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-lg font-black text-[#8A5E12]">₹{card.price}</span>
-                    <span className="text-xs text-neutral-400 line-through">₹{card.originalPrice}</span>
-                    <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
-                      {card.discount}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => handleSubCardAddToCart(card)}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-[#8A5E12] text-white text-xs font-bold transition-colors cursor-pointer"
-                  >
-                    <ShoppingCart className="w-3.5 h-3.5" />
-                    <span>ADD</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
 
       </div>

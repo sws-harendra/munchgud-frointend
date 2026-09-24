@@ -4,6 +4,8 @@ import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import authReducer from "./features/authSlice";
 import productReducer from "./features/productSlice";
 import bannerReducer from "./features/bannerSlice";
+import heroImageReducer from "./features/heroImageSlice";
+import trendingImageReducer from "./features/trendingImageSlice";
 import cartReducer from "./features/cartSlice";
 import orderReducer from "./features/orderSlice";
 import dashboardReducer from "./features/dashboardSlice";
@@ -24,6 +26,8 @@ export const store = configureStore({
     auth: authReducer,
     product: productReducer,
     banners: bannerReducer,
+    heroImages: heroImageReducer,
+    trendingImages: trendingImageReducer,
     cart: cartReducer,
     order: orderReducer,
     dashboard: dashboardReducer,
