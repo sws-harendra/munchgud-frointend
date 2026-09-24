@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Sidebar from "../components/sidebar";
+import AdminLayoutWrapper from "../components/AdminLayoutWrapper";
 import { Toaster } from "react-hot-toast";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -13,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "User Dashboard",
-  description: "Dashboard section for users",
+  title: "Admin Dashboard | Flazo Control Center",
+  description: "Administrative dashboard and store control center",
 };
 
 export default function AdminDashboardLayout({
@@ -27,13 +28,8 @@ export default function AdminDashboardLayout({
       className={`h-screen overflow-hidden ${geistSans.variable} ${geistMono.variable}`}
     >
       <Toaster position="top-right" reverseOrder={false} />
-      <main className="flex h-full">
-        {/* Sidebar stays fixed height */}
-        <Sidebar />
-
-        {/* Right content gets its own scroll */}
-        <div className="flex-1 p-6 overflow-y-auto">{children}</div>
-      </main>
+      <AdminLayoutWrapper>{children}</AdminLayoutWrapper>
     </div>
   );
 }
+

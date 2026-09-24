@@ -388,3 +388,99 @@ h1, h2, h3, h4, h5, h6 {
   animation: eq-pulse 0.8s ease-in-out infinite 0.35s;
 }
 
+/* ======================================================== */
+/* ADMIN DASHBOARD DYNAMIC THEME SYSTEM */
+/* ======================================================== */
+.admin-theme-root {
+  font-family: var(--admin-font, sans-serif) !important;
+}
+
+.admin-theme-root * {
+  font-family: inherit;
+}
+
+/* Animations for Admin Customizer */
+@keyframes drawerFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: drawerFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Dark Mode Overrides for Admin Panel Surfaces */
+.admin-theme-root.dark {
+  color-scheme: dark;
+}
+
+.admin-theme-root.dark .bg-white {
+  background-color: #0f172a !important;
+  color: #f1f5f9;
+}
+
+.admin-theme-root.dark .bg-gray-50,
+.admin-theme-root.dark .bg-neutral-50,
+.admin-theme-root.dark .bg-slate-50 {
+  background-color: #090d16 !important;
+}
+
+.admin-theme-root.dark .bg-gray-100,
+.admin-theme-root.dark .bg-neutral-100 {
+  background-color: #1e293b !important;
+  color: #f1f5f9;
+}
+
+.admin-theme-root.dark .border-gray-200,
+.admin-theme-root.dark .border-neutral-200,
+.admin-theme-root.dark .border-slate-200,
+.admin-theme-root.dark .border-gray-100 {
+  border-color: #1e293b !important;
+}
+
+.admin-theme-root.dark .text-gray-900,
+.admin-theme-root.dark .text-neutral-900,
+.admin-theme-root.dark .text-slate-900,
+.admin-theme-root.dark .text-neutral-950 {
+  color: #f8fafc !important;
+}
+
+.admin-theme-root.dark .text-gray-800,
+.admin-theme-root.dark .text-neutral-800 {
+  color: #e2e8f0 !important;
+}
+
+.admin-theme-root.dark .text-gray-700,
+.admin-theme-root.dark .text-neutral-700 {
+  color: #cbd5e1 !important;
+}
+
+.admin-theme-root.dark .text-gray-600,
+.admin-theme-root.dark .text-neutral-600,
+.admin-theme-root.dark .text-gray-500,
+.admin-theme-root.dark .text-neutral-500 {
+  color: #94a3b8 !important;
+}
+
+.admin-theme-root.dark input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+.admin-theme-root.dark select,
+.admin-theme-root.dark textarea {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.admin-theme-root.dark table thead th {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+.admin-theme-root.dark table tbody tr {
+  border-color: #1e293b !important;
+}
+
+.admin-theme-root.dark table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+

@@ -34,6 +34,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { brandName } from "@/app/contants";
 import { useAppDispatch } from "@/app/lib/store/store";
 import { logout } from "@/app/lib/store/features/authSlice";
+import { useAdminTheme } from "../context/AdminThemeContext";
 
 interface SubMenuItem {
   name: string;
@@ -147,9 +148,11 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function Sidebar() {
-  const [open, setOpen] = useState(true);
+  const { settings, updateSetting, isSidebarDark } = useAdminTheme();
+  const open = !settings.sidebarCollapsed;
+
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
-    Images: true, // Default open so tree view is immediately visible
+    Images: true,
   });
 
   const router = useRouter();
@@ -172,7 +175,7 @@ export default function Sidebar() {
 
   const toggleSubmenu = (menuName: string) => {
     if (!open) {
-      setOpen(true);
+      updateSetting("sidebarCollapsed", false);
       setExpandedMenus((prev) => ({ ...prev, [menuName]: true }));
       return;
     }
@@ -194,49 +197,104 @@ export default function Sidebar() {
     }
   };
 
+  // Helper for active styling
+  const getActiveItemStyles = (isActive: boolean) => {
+    if (!isActive) return {};
+    switch (settings.sidebarActiveStyle) {
+      case "border":
+        return {
+          borderLeft: `4px solid ${settings.accentColor}`,
+          backgroundColor: isSidebarDark
+            ? "rgba(255, 255, 255, 0.08)"
+            : "rgba(0, 0, 0, 0.05)",
+          color: settings.accentColor,
+        };
+      case "glow":
+        return {
+          border: `1px solid ${settings.accentColor}`,
+          boxShadow: `0 0 12px ${settings.accentColor}44`,
+          backgroundColor: `${settings.accentColor}18`,
+          color: settings.accentColor,
+        };
+      case "minimal":
+        return {
+          color: settings.accentColor,
+          backgroundColor: isSidebarDark
+            ? "rgba(255, 255, 255, 0.06)"
+            : "rgba(0, 0, 0, 0.04)",
+        };
+      case "pill":
+      default:
+        return {
+          backgroundColor: `${settings.accentColor}25`,
+          borderColor: `${settings.accentColor}50`,
+          color: settings.accentColor,
+        };
+    }
+  };
+
+  const sidebarBg = settings.isSidebarGradient
+    ? settings.sidebarGradient
+    : settings.sidebarColor;
+
   return (
-    <div className="flex overflow-y-auto overflow-x-hidden h-full bg-gray-900 select-none">
+    <aside
+      className="flex overflow-y-auto overflow-x-hidden h-full select-none shrink-0 transition-all duration-300 border-r z-30"
+      style={{
+        background: sidebarBg,
+        color: isSidebarDark ? "#f8fafc" : "#1e293b",
+        borderColor: isSidebarDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
+      }}
+    >
       {/* Sidebar Container */}
       <div
         className={`${
           open ? "w-64" : "w-20"
-        } bg-gray-900 text-gray-100 h-screen p-4 pt-6 relative duration-300 flex flex-col justify-between`}
+        } h-screen p-4 pt-6 relative duration-300 flex flex-col justify-between`}
       >
         <div>
           {/* Toggle Expand/Collapse Button */}
           <button
-            onClick={() => setOpen(!open)}
+            onClick={() =>
+              updateSetting("sidebarCollapsed", !settings.sidebarCollapsed)
+            }
             aria-label="Toggle Sidebar"
-            className="absolute -right-3 top-8 w-7 h-7 bg-gray-800 border border-gray-700 rounded-full flex items-center justify-center text-gray-300 hover:text-white hover:bg-gray-700 transition cursor-pointer z-20"
+            className="absolute -right-3 top-8 w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer z-20 shadow-md border"
+            style={{
+              backgroundColor: isSidebarDark ? "#1e293b" : "#ffffff",
+              borderColor: isSidebarDark ? "#334155" : "#e2e8f0",
+              color: isSidebarDark ? "#cbd5e1" : "#475569",
+            }}
           >
-            {open ? <X size={16} /> : <Menu size={16} />}
+            {open ? <X size={15} /> : <Menu size={15} />}
           </button>
 
           {/* Brand Logo */}
           <h1
-            className={`text-xl font-bold mb-8 text-center duration-300 tracking-wider text-amber-400 ${
-              !open && "scale-0"
+            className={`text-xl font-black mb-8 text-center duration-300 tracking-wider transition-transform ${
+              !open && "scale-0 h-0 mb-4"
             }`}
+            style={{ color: settings.accentColor }}
           >
             {brandName}
           </h1>
 
           {/* Menu Items List */}
-          <ul className="space-y-2 pb-6">
+          <ul className="space-y-1.5 pb-6">
             {menuItems.map((item, idx) => {
               // 1. Logout Action
               if (item.isLogout) {
                 return (
-                  <li key={idx}>
+                  <li key={idx} className="pt-2">
                     <button
                       onClick={handleLogout}
-                      className="flex w-full items-center gap-3 p-2 rounded-xl hover:bg-red-950/40 text-red-400 hover:text-red-300 transition text-left cursor-pointer"
+                      className="flex w-full items-center gap-3 p-2.5 rounded-xl transition text-left cursor-pointer group text-rose-400 hover:text-rose-300 hover:bg-rose-950/30"
                     >
-                      <item.icon size={20} className="shrink-0" />
+                      <item.icon size={19} className="shrink-0 transition-transform group-hover:scale-110" />
                       <span
                         className={`${
                           !open && "hidden"
-                        } origin-left duration-200 text-sm font-medium`}
+                        } origin-left duration-200 text-sm font-semibold`}
                       >
                         {item.name}
                       </span>
@@ -257,18 +315,22 @@ export default function Sidebar() {
                     {/* Parent Toggle Button */}
                     <button
                       onClick={() => toggleSubmenu(item.name)}
-                      className={`flex w-full items-center justify-between p-2.5 rounded-xl transition-all text-left cursor-pointer group ${
+                      className={`flex w-full items-center justify-between p-2.5 rounded-xl transition-all text-left cursor-pointer group border ${
                         hasActiveChild
-                          ? "bg-gray-800 text-amber-400 font-semibold border border-amber-500/30 shadow-xs"
-                          : "hover:bg-gray-800 text-gray-200"
+                          ? "font-semibold shadow-xs"
+                          : isSidebarDark
+                          ? "border-transparent hover:bg-white/10 text-slate-300"
+                          : "border-transparent hover:bg-black/5 text-slate-700"
                       }`}
+                      style={hasActiveChild ? getActiveItemStyles(true) : {}}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <item.icon
-                          size={20}
-                          className={`shrink-0 transition-transform duration-200 group-hover:scale-105 ${
-                            hasActiveChild ? "text-amber-400" : "text-gray-400 group-hover:text-amber-400"
-                          }`}
+                          size={19}
+                          className="shrink-0 transition-transform duration-200 group-hover:scale-105"
+                          style={{
+                            color: hasActiveChild ? settings.accentColor : undefined,
+                          }}
                         />
                         <span
                           className={`${
@@ -281,13 +343,23 @@ export default function Sidebar() {
 
                       {open && (
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-gray-800 text-gray-400 border border-gray-700/60 group-hover:border-amber-500/30 group-hover:text-amber-400 transition-colors">
+                          <span
+                            className="text-[10px] font-bold px-1.5 py-0.5 rounded-md border transition-colors"
+                            style={{
+                              backgroundColor: isSidebarDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                              borderColor: isSidebarDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+                              color: hasActiveChild ? settings.accentColor : "inherit",
+                            }}
+                          >
                             {item.subItems.length}
                           </span>
                           <span
-                            className={`text-gray-400 transition-transform duration-200 ${
-                              isExpanded ? "rotate-90 text-amber-400" : ""
+                            className={`transition-transform duration-200 opacity-60 ${
+                              isExpanded ? "rotate-90" : ""
                             }`}
+                            style={{
+                              color: isExpanded ? settings.accentColor : undefined,
+                            }}
                           >
                             <ChevronRight size={15} />
                           </span>
@@ -299,7 +371,14 @@ export default function Sidebar() {
                     {open && isExpanded && (
                       <div className="mt-1 ml-5 relative space-y-1 py-1">
                         {/* Continuous Vertical Guide Line for Tree */}
-                        <div className="absolute left-0 top-0 bottom-3 w-[2px] bg-gradient-to-b from-amber-500/50 via-gray-700 to-transparent" />
+                        <div
+                          className="absolute left-0 top-0 bottom-3 w-[2px]"
+                          style={{
+                            background: `linear-gradient(to bottom, ${settings.accentColor}99, ${
+                              isSidebarDark ? "#475569" : "#cbd5e1"
+                            }, transparent)`,
+                          }}
+                        />
 
                         {item.subItems.map((sub, sIdx) => {
                           const isChildActive = pathname === sub.href;
@@ -309,47 +388,81 @@ export default function Sidebar() {
                             <div key={sIdx} className="relative pl-5 group">
                               {/* Horizontal Tree Branch Connector */}
                               <div
-                                className={`absolute left-0 top-1/2 -translate-y-1/2 w-4 h-[2px] transition-colors ${
-                                  isChildActive
-                                    ? "bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.6)]"
-                                    : "bg-gray-700 group-hover:bg-amber-500/50"
-                                }`}
+                                className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-[2px] transition-colors"
+                                style={{
+                                  backgroundColor: isChildActive
+                                    ? settings.accentColor
+                                    : isSidebarDark
+                                    ? "#475569"
+                                    : "#cbd5e1",
+                                }}
                               />
                               {/* Connector Node Dot */}
                               <div
                                 className={`absolute left-[13px] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-all ${
-                                  isChildActive
-                                    ? "bg-amber-400 ring-2 ring-amber-400/30 scale-125"
-                                    : "bg-gray-600 group-hover:bg-amber-400"
+                                  isChildActive ? "ring-2 scale-125" : ""
                                 }`}
+                                style={{
+                                  backgroundColor: isChildActive
+                                    ? settings.accentColor
+                                    : isSidebarDark
+                                    ? "#64748b"
+                                    : "#94a3b8",
+                                  boxShadow: isChildActive
+                                    ? `0 0 0 2px ${settings.accentColor}40`
+                                    : undefined,
+                                }}
                               />
 
                               <Link
                                 href={sub.href}
                                 className={`flex items-center justify-between py-2 px-3 rounded-lg text-xs transition-all ${
                                   isChildActive
-                                    ? "bg-gradient-to-r from-amber-500/20 to-transparent text-amber-300 font-semibold border-l-2 border-amber-400 shadow-sm"
-                                    : "text-gray-400 hover:text-gray-100 hover:bg-gray-800/60"
+                                    ? "font-bold shadow-xs"
+                                    : isSidebarDark
+                                    ? "text-slate-400 hover:text-slate-100 hover:bg-white/5"
+                                    : "text-slate-600 hover:text-slate-900 hover:bg-black/5"
                                 }`}
+                                style={
+                                  isChildActive
+                                    ? {
+                                        backgroundColor: `${settings.accentColor}20`,
+                                        color: settings.accentColor,
+                                        borderLeft: `2px solid ${settings.accentColor}`,
+                                      }
+                                    : {}
+                                }
                               >
                                 <div className="flex items-center gap-2.5 min-w-0">
                                   <SubIcon
                                     size={14}
-                                    className={`shrink-0 transition-transform ${
-                                      isChildActive
-                                        ? "text-amber-400 fill-amber-400/40"
-                                        : "text-gray-500 group-hover:text-amber-400"
-                                    }`}
+                                    className="shrink-0 transition-transform"
+                                    style={{
+                                      color: isChildActive
+                                        ? settings.accentColor
+                                        : undefined,
+                                    }}
                                   />
                                   <span className="truncate">{sub.name}</span>
                                 </div>
                                 {sub.badge && (
                                   <span
-                                    className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                                    className="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border"
+                                    style={
                                       isChildActive
-                                        ? "bg-amber-400/20 text-amber-300 border border-amber-400/30"
-                                        : "bg-gray-800 text-gray-500 group-hover:text-gray-300"
-                                    }`}
+                                        ? {
+                                            backgroundColor: `${settings.accentColor}25`,
+                                            borderColor: `${settings.accentColor}40`,
+                                            color: settings.accentColor,
+                                          }
+                                        : {
+                                            backgroundColor: isSidebarDark
+                                              ? "rgba(255,255,255,0.06)"
+                                              : "rgba(0,0,0,0.04)",
+                                            borderColor: "transparent",
+                                            opacity: 0.7,
+                                          }
+                                    }
                                   >
                                     {sub.badge}
                                   </span>
@@ -371,17 +484,21 @@ export default function Sidebar() {
                 <li key={idx}>
                   <Link
                     href={item.href || "#"}
-                    className={`flex items-center gap-3 p-2 rounded-xl transition ${
+                    className={`flex items-center gap-3 p-2.5 rounded-xl transition cursor-pointer group border ${
                       isActive
-                        ? "bg-gray-800 text-amber-400 font-semibold border-l-4 border-amber-500"
-                        : "hover:bg-gray-800 text-gray-200"
+                        ? "font-semibold shadow-xs"
+                        : isSidebarDark
+                        ? "border-transparent hover:bg-white/10 text-slate-300"
+                        : "border-transparent hover:bg-black/5 text-slate-700"
                     }`}
+                    style={isActive ? getActiveItemStyles(true) : {}}
                   >
                     <item.icon
-                      size={20}
-                      className={`shrink-0 ${
-                        isActive ? "text-amber-400" : "text-gray-400"
-                      }`}
+                      size={19}
+                      className="shrink-0 transition-transform duration-200 group-hover:scale-105"
+                      style={{
+                        color: isActive ? settings.accentColor : undefined,
+                      }}
                     />
                     <span
                       className={`${
@@ -397,6 +514,6 @@ export default function Sidebar() {
           </ul>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }
