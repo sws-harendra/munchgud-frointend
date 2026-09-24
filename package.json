@@ -30,7 +30,7 @@
     "@tiptap/starter-kit": "^3.4.2",
     "axios": "^1.11.0",
     "lucide-react": "^0.540.0",
-    "next": "15.4.10",
+    "next": "15.5.26",
     "razorpay": "^2.9.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -40,7 +40,7 @@
     "react-redux": "^9.2.0",
     "react-share": "^5.2.2",
     "sonner": "^2.0.7",
-    "swiper": "^11.2.10"
+    "swiper": "^12.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -49,8 +49,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.4.7",
+    "eslint-config-next": "15.5.26",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "^8.5.28",
+    "sharp": "^0.35.4"
   }
 }
