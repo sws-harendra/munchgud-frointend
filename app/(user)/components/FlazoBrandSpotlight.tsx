@@ -193,13 +193,15 @@ export default function FlazoBrandSpotlight() {
                   </div>
 
                   {/* Real Earbud Product Visual */}
-                  <div className="relative w-full aspect-[545/643] rounded-2xl overflow-hidden bg-gradient-to-b from-[#FAF7F2] to-[#F5EFE6]">
+                  <div className="relative w-full rounded-2xl overflow-hidden bg-gradient-to-b from-[#FAF7F2] to-[#F5EFE6] flex items-center justify-center min-h-[360px] sm:min-h-[440px]">
                     <Image
-                      src="/images/real_earbud_product.png"
+                      src="/images/real_earbud_product.png?v=2"
                       alt="Flazo Nirvana High Definition 13mm Wireless Earbuds with 100H Battery"
-                      fill
+                      width={545}
+                      height={643}
                       priority
-                      className="object-contain p-2 transform group-hover:scale-[1.02] transition-transform duration-500"
+                      unoptimized
+                      className="w-full h-auto max-h-[480px] object-contain p-2 transform group-hover:scale-[1.02] transition-transform duration-500"
                     />
                   </div>
 
