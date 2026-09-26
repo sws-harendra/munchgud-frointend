@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
-import { updateProduct } from "@/app/lib/store/features/productSlice";
+import { updateProduct, fetchProductsforadmin } from "@/app/lib/store/features/productSlice";
 import { toast } from "sonner";
 import {
   ImagePlus,
@@ -12,11 +12,15 @@ import {
   IndianRupee,
   Archive,
   Video,
+  Sparkles,
+  Percent,
+  CheckCircle2,
 } from "lucide-react";
 import { categoryService } from "@/app/sercices/category.service";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { isImageFile, isVideoFile } from "@/app/utils/getMediaType";
 import RichTextEditor from "@/app/commonComponents/RichTextEditor";
+import { useAdminTheme } from "../context/AdminThemeContext";
 
 interface Category {
   id: number;
@@ -25,13 +29,16 @@ interface Category {
 
 interface EditProductProps {
   productId: number;
+  onSuccess?: () => void;
 }
 
-const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
+const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
   const dispatch = useAppDispatch();
+  const { isDark } = useAdminTheme();
   const { products } = useAppSelector((state) => state.product);
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -45,18 +52,14 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
     varientValue: "",
   });
 
-  // Separate state for image management
-  const [newImages, setNewImages] = useState<File[]>([]);
-  const [existingImages, setExistingImages] = useState<string[]>([]);
-  const [removedImages, setRemovedImages] = useState<string[]>([]);
-  const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
-  // Replace image-specific states with media states
+  // Media states
   const [newMedia, setNewMedia] = useState<File[]>([]);
   const [existingMedia, setExistingMedia] = useState<string[]>([]);
   const [removedMedia, setRemovedMedia] = useState<string[]>([]);
   const [newMediaPreviews, setNewMediaPreviews] = useState<
     { url: string; type: "image" | "video" }[]
   >([]);
+
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -71,22 +74,21 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
   }, []);
 
   // Load product data
-  // Load product data
   useEffect(() => {
     const product = products.products.find((p) => p.id === productId);
     if (product) {
       setFormData({
-        name: product.name,
-        varientValue: product.varientValue,
-        description: product.description,
-        categoryId: String(product.categoryId),
+        name: product.name || "",
+        varientValue: product.varientValue || "",
+        description: product.description || "",
+        categoryId: product.categoryId ? String(product.categoryId) : "",
         tags: Array.isArray(product.tags)
           ? product.tags.join(",")
           : product.tags || "",
-        originalPrice: String(product.originalPrice),
-        discountPrice: String(product.discountPrice),
-        stock: String(product.stock),
-        trendingProduct: product.trending_product,
+        originalPrice: product.originalPrice ? String(product.originalPrice) : "",
+        discountPrice: product.discountPrice ? String(product.discountPrice) : "",
+        stock: product.stock !== undefined ? String(product.stock) : "",
+        trendingProduct: !!product.trending_product,
         paymentMethods: product.paymentMethods || "both",
       });
 
@@ -111,6 +113,18 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
     }
   }, [productId, products]);
 
+  // Pricing calculations
+  const priceStats = useMemo(() => {
+    const original = parseFloat(formData.originalPrice) || 0;
+    const sale = parseFloat(formData.discountPrice) || 0;
+    if (original > 0 && sale > 0 && original > sale) {
+      const discountPercent = Math.round(((original - sale) / original) * 100);
+      const savings = original - sale;
+      return { discountPercent, savings };
+    }
+    return { discountPercent: 0, savings: 0 };
+  }, [formData.originalPrice, formData.discountPrice]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -119,23 +133,20 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-
-  // Product Description Handler
   const handleDescriptionChange = (value: string) => {
-  setFormData((prev) => ({
-    ...prev,
-    description: value,
-  }));
-};
+    setFormData((prev) => ({
+      ...prev,
+      description: value,
+    }));
+  };
 
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
       setNewMedia((prev) => [...prev, ...files]);
 
-      // Create previews for new media
       const newPreviews = files.map((file) => {
-        const type = file.type.startsWith("video/") ? "video" : "image";
+        const type = file.type.startsWith("video/") ? ("video" as const) : ("image" as const);
         const previewUrl = type === "image" ? URL.createObjectURL(file) : "";
         return { url: previewUrl, type };
       });
@@ -144,16 +155,12 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
   };
 
   const handleRemoveExistingMedia = (mediaPath: string, index: number) => {
-    // Move from existing to removed
     setExistingMedia((prev) => prev.filter((_, i) => i !== index));
     setRemovedMedia((prev) => [...prev, mediaPath]);
   };
 
   const handleRemoveNewMedia = (index: number) => {
-    // Remove from new media
     setNewMedia((prev) => prev.filter((_, i) => i !== index));
-
-    // Clean up preview URL and remove from previews
     const previewToRemove = newMediaPreviews[index];
     if (previewToRemove && previewToRemove.type === "image") {
       URL.revokeObjectURL(previewToRemove.url);
@@ -165,43 +172,18 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
   useEffect(() => {
     return () => {
       newMediaPreviews.forEach((preview) => {
-        if (preview.type === "image") {
+        if (preview.type === "image" && preview.url) {
           URL.revokeObjectURL(preview.url);
         }
       });
     };
-  }, []);
-  const handleRemoveExistingImage = (imageUrl: string, index: number) => {
-    // Move from existing to removed
-    setExistingImages((prev) => prev.filter((_, i) => i !== index));
-    setRemovedImages((prev) => [...prev, imageUrl]);
-  };
-
-  const handleRemoveNewImage = (index: number) => {
-    // Remove from new images
-    setNewImages((prev) => prev.filter((_, i) => i !== index));
-
-    // Clean up preview URL and remove from previews
-    const previewToRemove = newImagePreviews[index];
-    if (previewToRemove) {
-      URL.revokeObjectURL(previewToRemove);
-    }
-    setNewImagePreviews((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  // Clean up preview URLs on unmount
-  useEffect(() => {
-    return () => {
-      newImagePreviews.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, []);
+  }, [newMediaPreviews]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const data = new FormData();
-
-      // Add form fields
       data.append("name", formData.name);
       data.append("description", formData.description);
       data.append("categoryId", formData.categoryId);
@@ -212,83 +194,61 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
       data.append("trending_product", String(formData.trendingProduct));
       data.append("paymentMethods", formData.paymentMethods);
       data.append("varientValue", formData.varientValue);
-      // Add media management data (updated field names)
       data.append("existingMedia", JSON.stringify(existingMedia));
       data.append("removedMedia", JSON.stringify(removedMedia));
 
-      // Add new media files
       newMedia.forEach((file) => {
-        data.append("media", file); // Changed from "images" to "media"
+        data.append("media", file);
       });
 
       await dispatch(updateProduct({ id: productId, data })).unwrap();
+      await dispatch(fetchProductsforadmin({ page: 1, limit: 10 }));
       toast.success("✅ Product updated successfully!");
+      if (onSuccess) onSuccess();
     } catch (error: any) {
-      toast.error(`❌ Failed: ${error}`);
+      toast.error(`❌ Failed: ${error?.message || error || "Unknown error"}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // Calculate total images for display
   const totalMedia = existingMedia.length + newMedia.length;
+
   const flattenCategoriesForDropdown = (cats: any[], level = 0): any[] => {
     let result: any[] = [];
-
     cats.forEach((cat) => {
-      // Add current category with proper indentation indicator
       result.push({
         id: cat.id,
         name: cat.name,
         level: level,
         displayName: "  ".repeat(level) + (level > 0 ? "└ " : "") + cat.name,
       });
-
-      // Recursively add subcategories
       if (cat.subcategories && cat.subcategories.length > 0) {
         result = result.concat(
           flattenCategoriesForDropdown(cat.subcategories, level + 1),
         );
       }
     });
-
-    return result;
-  };
-
-  // Function to flatten categories for table display
-  const flattenCategoriesForTable = (cats: any[], level = 0): any[] => {
-    let result: any[] = [];
-
-    cats.forEach((cat) => {
-      result.push({
-        ...cat,
-        level: level,
-        displayName: "  ".repeat(level) + (level > 0 ? "└ " : "") + cat.name,
-      });
-
-      if (cat.subcategories && cat.subcategories.length > 0) {
-        result = result.concat(
-          flattenCategoriesForTable(cat.subcategories, level + 1),
-        );
-      }
-    });
-
     return result;
   };
 
   const dropdownCategories = flattenCategoriesForDropdown(categories);
 
   return (
-    <div className="min-h-screen py-2 px-1">
-      <div className="max-w-4xl mx-auto">
-        {/* Main Form Container */}
-        <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+    <div className={`w-full transition-colors duration-200 ${isDark ? "bg-black text-white" : "bg-transparent text-gray-900"}`}>
+      <div className="w-full">
+        <div className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+          isDark 
+            ? "bg-black border-zinc-800/80 shadow-none" 
+            : "bg-white border-gray-100 shadow-sm"
+        }`}>
           <form onSubmit={handleSubmit}>
-            {/* Form Content */}
-            <div className="p-8 space-y-8">
+            <div className="p-4 sm:p-6 space-y-7">
               {/* Basic Information Section */}
               <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full"></div>
-                  <h3 className="text-xl font-semibold text-gray-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-7 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full"></div>
+                  <h3 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
                     Basic Information
                   </h3>
                 </div>
@@ -296,18 +256,22 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Product Name */}
                   <div className="lg:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Product Name
+                    <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                      Product Name *
                     </label>
                     <div className="relative">
-                      <Package className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <Package className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-amber-500 w-5 h-5" />
                       <input
                         type="text"
                         name="name"
-                        placeholder="Enter product name"
+                        placeholder="e.g. Flazo Nirvana Gold Pro X ANC Earbuds"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                        className={`w-full pl-11 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none ${
+                          isDark
+                            ? "bg-zinc-900/90 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+                            : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:bg-white"
+                        }`}
                         required
                       />
                     </div>
@@ -315,75 +279,82 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
 
                   {/* Description */}
                   <div className="lg:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Description
+                    <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                      Product Story & Highlights *
                     </label>
-                    {/* <textarea
-                      name="description"
-                      placeholder="Describe your product features and benefits"
-                      value={formData.description}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white resize-none"
-                      rows={4}
-                      required
-                    /> */}
                     <RichTextEditor
-                      placeholder="Describe your product features and benefits"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white resize-none"
-                      value={formData.description} 
+                      placeholder="Describe audio architecture, acoustic performance, and key specs..."
+                      className={`w-full rounded-xl border transition-all ${
+                        isDark ? "border-zinc-800 bg-zinc-900/60" : "border-gray-200 bg-gray-50"
+                      }`}
+                      value={formData.description}
                       onChange={handleDescriptionChange}
                       required
-                      />
+                    />
                   </div>
 
                   {/* Category */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Category
+                    <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                      Category *
                     </label>
                     <select
                       name="categoryId"
                       value={formData.categoryId}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                      className={`w-full px-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none ${
+                        isDark
+                          ? "bg-zinc-900 border-zinc-800 text-white focus:border-amber-400"
+                          : "bg-gray-50 border-gray-200 text-gray-900 focus:border-amber-500 focus:bg-white"
+                      }`}
                       required
                     >
                       <option value="">Select Category</option>
                       {dropdownCategories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
+                        <option key={cat.id} value={cat.id} className={isDark ? "bg-zinc-900 text-white" : ""}>
                           {cat.displayName}
                         </option>
                       ))}
                     </select>
                   </div>
+
+                  {/* Variant */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Add Varient Type
+                    <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                      Variant / Edition
                     </label>
                     <input
                       type="text"
                       name="varientValue"
-                      placeholder="eg. 100gm or 1kg"
+                      placeholder="e.g. Signature Gold / 50Hr Playtime"
                       value={formData.varientValue}
                       onChange={handleChange}
-                      className="w-full pl-2 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
-                      required
+                      className={`w-full px-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none ${
+                        isDark
+                          ? "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-400"
+                          : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:bg-white"
+                      }`}
                     />
                   </div>
+
                   {/* Tags */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tags
+                  <div className="lg:col-span-2">
+                    <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                      Search Tags (Comma separated)
                     </label>
                     <div className="relative">
-                      <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <Tag className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
                       <input
                         type="text"
                         name="tags"
-                        placeholder="smartphone, android, mobile"
+                        placeholder="earbuds, anc, flazo, wireless, bluetooth 5.4, gaming"
                         value={formData.tags}
                         onChange={handleChange}
-                        className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                        className={`w-full pl-11 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none ${
+                          isDark
+                            ? "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-400"
+                            : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:bg-white"
+                        }`}
                       />
                     </div>
                   </div>
@@ -392,28 +363,32 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
 
               {/* Pricing & Inventory Section */}
               <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-2 h-8 bg-gradient-to-b from-emerald-500 to-green-500 rounded-full"></div>
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    Pricing & Inventory
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-7 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-full"></div>
+                  <h3 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+                    Pricing & Stock Inventory
                   </h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Original Price */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Original Price
+                    <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                      MRP (Original Price) *
                     </label>
                     <div className="relative">
-                      <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <IndianRupee className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-zinc-400 w-4 h-4" />
                       <input
                         type="number"
                         name="originalPrice"
-                        placeholder="0.00"
+                        placeholder="4999"
                         value={formData.originalPrice}
                         onChange={handleChange}
-                        className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none ${
+                          isDark
+                            ? "bg-zinc-900 border-zinc-800 text-white focus:border-amber-400"
+                            : "bg-gray-50 border-gray-200 text-gray-900 focus:border-amber-500 focus:bg-white"
+                        }`}
                         required
                       />
                     </div>
@@ -421,18 +396,22 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
 
                   {/* Discount Price */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Sale Price
+                    <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
+                      Sale Offer Price *
                     </label>
                     <div className="relative">
-                      <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-emerald-500 w-5 h-5" />
+                      <IndianRupee className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-emerald-500 w-4 h-4" />
                       <input
                         type="number"
                         name="discountPrice"
-                        placeholder="0.00"
+                        placeholder="1899"
                         value={formData.discountPrice}
                         onChange={handleChange}
-                        className="w-full pl-11 pr-4 py-3 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 bg-emerald-50 hover:bg-white"
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm font-semibold transition-all outline-none ${
+                          isDark
+                            ? "bg-emerald-950/20 border-emerald-900/60 text-emerald-400 focus:border-emerald-500"
+                            : "bg-emerald-50/70 border-emerald-200 text-emerald-700 focus:border-emerald-500 focus:bg-white"
+                        }`}
                         required
                       />
                     </div>
@@ -440,245 +419,232 @@ const EditProduct: React.FC<EditProductProps> = ({ productId }) => {
 
                   {/* Stock */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Stock Quantity
+                    <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                      Stock Units *
                     </label>
                     <div className="relative">
-                      <Archive className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <Archive className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-zinc-400 w-4 h-4" />
                       <input
                         type="number"
                         name="stock"
-                        placeholder="0"
+                        placeholder="100"
                         value={formData.stock}
                         onChange={handleChange}
-                        className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm font-medium transition-all outline-none ${
+                          isDark
+                            ? "bg-zinc-900 border-zinc-800 text-white focus:border-amber-400"
+                            : "bg-gray-50 border-gray-200 text-gray-900 focus:border-amber-500 focus:bg-white"
+                        }`}
                         required
                       />
                     </div>
                   </div>
                 </div>
+
+                {/* Savings Live Display */}
+                {priceStats.discountPercent > 0 && (
+                  <div className={`flex items-center gap-3 p-3.5 rounded-2xl border text-xs font-medium ${
+                    isDark 
+                      ? "bg-emerald-950/20 border-emerald-900/50 text-emerald-300"
+                      : "bg-emerald-50 border-emerald-200 text-emerald-800"
+                  }`}>
+                    <Percent className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>
+                      Customer saves <strong className="font-bold">₹{priceStats.savings.toLocaleString("en-IN")}</strong> ({priceStats.discountPercent}% OFF)
+                    </span>
+                  </div>
+                )}
               </div>
 
-              {/* Image Upload Section */}
+              {/* Media Section */}
               <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-2 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    Product Images
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-7 bg-gradient-to-b from-purple-400 to-pink-500 rounded-full"></div>
+                  <h3 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+                    Product Media & Images
                   </h3>
                 </div>
 
                 {/* Upload Area */}
-                {/* Media Upload Section */}
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-2 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      Product Media
-                    </h3>
-                  </div>
+                <div className={`border-2 border-dashed rounded-2xl p-6 text-center transition-all duration-300 cursor-pointer group ${
+                  isDark
+                    ? "border-zinc-800 hover:border-amber-400/60 hover:bg-zinc-900/40"
+                    : "border-gray-200 hover:border-amber-500 hover:bg-amber-50/30"
+                }`}>
+                  <label className="flex flex-col items-center space-y-3 cursor-pointer">
+                    <div className="w-14 h-14 bg-gradient-to-tr from-amber-500 to-amber-300 rounded-2xl flex items-center justify-center text-zinc-950 shadow-md group-hover:scale-105 transition-transform duration-300">
+                      <ImagePlus className="w-7 h-7" />
+                    </div>
+                    <div>
+                      <span className={`text-base font-bold ${isDark ? "text-white" : "text-gray-800"}`}>
+                        Upload Additional Images / Video
+                      </span>
+                      <p className={`text-xs mt-1 ${isDark ? "text-zinc-400" : "text-gray-500"}`}>
+                        PNG, JPG, WEBP, MP4 (recommended 800x800 or 1000x1000)
+                      </p>
+                    </div>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*,video/*"
+                      onChange={handleMediaChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
 
-                  {/* Upload Area */}
-                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer group">
-                    <label className="flex flex-col items-center space-y-4 cursor-pointer">
-                      <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <ImagePlus className="w-8 h-8 text-white" />
-                      </div>
-                      <div>
-                        <span className="text-xl font-medium text-gray-700 group-hover:text-blue-600">
-                          Upload Additional Media
-                        </span>
-                        <p className="text-gray-500 mt-1">
-                          PNG, JPG, WEBP, MP4 up to 50MB
-                        </p>
-                      </div>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*,video/*" // Accept both images and videos
-                        onChange={handleMediaChange}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-
-                  {/* Media Preview */}
-                  {(existingMedia.length > 0 || newMedia.length > 0) && (
-                    <div className="space-y-4">
-                      <h4 className="font-medium text-gray-700">
-                        Product Media ({totalMedia})
+                {/* Media Preview Grid */}
+                {(existingMedia.length > 0 || newMedia.length > 0) && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                        Total Media Attached ({totalMedia})
                       </h4>
+                    </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {/* Existing Media */}
-                        {existingMedia.map((mediaPath, idx) => {
-                          const isImage = isImageFile(mediaPath);
-                          const isVideo = isVideoFile(mediaPath);
+                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                      {/* Existing Media */}
+                      {existingMedia.map((mediaPath, idx) => {
+                        const isImage = isImageFile(mediaPath);
+                        const isVideo = isVideoFile(mediaPath);
 
-                          return (
-                            <div
-                              key={`existing-${idx}`}
-                              className="relative group aspect-square rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
-                            >
-                              {isImage ? (
-                                <img
-                                  src={getImageUrl(mediaPath)}
-                                  alt={`Existing ${idx + 1}`}
-                                  className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
-                                />
-                              ) : isVideo ? (
-                                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                  <Video className="w-8 h-8 text-gray-500" />
-                                  <span className="sr-only">Video file</span>
-                                </div>
-                              ) : (
-                                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                  <span className="text-gray-500 text-sm">
-                                    Unsupported
-                                  </span>
-                                </div>
-                              )}
-                              <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
-                              <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                                Existing
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleRemoveExistingMedia(mediaPath, idx)
-                                }
-                                className="absolute -top-2 -right-2 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transform hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
-                              {isVideo && (
-                                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                                  Video
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-
-                        {/* New Media */}
-                        {newMediaPreviews.map((preview, idx) => (
+                        return (
                           <div
-                            key={`new-${idx}`}
-                            className="relative group aspect-square rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+                            key={`existing-${idx}`}
+                            className={`relative group aspect-square rounded-xl overflow-hidden border ${
+                              isDark ? "border-zinc-800 bg-zinc-900" : "border-gray-200 bg-gray-100"
+                            }`}
                           >
-                            {preview.type === "image" ? (
+                            {isImage ? (
                               <img
-                                src={preview.url}
-                                alt={`New ${idx + 1}`}
-                                className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
+                                src={getImageUrl(mediaPath)}
+                                alt={`Existing ${idx + 1}`}
+                                className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
                               />
+                            ) : isVideo ? (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Video className="w-8 h-8 text-zinc-400" />
+                              </div>
                             ) : (
-                              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                <Video className="w-8 h-8 text-gray-500" />
-                                <span className="sr-only">Video file</span>
+                              <div className="w-full h-full flex items-center justify-center text-xs text-zinc-400">
+                                File
                               </div>
                             )}
-                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
-                            <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                              New
+                            <div className="absolute top-1.5 left-1.5 bg-blue-500/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                              Current
                             </div>
                             <button
                               type="button"
-                              onClick={() => handleRemoveNewMedia(idx)}
-                              className="absolute -top-2 -right-2 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transform hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                              onClick={() => handleRemoveExistingMedia(mediaPath, idx)}
+                              className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center shadow hover:bg-red-700 transition"
                             >
-                              <X className="w-4 h-4" />
+                              <X className="w-3.5 h-3.5" />
                             </button>
-                            {preview.type === "video" && (
-                              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                                Video
-                              </div>
-                            )}
                           </div>
-                        ))}
-                      </div>
+                        );
+                      })}
 
-                      {/* Media Summary */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex justify-between text-sm text-gray-600">
-                          <span>Existing: {existingMedia.length}</span>
-                          <span>New: {newMedia.length}</span>
-                          <span>Total: {totalMedia}</span>
-                          {removedMedia.length > 0 && (
-                            <span className="text-green-600">
-                              Removed: {removedMedia.length}
-                            </span>
+                      {/* New Media */}
+                      {newMediaPreviews.map((preview, idx) => (
+                        <div
+                          key={`new-${idx}`}
+                          className={`relative group aspect-square rounded-xl overflow-hidden border ${
+                            isDark ? "border-emerald-900/60 bg-zinc-900" : "border-emerald-200 bg-gray-100"
+                          }`}
+                        >
+                          {preview.type === "image" ? (
+                            <img
+                              src={preview.url}
+                              alt={`New ${idx + 1}`}
+                              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Video className="w-8 h-8 text-emerald-400" />
+                            </div>
                           )}
+                          <div className="absolute top-1.5 left-1.5 bg-emerald-500/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                            New
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveNewMedia(idx)}
+                            className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center shadow hover:bg-red-700 transition"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
                         </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Trending Product Section */}
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-2 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      Trending Product
-                    </h3>
-                  </div>
-
-                  <div className="relative">
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        name="trendingProduct"
-                        checked={formData.trendingProduct}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            trendingProduct: e.target.checked,
-                          })
-                        }
-                        className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                      />
-                      <span className="text-gray-700">Mark as Trending</span>
+                      ))}
                     </div>
                   </div>
-                </div>
+                )}
               </div>
-              {/* Payment Mode Section */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-2 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    Payment Mode
-                  </h3>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Payment Mode
+              {/* Status, Trending & Payment Options */}
+              <div className={`p-5 rounded-2xl border space-y-5 ${
+                isDark ? "bg-zinc-900/40 border-zinc-800" : "bg-gray-50 border-gray-200"
+              }`}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Trending Checkbox */}
+                  <label className="flex items-center gap-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      name="trendingProduct"
+                      checked={formData.trendingProduct}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          trendingProduct: e.target.checked,
+                        })
+                      }
+                      className="h-5 w-5 text-amber-500 rounded border-zinc-700 focus:ring-amber-400 cursor-pointer"
+                    />
+                    <div>
+                      <span className={`text-sm font-bold flex items-center gap-1.5 ${isDark ? "text-white" : "text-gray-900"}`}>
+                        <Sparkles className="w-4 h-4 text-amber-500" />
+                        Mark as Trending Product
+                      </span>
+                      <p className={`text-xs ${isDark ? "text-zinc-400" : "text-gray-500"}`}>
+                        Display with featured highlight tags across the store
+                      </p>
+                    </div>
                   </label>
-                  <select
-                    name="paymentMethods"
-                    value={formData.paymentMethods}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
-                    required
-                  >
-                    <option value="cod">Cash on Delivery (COD)</option>
-                    <option value="online">Online Payment</option>
-                    <option value="both">Both COD & Online</option>
-                  </select>
+
+                  {/* Payment Mode */}
+                  <div>
+                    <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                      Allowed Payment Methods
+                    </label>
+                    <select
+                      name="paymentMethods"
+                      value={formData.paymentMethods}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2.5 rounded-xl border text-sm font-medium transition-all outline-none ${
+                        isDark
+                          ? "bg-zinc-900 border-zinc-800 text-white focus:border-amber-400"
+                          : "bg-white border-gray-200 text-gray-900 focus:border-amber-500"
+                      }`}
+                    >
+                      <option value="both">Both COD & Online Payment</option>
+                      <option value="online">Online Payment Only</option>
+                      <option value="cod">Cash on Delivery (COD) Only</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Submit Button */}
-            <div className="bg-gray-50 px-8 py-6 border-t border-gray-100">
+            {/* Submit Action Bar */}
+            <div className={`px-8 py-5 border-t flex items-center justify-end gap-3 ${
+              isDark ? "bg-black/60 border-zinc-800" : "bg-gray-50 border-gray-100"
+            }`}>
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 px-8 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-3"
+                disabled={isSubmitting}
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-zinc-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 disabled:opacity-50"
               >
-                <Upload className="w-6 h-6" />
-                Update Product in Inventory
+                <Upload className="w-5 h-5 text-zinc-950" />
+                {isSubmitting ? "Updating Product..." : "Save & Update Product"}
               </button>
             </div>
           </form>

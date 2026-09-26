@@ -6,6 +6,14 @@ export const authService = {
   emailLogin: async (credentials: EmailLoginRequest) => {
     try {
       const response = await axiosInstance.post("/user/login-user", credentials);
+      if (typeof window !== "undefined") {
+        if (response.data?.accessToken) {
+          localStorage.setItem("accessToken", response.data.accessToken);
+        }
+        if (response.data?.refreshToken) {
+          localStorage.setItem("refreshToken", response.data.refreshToken);
+        }
+      }
       return response.data;
     } catch (error: any) {
       console.log("SERVICE ERROR 👉", error);
@@ -99,8 +107,22 @@ export const authService = {
 
   // Logout
   logout: async () => {
-    const response = await axiosInstance.post("/user/logout");
-    return response.data;
+    try {
+      const response = await axiosInstance.post("/user/logout");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("token");
+      }
+      return response.data;
+    } catch (error) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("token");
+      }
+      return { success: true };
+    }
   },
 
   // Refresh token
@@ -109,9 +131,26 @@ export const authService = {
     return response.data;
   },
 
-  registerUser: async (userData: RegisterUserRequest) => {
-    const response = await axiosInstance.post("user/create-user", userData);
-    return response.data;
+  registerUser: async (userData: RegisterUserRequest | FormData) => {
+    try {
+      const response = await axiosInstance.post("/user/create-user", userData);
+      if (typeof window !== "undefined") {
+        if (response.data?.accessToken) {
+          localStorage.setItem("accessToken", response.data.accessToken);
+        }
+        if (response.data?.refreshToken) {
+          localStorage.setItem("refreshToken", response.data.refreshToken);
+        }
+      }
+      return response.data;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "Registration failed";
+      throw { message };
+    }
   },
   getAllUsers: async (params: {
     page?: number;

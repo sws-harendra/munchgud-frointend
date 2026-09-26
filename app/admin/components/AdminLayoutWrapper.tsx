@@ -13,7 +13,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     <div
       className={`flex h-screen w-screen overflow-hidden ${
         resolvedTheme === "dark"
-          ? "dark bg-slate-950 text-slate-100"
+          ? "dark bg-black text-zinc-100"
           : "bg-slate-50 text-slate-800"
       }`}
     >
@@ -28,7 +28,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
         {/* PAGE CONTENT CONTAINER (SCROLLABLE) */}
         <main
           className={`flex-1 overflow-y-auto min-w-0 transition-colors ${
-            resolvedTheme === "dark" ? "bg-slate-950" : "bg-slate-50/70"
+            resolvedTheme === "dark" ? "bg-black text-zinc-100" : "bg-slate-50/70 text-slate-800"
           }`}
         >
           {children}

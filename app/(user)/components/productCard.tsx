@@ -57,18 +57,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Link href={`/products/${slugify(name)}/${id}`}>
-      <div className="group relative bg-white p-2 rounded-sm sm:rounded-sm shadow-sm sm:border sm:border-green-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 hover:bg-gradient-to-br hover:from-white hover:to-blue-50/30">
+      <div className="group relative bg-white p-2 rounded-sm sm:rounded-sm shadow-sm sm:border sm:border-amber-100/70 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 hover:bg-gradient-to-br hover:from-white hover:to-amber-50/20">
         {/* Enhanced Discount Badge */}
         <div className="absolute top-4 left-4 z-20">
           <div className="relative">
-            <div className="bg-gradient-to-r from-green-700  to-green-800 text-white px-2 py-1.5 rounded-2xl text-xs font-bold shadow-lg transform -rotate-2 group-hover:rotate-0 transition-transform duration-500">
+            <div className="bg-gradient-to-r from-amber-600 to-amber-700 text-white px-2 py-1.5 rounded-2xl text-xs font-bold shadow-lg transform -rotate-2 group-hover:rotate-0 transition-transform duration-500">
               <span className="sm:text-base text-[10px] flex items-center gap-1">
-                <Zap size={10} className="text-yellow-300" />
+                <Zap size={10} className="text-yellow-200 fill-yellow-200" />
                 {discount}% OFF
               </span>
             </div>
             {/* Glowing effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-green-700  to-green-800 rounded blur-sm opacity-50 -z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-amber-700 rounded blur-sm opacity-50 -z-10" />
           </div>
         </div>
 
@@ -146,7 +146,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="p-2 sm:p-3 space-y-0">
           {/* Product Name */}
           <div className="text-left  space-y-2">
-            <h3 className=" text-xs text-gray-900 group-hover:text-green-700 transition-colors duration-300 truncate sm:text-base leading-snug tracking-tight">
+            <h3 className=" text-xs text-gray-900 group-hover:text-amber-700 transition-colors duration-300 truncate sm:text-base leading-snug tracking-tight">
               {name}
             </h3>
             {/* <p className="text-sm mb-1"> Lorem ipsum dolor sit amet, consectetur adipisicing</p> */}
@@ -163,9 +163,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     size={14}
                     className={`transition-all duration-300 ${
                       i < Math.floor(rating)
-                        ? "text-green-600 fill-green-600 drop-shadow-sm"
+                        ? "text-amber-400 fill-amber-400 drop-shadow-sm"
                         : i === Math.floor(rating) && rating % 1 >= 0.5
-                          ? "text-green-600 fill-green-600/50"
+                          ? "text-amber-400 fill-amber-400/50"
                           : "text-gray-300"
                     }`}
                   />

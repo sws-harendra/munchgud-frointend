@@ -34,7 +34,6 @@ import Link from "next/link";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import {
   addUserAddress,
-  updateUserInfo,
 } from "@/app/lib/store/features/authSlice";
 import Loader from "@/app/commonComponents/loader";
 import { Address } from "@/app/types/auth.types";
@@ -248,44 +247,9 @@ const CheckoutPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // const handleNextStep = () => {
-  //   if (validateStep(activeStep)) {
-  //     setActiveStep(activeStep + 1);
-  //   }
-  // };
-  const handleNextStep = async () => {
+  const handleNextStep = () => {
     if (validateStep(activeStep)) {
-      try {
-        if (activeStep === 1) {
-          if (!user) {
-            console.error("No user data available");
-            return;
-          }
-
-          const updates: any = {};
-          if (formData.fullname !== user.fullname)
-            updates.fullname = formData.fullname;
-          if (formData.email !== user.email) updates.email = formData.email;
-          if (formData.phone !== user.phoneNumber)
-            updates.phoneNumber = formData.phone;
-          if (formData.secondaryNumber !== user.secondaryNumber)
-            updates.secondaryNumber = formData.secondaryNumber;
-
-          if (Object.keys(updates).length > 0) {
-            await dispatch(
-              updateUserInfo({
-                ...updates,
-              }),
-            ).unwrap();
-            toast.success("Profile details updated successfully!");
-          }
-        }
-
-        setActiveStep(activeStep + 1);
-      } catch (err: any) {
-        console.error("Update failed:", err);
-        toast.error(err?.message || "Failed to update profile details. Please try again.");
-      }
+      setActiveStep((prev) => prev + 1);
     }
   };
 
@@ -364,11 +328,11 @@ const CheckoutPage = () => {
         },
 
         prefill: {
-          name: user?.name || "Guest",
-          email: user?.email || "guest@example.com",
-          contact: user?.phoneNumber || "9999999999",
+          name: formData.fullname || user?.fullname || "Customer",
+          email: formData.email || user?.email || "customer@example.com",
+          contact: formData.phone || user?.phoneNumber || "9999999999",
         },
-        theme: { color: "#3399cc" },
+        theme: { color: "#d97706" },
       };
 
       const rzp = new (window as any).Razorpay(options);
@@ -467,10 +431,10 @@ const CheckoutPage = () => {
 
   if (items.length === 0 && !orderSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
-        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full border border-gray-100 text-center">
-          <div className="w-24 h-24 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertCircle className="w-12 h-12 text-green-600" />
+      <div className="min-h-screen bg-gradient-to-br from-amber-50/40 via-white to-neutral-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full border border-amber-100/80 text-center">
+          <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-amber-200/60">
+            <AlertCircle className="w-12 h-12 text-amber-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Your cart is empty
@@ -479,7 +443,7 @@ const CheckoutPage = () => {
             Add items to your cart before proceeding to checkout.
           </p>
           <Link href="/">
-            <button className="bg-green-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg shadow-amber-500/25 transform hover:scale-[1.02] transition-all duration-300">
               Continue Shopping
             </button>
           </Link>
@@ -490,29 +454,29 @@ const CheckoutPage = () => {
 
   if (orderSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full border border-gray-100 text-center">
-          <div className="w-24 h-24 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-green-600" />
+      <div className="min-h-screen bg-gradient-to-br from-amber-50/40 via-white to-neutral-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full border border-amber-100/80 text-center">
+          <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-amber-200/60">
+            <CheckCircle className="w-12 h-12 text-amber-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Order Placed Successfully!
           </h2>
           <p className="text-gray-600 mb-2">
             Your order ID is:{" "}
-            <span className="font-bold text-green-600">{orderId}</span>
+            <span className="font-bold text-amber-600">{orderId}</span>
           </p>
           <p className="text-gray-600 mb-8">
             You will receive a confirmation email shortly.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/">
-              <button className="bg-green-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+              <button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg shadow-amber-500/25 transform hover:scale-[1.02] transition-all duration-300">
                 Continue Shopping
               </button>
             </Link>
             <Link href="/orderhistory">
-              <button className="bg-white text-green-600 border-2 border-green-200 px-8 py-4 rounded-2xl font-semibold hover:bg-green-50 transition-all duration-300">
+              <button className="bg-white text-amber-700 border-2 border-amber-300 px-8 py-4 rounded-2xl font-semibold hover:bg-amber-50 transition-all duration-300 shadow-sm">
                 View Order Details
               </button>
             </Link>
@@ -523,18 +487,18 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50/30 via-white to-neutral-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <Link href="/cart">
-            <button className="flex items-center text-green-600 font-semibold hover:text-green-700 transition-colors bg-white px-6 py-3 rounded-2xl shadow-md hover:shadow-lg">
-              <ArrowLeft className="w-5 h-5 mr-2" />
+            <button className="flex items-center text-amber-700 font-semibold hover:text-amber-800 transition-colors bg-white border border-amber-200/60 px-6 py-3 rounded-2xl shadow-sm hover:shadow-md">
+              <ArrowLeft className="w-5 h-5 mr-2 text-amber-600" />
               Back to Cart
             </button>
           </Link>
-          <div className="text-sm text-gray-600 bg-white px-6 py-3 rounded-2xl shadow-md">
-            <Lock className="w-4 h-4 inline mr-2 text-green-600" />
+          <div className="text-sm text-gray-700 bg-white border border-amber-200/60 px-6 py-3 rounded-2xl shadow-sm">
+            <Lock className="w-4 h-4 inline mr-2 text-amber-600" />
             Secure SSL Encrypted Checkout
           </div>
         </div>
@@ -564,23 +528,23 @@ const CheckoutPage = () => {
                       <div
                         className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 ${
                           activeStep >= step
-                            ? "bg-green-600 text-white shadow-lg"
-                            : activeStep > step
-                              ? "bg-green-600 text-white"
-                              : "bg-gray-200 text-gray-500"
+                            ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg shadow-amber-500/25"
+                            : "bg-gray-100 text-gray-400 border border-gray-200"
                         }`}
                       >
                         {activeStep > step ? (
-                          <Check className="w-8 h-8" />
+                          <Check className="w-6 h-6 stroke-[2.5]" />
                         ) : (
-                          <Icon className="w-8 h-8" />
+                          <Icon className="w-5 h-5" />
                         )}
                       </div>
                       <span
                         className={`mt-3 text-sm font-semibold ${
                           activeStep === step
-                            ? "text-green-600"
-                            : "text-gray-600"
+                            ? "text-amber-700 font-bold"
+                            : activeStep > step
+                              ? "text-gray-900"
+                              : "text-gray-400"
                         }`}
                       >
                         {title}
@@ -591,10 +555,8 @@ const CheckoutPage = () => {
                         <div
                           className={`h-2 rounded-full transition-all duration-500 ${
                             activeStep > step
-                              ? "bg-gradient-to-r from-green-600 to-green-600"
-                              : activeStep === step
-                                ? "bg-gradient-to-r from-green-600 to-green-600"
-                                : "bg-gray-200"
+                              ? "bg-gradient-to-r from-amber-500 to-amber-600"
+                              : "bg-gray-200"
                           }`}
                         ></div>
                       </div>
@@ -608,8 +570,8 @@ const CheckoutPage = () => {
             {activeStep === 1 && (
               <div className="bg-white rounded-3xl shadow-xl p-8 mb-8 border border-gray-100">
                 <div className="flex items-center mb-8">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mr-4">
-                    <User className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center mr-4 shadow-sm border border-amber-200/50">
+                    <User className="w-6 h-6 text-amber-600" />
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900">
                     Contact Information
@@ -626,15 +588,15 @@ const CheckoutPage = () => {
                       name="fullname"
                       value={formData.fullname}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
+                      className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
                         errors.fullname
-                          ? "border-green-700 bg-red-50"
+                          ? "border-red-400 bg-red-50/40"
                           : "border-gray-200 hover:border-gray-300"
                       }`}
                       placeholder="Enter your full name"
                     />
                     {errors.fullname && (
-                      <p className="mt-2 text-sm text-green-700 font-medium">
+                      <p className="mt-2 text-sm text-red-500 font-medium">
                         {errors.fullname}
                       </p>
                     )}
@@ -648,42 +610,19 @@ const CheckoutPage = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
+                      className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
                         errors.email
-                          ? "border-green-700 bg-red-50"
+                          ? "border-red-400 bg-red-50/40"
                           : "border-gray-200 hover:border-gray-300"
                       }`}
                       placeholder="Enter your email address"
                     />
                     {errors.email && (
-                      <p className="mt-2 text-sm text-green-700 font-medium">
+                      <p className="mt-2 text-sm text-red-500 font-medium">
                         {errors.email}
                       </p>
                     )}
                   </div>
-
-                  {/* <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      Last Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 ${
-                        errors.lastName
-                          ? "border-green-700 bg-red-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                      placeholder="Enter your last name"
-                    />
-                    {errors.lastName && (
-                      <p className="mt-2 text-sm text-green-700 font-medium">
-                        {errors.lastName}
-                      </p>
-                    )}
-                  </div> */}
                 </div>
 
                 <div className="mb-8">
@@ -695,40 +634,31 @@ const CheckoutPage = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
+                    className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
                       errors.phone
-                        ? "border-green-700 bg-red-50"
+                        ? "border-red-400 bg-red-50/40"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                     placeholder="Enter your primary phone number"
                   />
                   {errors.phone && (
-                    <p className="mt-2 text-sm text-green-700 font-medium">
+                    <p className="mt-2 text-sm text-red-500 font-medium">
                       {errors.phone}
                     </p>
                   )}
                 </div>
                 <div className="mb-8">
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    Secondary Phone Number *
+                    Secondary Phone Number (Optional)
                   </label>
                   <input
                     type="tel"
                     name="secondaryNumber"
                     value={formData.secondaryNumber}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
-                      errors.phone
-                        ? "border-green-700 bg-red-50"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                    placeholder="Enter your primary phone number"
+                    className="w-full px-4 py-4 border-2 border-gray-200 hover:border-gray-300 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200"
+                    placeholder="Enter secondary phone number"
                   />
-                  {errors.phone && (
-                    <p className="mt-2 text-sm text-green-700 font-medium">
-                      {errors.phone}
-                    </p>
-                  )}
                 </div>
                 <div className="flex justify-end">
                   <button
@@ -739,7 +669,7 @@ const CheckoutPage = () => {
                         router.push("/authentication/login"); // go to login if not logged in
                       }
                     }}
-                    className="bg-green-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                    className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg shadow-amber-500/25 transform hover:scale-[1.02] transition-all duration-300"
                   >
                     Continue to Shipping
                   </button>
@@ -751,8 +681,8 @@ const CheckoutPage = () => {
             {activeStep === 2 && (
               <div className="bg-white rounded-3xl shadow-xl p-8 mb-8 border border-gray-100">
                 <div className="flex items-center mb-8">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mr-4">
-                    <MapPin className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center mr-4 shadow-sm border border-amber-200/50">
+                    <MapPin className="w-6 h-6 text-amber-600" />
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900">
                     Shipping Address
@@ -772,7 +702,7 @@ const CheckoutPage = () => {
                             key={address.id}
                             className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-200 ${
                               formData.selectedAddressId === address.id
-                                ? "border-green-600 bg-blue-50 shadow-lg"
+                                ? "border-amber-500 bg-amber-50/40 shadow-md ring-1 ring-amber-500"
                                 : "border-gray-200 hover:border-gray-300 hover:shadow-md"
                             }`}
                             onClick={() =>
@@ -785,13 +715,13 @@ const CheckoutPage = () => {
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center">
                                 {address.addressType === "home" ? (
-                                  <Home className="w-5 h-5 mr-2 text-green-600" />
+                                  <Home className="w-5 h-5 mr-2 text-amber-600" />
                                 ) : address.addressType === "work" ? (
-                                  <Building2 className="w-5 h-5 mr-2 text-green-600" />
+                                  <Building2 className="w-5 h-5 mr-2 text-amber-600" />
                                 ) : (
-                                  <MapPin className="w-5 h-5 mr-2 text-green-600" />
+                                  <MapPin className="w-5 h-5 mr-2 text-amber-600" />
                                 )}
-                                <span className="font-semibold text-gray-800">
+                                <span className="font-semibold text-gray-800 capitalize">
                                   {address.addressType}
                                 </span>
                               </div>
@@ -810,9 +740,9 @@ const CheckoutPage = () => {
                     <div className="text-center mb-8">
                       <button
                         onClick={() => setShowAddressForm(true)}
-                        className="bg-white text-green-600 border-2 border-green-200 px-6 py-3 rounded-2xl font-semibold hover:bg-green-50 transition-all duration-200 flex items-center mx-auto"
+                        className="bg-white text-amber-700 border-2 border-amber-300 px-6 py-3 rounded-2xl font-semibold hover:bg-amber-50 transition-all duration-200 flex items-center mx-auto shadow-sm"
                       >
-                        <Plus className="w-5 h-5 mr-2" />
+                        <Plus className="w-5 h-5 mr-2 text-amber-600" />
                         Add New Address
                       </button>
                     </div>
@@ -828,7 +758,7 @@ const CheckoutPage = () => {
                       </h3>
                       <button
                         onClick={() => setShowAddressForm(false)}
-                        className="text-gray-500 hover:text-gray-700"
+                        className="text-gray-500 hover:text-gray-700 font-medium"
                       >
                         Cancel
                       </button>
@@ -843,7 +773,7 @@ const CheckoutPage = () => {
                           name="newAddress.type"
                           value={formData.newAddress.type}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200"
+                          className="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200"
                         >
                           <option value="home">Home</option>
                           <option value="work">Work</option>
@@ -860,15 +790,15 @@ const CheckoutPage = () => {
                           value={formData.newAddress.address1}
                           onChange={handleInputChange}
                           placeholder="Enter your street address"
-                          className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
+                          className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
                             errors["newAddress.address1"]
-                              ? "border-green-700 bg-red-50"
+                              ? "border-red-400 bg-red-50/40"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
                         />
 
                         {errors["newAddress.address1"] && (
-                          <p className="mt-2 text-sm text-green-700 font-medium">
+                          <p className="mt-2 text-sm text-red-500 font-medium">
                             {errors["newAddress.address1"]}
                           </p>
                         )}
@@ -879,7 +809,7 @@ const CheckoutPage = () => {
 
                     <div className="mb-6">
                       <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        LandMark
+                        Landmark
                       </label>
                       <input
                         type="text"
@@ -887,15 +817,15 @@ const CheckoutPage = () => {
                         required
                         value={formData.newAddress.landmark}
                         onChange={handleInputChange}
-                        placeholder="Landmark."
-                        className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
+                        placeholder="Landmark"
+                        className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
                           errors["newAddress.landmark"]
-                            ? "border-green-700 bg-red-50"
+                            ? "border-red-400 bg-red-50/40"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       />{" "}
                       {errors["newAddress.landmark"] && (
-                        <p className="mt-2 text-sm text-green-700 font-medium">
+                        <p className="mt-2 text-sm text-red-500 font-medium">
                           {errors["newAddress.landmark"]}
                         </p>
                       )}
@@ -910,17 +840,8 @@ const CheckoutPage = () => {
                         value={formData.newAddress.address2}
                         onChange={handleInputChange}
                         placeholder="Apartment, suite, floor, etc."
-                        className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
-                          errors["newAddress.address2"]
-                            ? "border-green-700 bg-red-50"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      />{" "}
-                      {errors["newAddress.address2"] && (
-                        <p className="mt-2 text-sm text-green-700 font-medium">
-                          {errors["newAddress.address2"]}
-                        </p>
-                      )}
+                        className="w-full px-4 py-4 border-2 border-gray-200 hover:border-gray-300 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200"
+                      />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -933,15 +854,15 @@ const CheckoutPage = () => {
                           name="newAddress.city"
                           value={formData.newAddress.city}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
+                          className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
                             errors["newAddress.city"]
-                              ? "border-green-700 bg-red-50"
+                              ? "border-red-400 bg-red-50/40"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
                           placeholder="City"
                         />
                         {errors["newAddress.city"] && (
-                          <p className="mt-2 text-sm text-green-700 font-medium">
+                          <p className="mt-2 text-sm text-red-500 font-medium">
                             {errors["newAddress.city"]}
                           </p>
                         )}
@@ -955,9 +876,9 @@ const CheckoutPage = () => {
                           name="newAddress.state"
                           value={formData.newAddress.state}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
+                          className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
                             errors["newAddress.state"]
-                              ? "border-green-700 bg-red-50"
+                              ? "border-red-400 bg-red-50/40"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
                         >
@@ -969,7 +890,7 @@ const CheckoutPage = () => {
                           ))}
                         </select>
                         {errors["newAddress.state"] && (
-                          <p className="mt-2 text-sm text-green-700 font-medium">
+                          <p className="mt-2 text-sm text-red-500 font-medium">
                             {errors["newAddress.state"]}
                           </p>
                         )}
@@ -984,15 +905,15 @@ const CheckoutPage = () => {
                           name="newAddress.zipCode"
                           value={formData.newAddress.zipCode}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition-all duration-200 ${
+                          className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
                             errors["newAddress.zipCode"]
-                              ? "border-green-700 bg-red-50"
+                              ? "border-red-400 bg-red-50/40"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
                           placeholder="ZIP Code"
                         />
                         {errors["newAddress.zipCode"] && (
-                          <p className="mt-2 text-sm text-green-700 font-medium">
+                          <p className="mt-2 text-sm text-red-500 font-medium">
                             {errors["newAddress.zipCode"]}
                           </p>
                         )}
@@ -1002,7 +923,7 @@ const CheckoutPage = () => {
                     <div className="flex justify-end">
                       <button
                         onClick={handleAddNewAddress}
-                        className="bg-gradient-to-r from-green-600 to-green-600 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                        className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-6 py-3 rounded-2xl font-semibold shadow-md shadow-amber-500/20 transform hover:scale-[1.02] transition-all duration-200"
                       >
                         Save Address
                       </button>
@@ -1013,15 +934,15 @@ const CheckoutPage = () => {
                 <div className="flex items-center justify-between mt-8">
                   <button
                     onClick={handlePrevStep}
-                    className="text-green-600 font-semibold hover:text-green-700 transition-colors flex items-center bg-green-50 px-6 py-3 rounded-2xl"
+                    className="text-amber-700 hover:text-amber-800 font-semibold transition-colors flex items-center bg-amber-50/80 hover:bg-amber-100 border border-amber-200/60 px-6 py-3 rounded-2xl"
                   >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    <ArrowLeft className="w-4 h-4 mr-2 text-amber-600" />
                     Back to Contact
                   </button>
                   {!showAddressForm && (
                     <button
                       onClick={handleNextStep}
-                      className="bg-gradient-to-r from-green-600 to-green-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg shadow-amber-500/25 transform hover:scale-[1.02] transition-all duration-300"
                     >
                       Continue to Payment
                     </button>
@@ -1034,8 +955,8 @@ const CheckoutPage = () => {
             {activeStep === 3 && (
               <div className="bg-white rounded-3xl shadow-xl p-8 mb-8 border border-gray-100">
                 <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-100 to-indigo-100 rounded-full flex items-center justify-center mr-4">
-                    <CreditCard className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center mr-4 shadow-sm border border-amber-200/50">
+                    <CreditCard className="w-6 h-6 text-amber-600" />
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900">
                     Select Payment Method
@@ -1062,13 +983,13 @@ const CheckoutPage = () => {
                           onClick={() =>
                             setFormData({ ...formData, paymentMethods: "cod" })
                           }
-                          className={`w-full text-left p-4 border rounded-2xl transition-colors ${
+                          className={`w-full text-left p-4 border rounded-2xl transition-all ${
                             formData.paymentMethods === "cod"
-                              ? "border-green-600 bg-green-50"
-                              : "border-gray-300 hover:border-green-600"
+                              ? "border-amber-500 bg-amber-50/40 ring-1 ring-amber-500"
+                              : "border-gray-200 hover:border-amber-400"
                           }`}
                         >
-                          <span className="text-gray-800 font-medium">
+                          <span className="text-gray-800 font-semibold">
                             Cash on Delivery
                           </span>
                         </button>
@@ -1083,14 +1004,14 @@ const CheckoutPage = () => {
                               paymentMethods: "online",
                             })
                           }
-                          className={`w-full text-left p-4 border rounded-2xl transition-colors ${
+                          className={`w-full text-left p-4 border rounded-2xl transition-all ${
                             formData.paymentMethods === "online"
-                              ? "border-green-600 bg-green-50"
-                              : "border-gray-300 hover:border-green-600"
+                              ? "border-amber-500 bg-amber-50/40 ring-1 ring-amber-500"
+                              : "border-gray-200 hover:border-amber-400"
                           }`}
                         >
-                          <span className="text-gray-800 font-medium">
-                            Online Payment
+                          <span className="text-gray-800 font-semibold">
+                            Online Payment (UPI, Cards, NetBanking)
                           </span>
                         </button>
                       )}
@@ -1101,9 +1022,9 @@ const CheckoutPage = () => {
                 <div className="flex items-center justify-between">
                   <button
                     onClick={handlePrevStep}
-                    className="text-green-600 font-semibold hover:text-green-700 transition-colors flex items-center bg-green-50 px-6 py-3 rounded-2xl"
+                    className="text-amber-700 hover:text-amber-800 font-semibold transition-colors flex items-center bg-amber-50/80 hover:bg-amber-100 border border-amber-200/60 px-6 py-3 rounded-2xl"
                   >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    <ArrowLeft className="w-4 h-4 mr-2 text-amber-600" />
                     Back to Shipping
                   </button>
 
@@ -1114,7 +1035,7 @@ const CheckoutPage = () => {
                         : handlePlaceOrderOnline()
                     }
                     disabled={isProcessing || !formData.paymentMethods}
-                    className="bg-gradient-to-r from-green-600 to-green-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg shadow-amber-500/25 transform hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     {isProcessing ? (
                       <div className="flex items-center">
@@ -1122,7 +1043,7 @@ const CheckoutPage = () => {
                         Processing...
                       </div>
                     ) : (
-                      `Place Order • ${total.toFixed(2)}`
+                      `Place Order • ₹${total.toFixed(2)}`
                     )}
                   </button>
                 </div>
@@ -1134,8 +1055,8 @@ const CheckoutPage = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-3xl shadow-xl p-8 sticky top-8 border border-gray-100">
               <h2 className="text-2xl font-semibold text-gray-900 mb-8 flex items-center">
-                <div className="w-8 h-8 bg-gradient-to-r from-green-100 to-indigo-100 rounded-full flex items-center justify-center mr-3">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
+                <div className="w-8 h-8 bg-gradient-to-br from-amber-100 to-amber-50 rounded-xl flex items-center justify-center mr-3 border border-amber-200/50">
+                  <CheckCircle className="w-5 h-5 text-amber-600" />
                 </div>
                 Order Summary
               </h2>
@@ -1146,7 +1067,7 @@ const CheckoutPage = () => {
                     key={item.id}
                     className="flex items-center py-4 border-b border-gray-100 last:border-b-0"
                   >
-                    <div className="w-20 h-20 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0">
+                    <div className="w-20 h-20 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-200/50">
                       <img
                         src={getImageUrl(item.imageUrl)}
                         alt={item.name}
@@ -1173,24 +1094,10 @@ const CheckoutPage = () => {
                   <span className="font-medium">Subtotal</span>
                   <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
                 </div>
-                {/* <div className="flex justify-between text-gray-600">
-                  <span className="font-medium">Shipping</span>
-                  <span className="font-semibold">
-                    {shipping === 0 ? (
-                      <span className="text-green-600 font-bold">Free</span>
-                    ) : (
-                      `${shipping.toFixed(2)}`
-                    )}
-                  </span>
-                </div>
-                <div className="flex justify-between text-gray-600">
-                  <span className="font-medium">Tax</span>
-                  <span className="font-semibold">{tax.toFixed(2)}</span>
-                </div> */}
                 <div className="border-t-2 border-gray-200 pt-4">
                   <div className="flex justify-between font-bold text-gray-900 text-xl">
                     <span>Total</span>
-                    <span className="text-green-600">₹{total.toFixed(2)}</span>
+                    <span className="text-amber-600 font-extrabold">₹{total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -1199,24 +1106,24 @@ const CheckoutPage = () => {
               <div className="border-t-2 border-gray-200 pt-8">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-2">
-                      <Shield className="w-6 h-6 text-green-600" />
+                    <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center mb-2 border border-amber-200/50">
+                      <Shield className="w-6 h-6 text-amber-600" />
                     </div>
                     <p className="text-xs font-semibold text-gray-700">
                       Secure Payment
                     </p>
                   </div>
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-gradient-to-r from-green-100 to-indigo-100 rounded-full flex items-center justify-center mb-2">
-                      <Lock className="w-6 h-6 text-green-600" />
+                    <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center mb-2 border border-amber-200/50">
+                      <Lock className="w-6 h-6 text-amber-600" />
                     </div>
                     <p className="text-xs font-semibold text-gray-700">
                       SSL Encrypted
                     </p>
                   </div>
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mb-2">
-                      <Truck className="w-6 h-6 text-purple-600" />
+                    <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center mb-2 border border-amber-200/50">
+                      <Truck className="w-6 h-6 text-amber-600" />
                     </div>
                     <p className="text-xs font-semibold text-gray-700">
                       Fast Delivery

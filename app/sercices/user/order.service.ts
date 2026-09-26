@@ -4,11 +4,10 @@ export const orderService = {
   // Place a new order
   placeOrder: async (orderData: {
     userId: string;
-    addressId: number;
-    items: { productId: number; quantity: number }[];
+    addressId: number | string;
+    items: { productId: number; quantity: number; variantId?: number; variantName?: string }[];
     paymentMethod: string;
     paymentProvider?: string;
-
     transactionId?: string;
   }) => {
     const response = await axiosInstance.post("/order/place", orderData);

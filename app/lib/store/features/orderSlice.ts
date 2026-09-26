@@ -53,7 +53,7 @@ export const placeOrder = createAsyncThunk(
       }[];
       paymentMethod: string;
       paymentProvider?: string;
-      transactionId?: string;
+      transactionId?: string; 
     },
     { rejectWithValue }
   ) => {
@@ -126,6 +126,18 @@ export const updateOrder = createAsyncThunk(
     try {
       const data = await orderService.updateOrder(orderId, orderData);
       return data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+export const deleteOrder = createAsyncThunk(
+  "orders/deleteOrder",
+  async (orderId: string, { rejectWithValue }) => {
+    try {
+      await orderService.deleteOrder(orderId);
+      return orderId;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -215,6 +227,13 @@ const orderSlice = createSlice({
       .addCase(updateOrder.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
+      })
+      .addCase(deleteOrder.fulfilled, (state, action: PayloadAction<string>) => {
+        state.status = "succeeded";
+        state.orders = state.orders.filter(
+          (order: any) => order.id.toString() !== action.payload.toString()
+        );
+        state.totalCount = Math.max(0, state.totalCount - 1);
       })
 
       .addCase(fetchRidersOrders.pending, (state) => {

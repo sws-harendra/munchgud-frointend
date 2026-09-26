@@ -61,11 +61,11 @@ const menuItems: MenuItem[] = [
     icon: Video,
     href: "/admin/dashboard/video-management",
   },
-  {
-    name: "Banners",
-    icon: Banknote,
-    href: "/admin/dashboard/banner-management",
-  },
+  // {
+  //   name: "Banners",
+  //   icon: Banknote,
+  //   href: "/admin/dashboard/banner-management",
+  // },
   {
     name: "Images",
     icon: ImageIcon,
@@ -148,7 +148,7 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function Sidebar() {
-  const { settings, updateSetting, isSidebarDark } = useAdminTheme();
+  const { settings, updateSetting, isSidebarDark, resolvedTheme } = useAdminTheme();
   const open = !settings.sidebarCollapsed;
 
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
@@ -235,6 +235,10 @@ export default function Sidebar() {
 
   const sidebarBg = settings.isSidebarGradient
     ? settings.sidebarGradient
+    : resolvedTheme === "dark" && (settings.sidebarColor === "#0f172a" || !settings.sidebarColor || settings.sidebarColor === "#ffffff")
+    ? "#000000"
+    : resolvedTheme === "light" && (settings.sidebarColor === "#000000" || !settings.sidebarColor)
+    ? "#ffffff"
     : settings.sidebarColor;
 
   return (
@@ -242,8 +246,8 @@ export default function Sidebar() {
       className="flex overflow-y-auto overflow-x-hidden h-full select-none shrink-0 transition-all duration-300 border-r z-30"
       style={{
         background: sidebarBg,
-        color: isSidebarDark ? "#f8fafc" : "#1e293b",
-        borderColor: isSidebarDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
+        color: isSidebarDark ? "#f4f4f5" : "#1e293b",
+        borderColor: isSidebarDark ? "#27272a" : "#e2e8f0",
       }}
     >
       {/* Sidebar Container */}
@@ -261,9 +265,9 @@ export default function Sidebar() {
             aria-label="Toggle Sidebar"
             className="absolute -right-3 top-8 w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer z-20 shadow-md border"
             style={{
-              backgroundColor: isSidebarDark ? "#1e293b" : "#ffffff",
-              borderColor: isSidebarDark ? "#334155" : "#e2e8f0",
-              color: isSidebarDark ? "#cbd5e1" : "#475569",
+              backgroundColor: isSidebarDark ? "#09090b" : "#ffffff",
+              borderColor: isSidebarDark ? "#27272a" : "#e2e8f0",
+              color: isSidebarDark ? "#f4f4f5" : "#475569",
             }}
           >
             {open ? <X size={15} /> : <Menu size={15} />}

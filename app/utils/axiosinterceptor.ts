@@ -2,37 +2,51 @@ import axios from "axios";
 import { serverurl } from "@/app/contants";
 
 const instance = axios.create({
-  withCredentials: true, // This is crucial for sending cookies
+  withCredentials: true, // Crucial for sending cookies
   baseURL: `${serverurl}`,
 });
 
 instance.interceptors.request.use(
   (config) => {
-    console.log("Request Interceptor");
-    // Remove localStorage token logic since backend uses httpOnly cookies
-    // The cookies will be automatically sent with withCredentials: true
+    if (typeof window !== "undefined") {
+      const token =
+        localStorage.getItem("accessToken") || localStorage.getItem("token");
+      if (token && !config.headers.Authorization) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
     return config;
   },
   (error) => {
-    console.log("Request Interceptor Error", error);
     return Promise.reject(error);
   }
 );
 
 const refreshAccessToken = async () => {
   try {
-    // No need to send refreshToken in body since it's in httpOnly cookie
+    const refreshToken =
+      typeof window !== "undefined"
+        ? localStorage.getItem("refreshToken") || ""
+        : "";
+
     const response = await axios.post(
       `${serverurl}/user/refreshtoken`,
-      {}, // Empty body
+      { refreshToken },
       {
-        withCredentials: true, // Send cookies with this request
+        withCredentials: true,
       }
     );
 
-    // Backend sets new accessToken cookie automatically
-    return response.data.accessToken; // This might not be needed since token is in cookie
+    if (response.data?.accessToken && typeof window !== "undefined") {
+      localStorage.setItem("accessToken", response.data.accessToken);
+    }
+    return response.data?.accessToken;
   } catch (error) {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("token");
+    }
     throw new Error("Failed to refresh token");
   }
 };
@@ -42,25 +56,28 @@ instance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Skip token refresh on /auth routes
-    const authEndpoints = ["/authentication/login", "/authentication/register"];
+    // Skip token refresh on auth endpoints to prevent loops
+    const authEndpoints = ["/user/login-user", "/user/create-user", "/user/refreshtoken"];
     const isAuthRequest = authEndpoints.some((endpoint) =>
-      originalRequest.url?.includes(endpoint)
+      originalRequest?.url?.includes(endpoint)
     );
 
     if (
       error.response?.status === 401 &&
+      originalRequest &&
       !originalRequest._retry &&
       !isAuthRequest
     ) {
       originalRequest._retry = true;
 
       try {
-        await refreshAccessToken();
+        const newToken = await refreshAccessToken();
+        if (newToken) {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        }
         return instance(originalRequest);
       } catch (refreshError) {
-        // console.error("Token refresh failed:", refreshError);
-        // window.location.href = "/authentication/login";
+        // Refresh token expired or failed
       }
     }
 

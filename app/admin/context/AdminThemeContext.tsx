@@ -90,7 +90,7 @@ export interface AdminThemeSettings {
 
 const DEFAULT_SETTINGS: AdminThemeSettings = {
   themeMode: "dark",
-  sidebarColor: "#0f172a",
+  sidebarColor: "#000000",
   isSidebarGradient: false,
   sidebarGradient: "linear-gradient(180deg, #1d0e3a 0%, #091224 100%)",
   sidebarStyle: "solid",
@@ -107,6 +107,7 @@ const DEFAULT_SETTINGS: AdminThemeSettings = {
 interface AdminThemeContextType {
   settings: AdminThemeSettings;
   resolvedTheme: "light" | "dark";
+  isDark: boolean;
   isCustomizerOpen: boolean;
   activeFont: FontOption;
   openCustomizer: () => void;
@@ -150,6 +151,25 @@ export function AdminThemeProvider({ children }: { children: React.ReactNode }) 
     }
   }, []);
 
+  // Compute resolved theme
+  const resolvedTheme: "light" | "dark" = useMemo(() => {
+    if (settings.themeMode === "system") {
+      return systemIsDark ? "dark" : "light";
+    }
+    return settings.themeMode;
+  }, [settings.themeMode, systemIsDark]);
+
+  // Sync dark class on documentElement for global tailwind dark mode
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      if (resolvedTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    }
+  }, [resolvedTheme]);
+
   // Save to localStorage whenever settings change
   const updateSetting = <K extends keyof AdminThemeSettings>(
     key: K,
@@ -174,14 +194,6 @@ export function AdminThemeProvider({ children }: { children: React.ReactNode }) 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_SETTINGS));
     }
   };
-
-  // Compute resolved theme
-  const resolvedTheme: "light" | "dark" = useMemo(() => {
-    if (settings.themeMode === "system") {
-      return systemIsDark ? "dark" : "light";
-    }
-    return settings.themeMode;
-  }, [settings.themeMode, systemIsDark]);
 
   // Find active font object
   const activeFont = useMemo(() => {
@@ -240,6 +252,7 @@ export function AdminThemeProvider({ children }: { children: React.ReactNode }) 
       value={{
         settings,
         resolvedTheme,
+        isDark: resolvedTheme === "dark",
         isCustomizerOpen,
         activeFont,
         openCustomizer: () => setIsCustomizerOpen(true),
@@ -252,7 +265,7 @@ export function AdminThemeProvider({ children }: { children: React.ReactNode }) 
     >
       <div
         className={`admin-theme-root h-screen w-full overflow-hidden ${
-          resolvedTheme === "dark" ? "dark bg-slate-950 text-slate-100" : "bg-slate-50 text-slate-900"
+          resolvedTheme === "dark" ? "dark bg-black text-zinc-100" : "bg-slate-50 text-slate-900"
         }`}
         style={
           {

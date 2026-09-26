@@ -126,35 +126,7 @@ export default function FlazoSaleIsLive() {
           </div>
         </div>
 
-        {/* Live Flash Deal Urgency Countdown Bar (boAt Signature Conversion Booster) */}
-        <div className="bg-gradient-to-r from-neutral-950 via-neutral-900 to-neutral-950 text-white rounded-2xl p-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 border border-amber-500/40 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400 shrink-0 shadow-xs">
-              <Zap className="w-5 h-5 fill-amber-400 animate-pulse" />
-            </div>
-            <div className="text-left">
-              <div className="text-xs sm:text-sm font-black tracking-wide text-white flex items-center gap-2">
-                <span>FLASH SALE IS LIVE</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-sm bg-red-600 font-bold uppercase tracking-wider text-white animate-pulse">UP TO 76% OFF</span>
-              </div>
-              <p className="text-[11px] text-neutral-400 mt-0.5">
-                Extra ₹200 OFF on prepaid UPI orders • Apply coupon: <strong className="text-amber-300 font-black tracking-wider">FLAZO200</strong>
-              </p>
-            </div>
-          </div>
 
-          {/* Live Countdown Clock */}
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider mr-1 hidden sm:inline">Deal Ends In:</span>
-            <div className="flex items-center gap-1.5 font-black text-xs text-neutral-950">
-              <span className="bg-amber-400 px-2.5 py-1 rounded-md min-w-[32px] text-center shadow-xs">{String(timeLeft.hours).padStart(2, "0")}h</span>
-              <span className="text-amber-400 font-bold">:</span>
-              <span className="bg-amber-400 px-2.5 py-1 rounded-md min-w-[32px] text-center shadow-xs">{String(timeLeft.minutes).padStart(2, "0")}m</span>
-              <span className="text-amber-400 font-bold">:</span>
-              <span className="bg-amber-400 px-2.5 py-1 rounded-md min-w-[32px] text-center shadow-xs">{String(timeLeft.seconds).padStart(2, "0")}s</span>
-            </div>
-          </div>
-        </div>
 
         {/* Section Header: "Sale Is Live" + "View All" (Exact boAt Style) */}
         <div className="flex items-center justify-between pt-2">
@@ -262,7 +234,7 @@ export default function FlazoSaleIsLive() {
                             </div>
                             <div className="flex items-center gap-1.5 mt-0.5">
                               {p.discount && (
-                                <span className="text-[11px] font-extrabold text-emerald-600 block">
+                                <span className="text-[11px] font-extrabold text-amber-500 block">
                                   {p.discount}
                                 </span>
                               )}

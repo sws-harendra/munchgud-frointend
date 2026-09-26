@@ -16,7 +16,7 @@ export const registerUser = createAsyncThunk(
       return await authService.registerUser(userData);
     } catch (err: any) {
       return rejectWithValue(
-        err?.message || "Invalid credentials"
+        err?.message || err?.response?.data?.message || "Registration failed"
       );
     }
   },
@@ -409,10 +409,16 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.pending, (state) => {
         state.registerStatus = "loading";
+        state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
-        // state.user = action.payload;
         state.registerStatus = "succeeded";
+        if (action.payload?.user) {
+          state.user = action.payload.user;
+          state.isAuthenticated = true;
+          state.status = "succeeded";
+        }
+        state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.registerStatus = "failed";

@@ -28,7 +28,7 @@ const PATH_MAP: Record<string, string> = {
   "/admin/dashboard/orders": "Orders Management",
   "/admin/dashboard/users": "User Accounts",
   "/admin/dashboard/video-management": "Video Showcase",
-  "/admin/dashboard/banner-management": "Promotional Banners",
+  // "/admin/dashboard/banner-management": "Promotional Banners",
   "/admin/dashboard/hero-images": "Hero Slides",
   "/admin/dashboard/trending-images": "Trending Visuals",
   "/admin/dashboard/section-control": "Homepage Sections",
@@ -108,7 +108,7 @@ export default function AdminTopBar() {
     <header
       className={`h-16 px-4 md:px-6 flex items-center justify-between border-b shrink-0 transition-all select-none z-20 ${
         resolvedTheme === "dark"
-          ? "bg-slate-900/90 border-slate-800 text-slate-100 backdrop-blur-md"
+          ? "bg-black/95 border-zinc-800 text-zinc-100 backdrop-blur-md"
           : "bg-white/90 border-slate-200 text-slate-800 backdrop-blur-md shadow-xs"
       }`}
     >
@@ -120,7 +120,7 @@ export default function AdminTopBar() {
           }
           className={`p-2 rounded-xl transition cursor-pointer ${
             resolvedTheme === "dark"
-              ? "hover:bg-slate-800 text-slate-400 hover:text-slate-100"
+              ? "hover:bg-zinc-900 text-zinc-400 hover:text-zinc-100"
               : "hover:bg-slate-100 text-slate-500 hover:text-slate-900"
           }`}
           title={settings.sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
@@ -151,7 +151,7 @@ export default function AdminTopBar() {
           target="_blank"
           className={`hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border transition ${
             resolvedTheme === "dark"
-              ? "border-slate-700/80 bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800"
+              ? "border-zinc-800 bg-zinc-900 text-zinc-300 hover:text-white hover:bg-zinc-800"
               : "border-slate-200 bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           }`}
           title="Open live customer storefront in new tab"
@@ -165,7 +165,7 @@ export default function AdminTopBar() {
       <div
         className={`hidden md:flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono border ${
           resolvedTheme === "dark"
-            ? "bg-slate-950/60 border-slate-800 text-slate-400"
+            ? "bg-zinc-900 border-zinc-800 text-zinc-300"
             : "bg-slate-100/80 border-slate-200 text-slate-600"
         }`}
       >
@@ -180,7 +180,7 @@ export default function AdminTopBar() {
           onClick={cycleTheme}
           className={`p-2 rounded-xl transition cursor-pointer relative group ${
             resolvedTheme === "dark"
-              ? "hover:bg-slate-800 text-slate-300 hover:text-amber-400"
+              ? "hover:bg-zinc-900 text-zinc-300 hover:text-amber-400"
               : "hover:bg-slate-100 text-slate-600 hover:text-amber-600"
           }`}
           title={`Theme: ${settings.themeMode.toUpperCase()} (Click to change)`}
@@ -196,7 +196,7 @@ export default function AdminTopBar() {
           onClick={toggleFullscreen}
           className={`hidden sm:flex p-2 rounded-xl transition cursor-pointer ${
             resolvedTheme === "dark"
-              ? "hover:bg-slate-800 text-slate-400 hover:text-slate-100"
+              ? "hover:bg-zinc-900 text-zinc-400 hover:text-slate-100"
               : "hover:bg-slate-100 text-slate-500 hover:text-slate-900"
           }`}
           title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
@@ -216,7 +216,7 @@ export default function AdminTopBar() {
           style={{
             borderColor: `${settings.accentColor}55`,
             backgroundColor:
-              resolvedTheme === "dark" ? "rgba(15, 23, 42, 0.85)" : "#ffffff",
+              resolvedTheme === "dark" ? "#09090b" : "#ffffff",
           }}
           title="Open Theme & Appearance Customizer"
         >
@@ -258,7 +258,7 @@ export default function AdminTopBar() {
         {/* Admin Profile Mini Avatar */}
         <div
           className={`flex items-center gap-2 pl-2 sm:pl-3 border-l ${
-            resolvedTheme === "dark" ? "border-slate-800" : "border-slate-200"
+            resolvedTheme === "dark" ? "border-zinc-800" : "border-slate-200"
           }`}
         >
           <div

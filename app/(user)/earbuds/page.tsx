@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { slugify } from "@/app/utils/slugify";
 import {
   Sparkles,
   Shield,
@@ -11,9 +13,12 @@ import {
   Star,
   CheckCircle2,
   Headphones,
+  RotateCw,
 } from "lucide-react";
-import { useAppDispatch } from "@/app/lib/store/store";
+import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
+import { fetchProducts } from "@/app/lib/store/features/productSlice";
 import { addToCart } from "@/app/lib/store/features/cartSlice";
+import { getImageUrl } from "@/app/utils/getImageUrl";
 import { toast } from "sonner";
 
 interface EarbudProduct {
@@ -170,7 +175,10 @@ const earbudCatalog: EarbudProduct[] = [
 
 export default function EarbudsPage() {
   const dispatch = useAppDispatch();
-  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const { products: storeProducts, status } = useAppSelector(
+    (state) => state.product
+  );
+
   const [selectedColors, setSelectedColors] = useState<{ [key: number]: number }>({
     301: 0,
     302: 0,
@@ -178,17 +186,121 @@ export default function EarbudsPage() {
     304: 0,
   });
 
-  const filteredProducts = earbudCatalog.filter((item) => {
-    if (selectedFilter === "all") return true;
-    return item.category === selectedFilter;
-  });
+  useEffect(() => {
+    dispatch(fetchProducts({ limit: 50 }));
+  }, [dispatch]);
+
+  // Combine backend products with rich catalog templates
+  const dynamicProducts: EarbudProduct[] = useMemo(() => {
+    const rawList: any[] = Array.isArray(storeProducts)
+      ? storeProducts
+      : (storeProducts as any)?.products || [];
+
+    // Filter products related to Earbuds
+    const earbudsFromDb = rawList.filter((p: any) => {
+      const catName = p.Category?.name?.toLowerCase() || "";
+      const name = p.name?.toLowerCase() || "";
+      const tags = Array.isArray(p.tags)
+        ? p.tags.join(" ").toLowerCase()
+        : (p.tags || "").toLowerCase();
+      return (
+        catName.includes("earbud") ||
+        name.includes("earbud") ||
+        name.includes("nirvana") ||
+        name.includes("basspod") ||
+        name.includes("aerobeat") ||
+        tags.includes("earbud")
+      );
+    });
+
+    if (earbudsFromDb.length === 0) {
+      return earbudCatalog;
+    }
+
+    return earbudsFromDb.map((p: any, idx: number) => {
+      const template = earbudCatalog[idx % earbudCatalog.length];
+
+      const origPrice =
+        parseFloat(p.originalPrice) || parseFloat(p.discountPrice) * 1.5;
+      const salePrice = parseFloat(p.discountPrice) || template.price;
+      const discountPct = Math.round(
+        ((origPrice - salePrice) / origPrice) * 100
+      );
+
+      // Parse tags
+      let parsedTags: string[] = [];
+      if (Array.isArray(p.tags)) parsedTags = p.tags;
+      else if (typeof p.tags === "string") {
+        try {
+          parsedTags = JSON.parse(p.tags);
+        } catch {
+          parsedTags = p.tags.split(",").map((t: string) => t.trim());
+        }
+      }
+
+      // Determine category
+      let category: "anc" | "bass" | "sports" | "audiophile" = "anc";
+      const tagsStr =
+        parsedTags.join(" ").toLowerCase() + " " + p.name.toLowerCase();
+      if (tagsStr.includes("bass")) category = "bass";
+      else if (
+        tagsStr.includes("sport") ||
+        tagsStr.includes("sweat") ||
+        tagsStr.includes("ipx7")
+      )
+        category = "sports";
+      else if (
+        tagsStr.includes("audio") ||
+        tagsStr.includes("ldac") ||
+        tagsStr.includes("hi-res")
+      )
+        category = "audiophile";
+
+      // Image
+      let imgPath = template.image;
+      if (p.images && p.images.length > 0) {
+        const firstImg = p.images[0];
+        if (
+          typeof firstImg === "string" &&
+          (firstImg.startsWith("http") || firstImg.startsWith("/"))
+        ) {
+          imgPath = firstImg;
+        } else {
+          imgPath = getImageUrl(firstImg);
+        }
+      }
+
+      return {
+        id: p.id,
+        name: p.name,
+        tagline: p.description
+          ? p.description.replace(/<[^>]*>?/gm, "").slice(0, 110) + "..."
+          : template.tagline,
+        category: category,
+        badge: p.trending_product ? "🔥 BESTSELLER" : template.badge,
+        badgeColor: p.trending_product
+          ? "bg-neutral-900 text-amber-400 border border-amber-400/40"
+          : template.badgeColor,
+        price: salePrice,
+        originalPrice: origPrice,
+        discount: `${discountPct > 0 ? discountPct : 60}% OFF`,
+        rating: p.ratings || template.rating || 4.9,
+        reviews: template.reviews || "24,800+",
+        image: imgPath,
+        specs: template.specs,
+        features:
+          parsedTags.length >= 3 ? parsedTags.slice(0, 4) : template.features,
+        colors: template.colors,
+      };
+    });
+  }, [storeProducts]);
 
   const handleAddToCart = (product: EarbudProduct) => {
     dispatch(
       addToCart({
         id: product.id,
         name: product.name,
-        price: product.price,
+        price: Number(product.price),
         imageUrl: product.image,
         quantity: 1,
         paymentMethods: "Prepaid, COD Available",
@@ -217,36 +329,13 @@ export default function EarbudsPage() {
           <p className="text-sm sm:text-base text-[#5C564E] max-w-2xl mx-auto leading-relaxed">
             Every pair of Flazo wireless earbuds is custom-tuned with titanium drivers, 50dB Hybrid ANC, and 24K gold acoustic trim for an unmatched acoustic journey.
           </p>
-
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2.5 pt-4">
-            {[
-              { id: "all", label: "All Earbuds" },
-              { id: "anc", label: "50dB Hybrid ANC" },
-              { id: "bass", label: "BoomBass™ Series" },
-              { id: "sports", label: "Workout & IPX7" },
-              { id: "audiophile", label: "Audiophile Labs" },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedFilter(tab.id)}
-                className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  selectedFilter === tab.id
-                    ? "bg-[#1A1815] text-amber-300 shadow-md scale-105"
-                    : "bg-white border border-[#E8DCC4] text-neutral-700 hover:border-amber-400 hover:text-amber-700"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* 2. CATALOG GRID */}
       <section className="max-w-[1560px] mx-auto px-4 sm:px-8 lg:px-12 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {filteredProducts.map((earbud) => (
+          {dynamicProducts.map((earbud) => (
             <div
               key={earbud.id}
               className="group rounded-3xl bg-white border border-[#E8DCC4] hover:border-[#D4AF37] shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between"
@@ -268,23 +357,29 @@ export default function EarbudsPage() {
 
                 {/* Earbud Image & Color Preview */}
                 <div className="relative w-full aspect-16/10 rounded-2xl bg-gradient-to-b from-[#FCFBF8] to-[#F5EFE0] border border-[#EFE5D0] flex items-center justify-center p-6 overflow-hidden">
-                  <Image
-                    src={earbud.image}
-                    alt={earbud.name}
-                    width={320}
-                    height={320}
-                    className="object-contain max-h-[220px] w-auto group-hover:scale-108 transition-transform duration-700 drop-shadow-lg"
-                  />
+                  <Link
+                    href={`/products/${slugify(earbud.name)}/${earbud.id}`}
+                    className="w-full h-full flex items-center justify-center cursor-pointer"
+                  >
+                    <Image
+                      src={earbud.image}
+                      alt={earbud.name}
+                      width={320}
+                      height={320}
+                      className="object-contain max-h-[220px] w-auto group-hover:scale-108 transition-transform duration-700 drop-shadow-lg"
+                    />
+                  </Link>
                   
                   {/* Floating Color Swatches */}
-                  <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1.5 rounded-full border border-amber-200 shadow-2xs">
+                  <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1.5 rounded-full border border-amber-200 shadow-2xs z-10">
                     <span className="text-[10px] font-bold text-neutral-500 mr-1">Shades:</span>
                     {earbud.colors.map((color, idx) => (
                       <button
                         key={color.name}
-                        onClick={() =>
-                          setSelectedColors((prev) => ({ ...prev, [earbud.id]: idx }))
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedColors((prev) => ({ ...prev, [earbud.id]: idx }));
+                        }}
                         title={color.name}
                         style={{ backgroundColor: color.hex }}
                         className={`w-4 h-4 rounded-full border border-black/20 transition-transform ${
@@ -299,9 +394,11 @@ export default function EarbudsPage() {
 
                 {/* Earbud Title & Tagline */}
                 <div className="space-y-1.5 text-left">
-                  <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#1A1815] group-hover:text-amber-800 transition-colors">
-                    {earbud.name}
-                  </h2>
+                  <Link href={`/products/${slugify(earbud.name)}/${earbud.id}`} className="block group/link">
+                    <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#1A1815] group-hover/link:text-amber-700 transition-colors">
+                      {earbud.name}
+                    </h2>
+                  </Link>
                   <p className="text-xs sm:text-sm text-[#665E50] leading-relaxed">
                     {earbud.tagline}
                   </p>

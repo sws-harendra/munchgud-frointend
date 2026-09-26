@@ -116,7 +116,7 @@ const EditOrder: React.FC<EditOrderProps> = ({ orderId, onClose }) => {
   }
 
   if (error) {
-    return <div className="p-8 text-center text-green-600">Error: {error}</div>;
+    return <div className="p-8 text-center text-rose-600">Error: {error}</div>;
   }
 
   if (!currentOrder || currentOrder.id !== parseInt(orderId)) {
@@ -173,7 +173,7 @@ const EditOrder: React.FC<EditOrderProps> = ({ orderId, onClose }) => {
                           e.stopPropagation(); // 🔥 IMPORTANT
                           selectDriver("");
                         }}
-                        className="text-green-700 h-5 w-5"
+                        className="text-rose-500 hover:text-rose-600 h-5 w-5"
                       />
                     ) : (
                       <Plus className="text-gray-600 h-5 w-5" />
@@ -181,27 +181,9 @@ const EditOrder: React.FC<EditOrderProps> = ({ orderId, onClose }) => {
                   </div>
                 ))}
             </div>
-            {/* <div className="bg-gray-50 rounded-xl p-4 max-h-80 overflow-y-auto space-y-2">
-              {loading && <p className="text-center">Loading...</p>}
-              {!loading &&
-                Array.isArray(allDrivers) &&
-                allDrivers?.map((product: any) => (
-                  <div
-                    key={product.id}
-                    className={`flex items-center justify-between p-3 rounded-lg cursor-pointer ${
-                      selectedDriver.includes(product.id)
-                        ? "bg-indigo-50 border-2 border-indigo-200"
-                        : "bg-white border border-gray-200"
-                    }`}
-                    // onClick={() => toggleProduct(product.id)}
-                  >
-                    <span>{product.name}</span>
-                  </div>
-                ))}
-            </div> */}
           </div>
           {updateError && (
-            <div className="bg-red-100 border border-green-700 text-green-700 px-4 py-3 rounded">
+            <div className="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-xs font-semibold">
               {updateError}
             </div>
           )}
@@ -296,7 +278,9 @@ const EditOrder: React.FC<EditOrderProps> = ({ orderId, onClose }) => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Customer</p>
-                  <p className="font-medium">User #{currentOrder.userId}</p>
+                  <p className="font-medium">
+                    {currentOrder.User?.fullname || `User #${currentOrder.userId}`}
+                  </p>
                 </div>
               </div>
 
@@ -336,7 +320,7 @@ const EditOrder: React.FC<EditOrderProps> = ({ orderId, onClose }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 rounded-xl font-bold shadow-md shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center transition-all"
             >
               <Save className="h-4 w-4 mr-2" />
               {isSubmitting ? "Updating..." : "Update Order"}

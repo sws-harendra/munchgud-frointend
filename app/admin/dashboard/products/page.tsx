@@ -14,6 +14,7 @@ import {
   TrendingUp,
   ShoppingCart,
   SeparatorVertical,
+  Flame,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import {
@@ -29,9 +30,13 @@ import AddProducts from "../../components/addproduct";
 import EditProduct from "../../components/editProduct";
 import ProductPreviewModal from "../../components/viewproducts";
 import Link from "next/link";
+import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
 
 export default function AdminProductsPage() {
   const dispatch = useAppDispatch();
+  const { resolvedTheme } = useAdminTheme();
+  const isDark = resolvedTheme === "dark";
+
   const { products, error, status } = useAppSelector((state) => state.product);
   const isLoading = status === "loading";
 
@@ -144,161 +149,233 @@ export default function AdminProductsPage() {
   const totalPages = Math.ceil(totalProducts / limit);
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-100 rounded-lg">
-              <Package className="w-6 h-6 text-indigo-600" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900">Products</h1>
-              <p className="text-slate-600 text-sm">
-                Manage your inventory and product catalog
-              </p>
-            </div>
+    <div
+      className={`min-h-screen p-4 sm:p-6 lg:p-8 transition-colors duration-200 ${
+        isDark ? "bg-black text-zinc-100" : "bg-slate-50/60 text-slate-800"
+      }`}
+    >
+      {/* Header Banner */}
+      <div
+        className={`rounded-2xl p-6 border mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors ${
+          isDark
+            ? "bg-zinc-950 border-zinc-800 text-white shadow-xl"
+            : "bg-white border-slate-200/80 shadow-xs text-slate-900"
+        }`}
+      >
+        <div className="flex items-center gap-3.5">
+          <div
+            className={`p-3 rounded-xl border ${
+              isDark
+                ? "bg-zinc-900 border-zinc-800 text-amber-400"
+                : "bg-amber-50 border-amber-200 text-amber-700"
+            }`}
+          >
+            <Package className="w-6 h-6" />
           </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
-            >
-              <Filter size={18} />
-              {showFilters ? "Hide Filters" : "Show Filters"}
-            </button>
-
-            <button
-              onClick={resetFilters}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
-            >
-              <X size={18} />
-              Clear
-            </button>
-
-            <button
-              onClick={() => dispatch(fetchProducts({ page, limit }))}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/25"
-            >
-              <RefreshCcw size={18} />
-              Refresh
-            </button>
-
-            <SidebarForm
-              title="Add Product"
-              trigger={
-                <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/25">
-                  <Plus size={18} />
-                  Add Product
-                </button>
-              }
-            >
-              <AddProducts />
-            </SidebarForm>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                Products Inventory
+              </h1>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Catalog
+              </span>
+            </div>
+            <p className={`text-xs sm:text-sm mt-0.5 ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+              Manage your Earbuds, audio equipment, stock levels, and store inventory
+            </p>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 my-6">
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm font-medium">
-                  Total Products
-                </p>
-                <p className="text-2xl font-bold text-slate-900">
-                  {totalProducts}
-                </p>
-              </div>
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Package className="w-5 h-5 text-blue-600" />
-              </div>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+              isDark
+                ? "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            <Filter size={16} />
+            {showFilters ? "Hide Filters" : "Filter Catalog"}
+          </button>
+
+          <button
+            onClick={resetFilters}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+              isDark
+                ? "bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white"
+                : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            <X size={15} />
+            Reset
+          </button>
+
+          <button
+            onClick={() => dispatch(fetchProductsforadmin({ page, limit }))}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+              isDark
+                ? "bg-zinc-900 border-zinc-800 text-emerald-400 hover:bg-zinc-800"
+                : "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+            }`}
+          >
+            <RefreshCcw size={15} />
+            Refresh
+          </button>
+
+          <SidebarForm
+            title="Add New Product"
+            trigger={
+              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-bold text-xs shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer">
+                <Plus size={16} />
+                <span>Add Product</span>
+              </button>
+            }
+          >
+            <AddProducts />
+          </SidebarForm>
+        </div>
+      </div>
+
+      {/* KPI Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div
+          className={`rounded-2xl p-4.5 border transition-colors ${
+            isDark
+              ? "bg-zinc-950 border-zinc-800 text-white shadow-xl"
+              : "bg-white border-slate-200/80 shadow-xs text-slate-900"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+                Total Products
+              </p>
+              <p className="text-2xl font-bold tracking-tight">
+                {totalProducts}
+              </p>
+            </div>
+            <div className={`p-3 rounded-xl ${isDark ? "bg-zinc-900 text-amber-400 border border-zinc-800" : "bg-blue-50 text-blue-600"}`}>
+              <Package className="w-5 h-5" />
             </div>
           </div>
+        </div>
 
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm font-medium">
-                  Active Products
-                </p>
-                <p className="text-2xl font-bold text-emerald-600">
-                  {Array.isArray(products?.products) ? activeProducts : 0}
-                </p>
-              </div>
-              <div className="p-2 bg-emerald-100 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-emerald-600" />
-              </div>
+        <div
+          className={`rounded-2xl p-4.5 border transition-colors ${
+            isDark
+              ? "bg-zinc-950 border-zinc-800 text-white shadow-xl"
+              : "bg-white border-slate-200/80 shadow-xs text-slate-900"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+                In Stock & Active
+              </p>
+              <p className="text-2xl font-bold tracking-tight text-emerald-500">
+                {Array.isArray(products?.products) ? activeProducts : 0}
+              </p>
+            </div>
+            <div className={`p-3 rounded-xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" : "bg-emerald-50 text-emerald-600"}`}>
+              <TrendingUp className="w-5 h-5" />
             </div>
           </div>
+        </div>
 
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm font-medium">Low Stock</p>
-                <p className="text-2xl font-bold text-amber-600">
-                  {Array.isArray(products?.products)
-                    ? products.products.filter((p) => (p.stock ?? 0) < 10)
-                        .length
-                    : 0}
-                </p>
-              </div>
-              <div className="p-2 bg-amber-100 rounded-lg">
-                <ShoppingCart className="w-5 h-5 text-amber-600" />
-              </div>
+        <div
+          className={`rounded-2xl p-4.5 border transition-colors ${
+            isDark
+              ? "bg-zinc-950 border-zinc-800 text-white shadow-xl"
+              : "bg-white border-slate-200/80 shadow-xs text-slate-900"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+                Low Stock (&lt; 10)
+              </p>
+              <p className="text-2xl font-bold tracking-tight text-amber-500">
+                {Array.isArray(products?.products)
+                  ? products.products.filter((p) => (p.stock ?? 0) < 10 && (p.stock ?? 0) > 0)
+                      .length
+                  : 0}
+              </p>
+            </div>
+            <div className={`p-3 rounded-xl ${isDark ? "bg-amber-500/10 text-amber-400 border border-amber-500/30" : "bg-amber-50 text-amber-600"}`}>
+              <ShoppingCart className="w-5 h-5" />
             </div>
           </div>
+        </div>
 
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm font-medium">
-                  Out of Stock
-                </p>
-                <p className="text-2xl font-bold text-green-700">
-                  {Array.isArray(products?.products)
-                    ? products.products.filter((p) => (p.stock ?? 0) === 0)
-                        .length
-                    : 0}
-                </p>
-              </div>
-              <div className="p-2 bg-red-100 rounded-lg">
-                <X className="w-5 h-5 text-green-700" />
-              </div>
+        <div
+          className={`rounded-2xl p-4.5 border transition-colors ${
+            isDark
+              ? "bg-zinc-950 border-zinc-800 text-white shadow-xl"
+              : "bg-white border-slate-200/80 shadow-xs text-slate-900"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+                Sold Out / Depleted
+              </p>
+              <p className="text-2xl font-bold tracking-tight text-rose-500">
+                {Array.isArray(products?.products)
+                  ? products.products.filter((p) => (p.stock ?? 0) === 0)
+                      .length
+                  : 0}
+              </p>
+            </div>
+            <div className={`p-3 rounded-xl ${isDark ? "bg-rose-500/10 text-rose-400 border border-rose-500/30" : "bg-rose-50 text-rose-600"}`}>
+              <X className="w-5 h-5" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="relative mb-6">
+      {/* Search Input Bar */}
+      <div className="relative mb-5">
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Search size={20} className="text-slate-400" />
+          <Search size={18} className={isDark ? "text-zinc-500" : "text-slate-400"} />
         </div>
         <input
           type="text"
-          placeholder="Search products by name, description or tags..."
-          className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all shadow-sm"
+          placeholder="Search products by title, audio specs, driver type or tags..."
+          className={`w-full pl-11 pr-4 py-3.5 text-sm rounded-2xl border focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all ${
+            isDark
+              ? "bg-zinc-950 border-zinc-800 text-white placeholder:text-zinc-500 shadow-xl"
+              : "bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 shadow-xs"
+          }`}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {/* Advanced Filters */}
+      {/* Advanced Filters Panel */}
       {showFilters && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div
+          className={`rounded-2xl p-6 border mb-6 transition-colors ${
+            isDark
+              ? "bg-zinc-950 border-zinc-800 text-white shadow-xl"
+              : "bg-white border-slate-200 text-slate-800 shadow-xs"
+          }`}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {/* Price Range */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-slate-900 text-sm">
-                Price Range
+            <div className="space-y-2">
+              <h3 className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-slate-600"}`}>
+                MRP Range
               </h3>
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <input
                   type="number"
-                  placeholder="Min"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  placeholder="Min ₹"
+                  className={`w-full px-3 py-2 text-xs rounded-xl border focus:outline-none focus:ring-1 focus:ring-amber-500 ${
+                    isDark ? "bg-zinc-900 border-zinc-800 text-white" : "bg-slate-50 border-slate-200"
+                  }`}
                   value={minPrice || ""}
                   onChange={(e) =>
                     setMinPrice(Number(e.target.value) || undefined)
@@ -306,8 +383,10 @@ export default function AdminProductsPage() {
                 />
                 <input
                   type="number"
-                  placeholder="Max"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  placeholder="Max ₹"
+                  className={`w-full px-3 py-2 text-xs rounded-xl border focus:outline-none focus:ring-1 focus:ring-amber-500 ${
+                    isDark ? "bg-zinc-900 border-zinc-800 text-white" : "bg-slate-50 border-slate-200"
+                  }`}
                   value={maxPrice || ""}
                   onChange={(e) =>
                     setMaxPrice(Number(e.target.value) || undefined)
@@ -317,15 +396,17 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Selling Price Range */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-slate-900 text-sm">
+            <div className="space-y-2">
+              <h3 className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-slate-600"}`}>
                 Selling Price
               </h3>
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <input
                   type="number"
-                  placeholder="Min"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  placeholder="Min ₹"
+                  className={`w-full px-3 py-2 text-xs rounded-xl border focus:outline-none focus:ring-1 focus:ring-amber-500 ${
+                    isDark ? "bg-zinc-900 border-zinc-800 text-white" : "bg-slate-50 border-slate-200"
+                  }`}
                   value={minSellingPrice || ""}
                   onChange={(e) =>
                     setMinSellingPrice(Number(e.target.value) || undefined)
@@ -333,8 +414,10 @@ export default function AdminProductsPage() {
                 />
                 <input
                   type="number"
-                  placeholder="Max"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                  placeholder="Max ₹"
+                  className={`w-full px-3 py-2 text-xs rounded-xl border focus:outline-none focus:ring-1 focus:ring-amber-500 ${
+                    isDark ? "bg-zinc-900 border-zinc-800 text-white" : "bg-slate-50 border-slate-200"
+                  }`}
                   value={maxSellingPrice || ""}
                   onChange={(e) =>
                     setMaxSellingPrice(Number(e.target.value) || undefined)
@@ -343,53 +426,15 @@ export default function AdminProductsPage() {
               </div>
             </div>
 
-            {/* Brand & Barcode */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-slate-900 text-sm">
-                Brand & Barcode
-              </h3>
-              <input
-                type="text"
-                placeholder="Brand name"
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
-                value={brand || ""}
-                onChange={(e) => setBrand(e.target.value || undefined)}
-              />
-              <input
-                type="text"
-                placeholder="Barcode"
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
-                value={barcode || ""}
-                onChange={(e) => setBarcode(e.target.value || undefined)}
-              />
-            </div>
-
-            {/* Additional Filters */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-slate-900 text-sm">
-                Other Filters
-              </h3>
-              <input
-                type="number"
-                placeholder="Tax (%)"
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
-                value={tax || ""}
-                onChange={(e) => setTax(Number(e.target.value) || undefined)}
-              />
-              <input
-                type="text"
-                placeholder="Unit"
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
-                value={unit || ""}
-                onChange={(e) => setUnit(e.target.value || undefined)}
-              />
-            </div>
-
             {/* Status Filters */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-slate-900 text-sm">Status</h3>
+            <div className="space-y-2">
+              <h3 className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-slate-600"}`}>
+                Status
+              </h3>
               <select
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                className={`w-full px-3 py-2 text-xs rounded-xl border focus:outline-none focus:ring-1 focus:ring-amber-500 ${
+                  isDark ? "bg-zinc-900 border-zinc-800 text-white" : "bg-slate-50 border-slate-200"
+                }`}
                 value={statusFilter || ""}
                 onChange={(e) => setStatusFilter(e.target.value || undefined)}
               >
@@ -400,40 +445,31 @@ export default function AdminProductsPage() {
               </select>
             </div>
 
-            {/* Boolean Filters */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-slate-900 text-sm">Options</h3>
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 cursor-pointer">
+            {/* Boolean Options */}
+            <div className="space-y-2">
+              <h3 className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-slate-600"}`}>
+                Special Visibility
+              </h3>
+              <div className="space-y-1.5 pt-1">
+                <label className="flex items-center gap-2 cursor-pointer text-xs">
                   <input
                     type="checkbox"
                     checked={!!trending}
                     onChange={() => setTrending(trending ? undefined : true)}
-                    className="w-4 h-4 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500"
+                    className="w-3.5 h-3.5 text-amber-500 rounded border-zinc-700"
                   />
-                  <span className="text-slate-700 text-sm">Trending</span>
+                  <span>Show Trending Products Only</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={!!purchasable}
-                    onChange={() =>
-                      setPurchasable(purchasable ? undefined : true)
-                    }
-                    className="w-4 h-4 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500"
-                  />
-                  <span className="text-slate-700 text-sm">Purchasable</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer text-xs">
                   <input
                     type="checkbox"
                     checked={!!showStockOut}
                     onChange={() =>
                       setShowStockOut(showStockOut ? undefined : true)
                     }
-                    className="w-4 h-4 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500"
+                    className="w-3.5 h-3.5 text-amber-500 rounded border-zinc-700"
                   />
-                  <span className="text-slate-700 text-sm">Show Stock Out</span>
+                  <span>Show Out of Stock Products</span>
                 </label>
               </div>
             </div>
@@ -441,52 +477,41 @@ export default function AdminProductsPage() {
         </div>
       )}
 
-      {/* Products Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      {/* Products Table Card */}
+      <div
+        className={`rounded-2xl border overflow-hidden shadow-xs transition-colors ${
+          isDark ? "bg-zinc-950 border-zinc-800 shadow-xl" : "bg-white border-slate-200/80"
+        }`}
+      >
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-200">
+          <table className="w-full text-left text-sm">
+            <thead
+              className={`border-b text-xs uppercase tracking-wider font-semibold ${
+                isDark
+                  ? "bg-zinc-900/90 border-zinc-800 text-zinc-400"
+                  : "bg-slate-50/80 border-slate-200 text-slate-600"
+              }`}
+            >
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  #
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Product
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Price
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Selling Price
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Stock
-                </th>
-                {/* <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Brand
-                </th> */}
-                <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Created
-                </th>
-                <th className="px-6 py-4 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-6 py-4">#</th>
+                <th className="px-6 py-4">Product</th>
+                <th className="px-6 py-4">Category</th>
+                <th className="px-6 py-4">MRP</th>
+                <th className="px-6 py-4">Sale Price</th>
+                <th className="px-6 py-4">Stock</th>
+                <th className="px-6 py-4">Trending</th>
+                <th className="px-6 py-4">Created</th>
+                <th className="px-6 py-4 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-slate-200">
+            <tbody className={`divide-y ${isDark ? "divide-zinc-850" : "divide-slate-100"}`}>
               {isLoading ? (
                 <tr>
-                  <td colSpan={10} className="px-6 py-12 text-center">
+                  <td colSpan={9} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center">
-                      <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-3"></div>
-                      <p className="text-slate-500 font-medium">
-                        Loading products...
+                      <div className="w-8 h-8 border-3 border-amber-500/30 border-t-amber-500 rounded-full animate-spin mb-3"></div>
+                      <p className={`text-xs font-semibold ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+                        Loading products catalog...
                       </p>
                     </div>
                   </td>
@@ -496,106 +521,129 @@ export default function AdminProductsPage() {
                 products.products.map((product: Product, index: number) => (
                   <tr
                     key={product.id}
-                    className="hover:bg-slate-50 transition-colors"
+                    className={`transition-colors ${
+                      isDark ? "hover:bg-zinc-900/60" : "hover:bg-slate-50/70"
+                    }`}
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                    <td className={`px-6 py-4 whitespace-nowrap text-xs font-mono ${isDark ? "text-zinc-500" : "text-slate-400"}`}>
                       {(page - 1) * limit + index + 1}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-3">
                         <img
                           src={
-                            getImageUrl(product.images?.[0]) || "/no-image.png"
+                            product.images && product.images.length > 0
+                              ? product.images[0].startsWith("http") || product.images[0].startsWith("/")
+                                ? product.images[0]
+                                : getImageUrl(product.images[0])
+                              : "/images/spotlight-earbud.jpg"
                           }
                           alt={product.name}
-                          className="w-12 h-12 object-cover rounded-xl mr-4 border border-slate-200"
+                          className={`w-11 h-11 object-cover rounded-xl border shrink-0 ${
+                            isDark ? "border-zinc-800 bg-zinc-900" : "border-slate-200 bg-slate-100"
+                          }`}
                         />
-                        <div>
-                          <div className="text-sm font-medium text-slate-900 max-w-xs truncate">
+                        <div className="min-w-0">
+                          <div className={`text-sm font-semibold truncate max-w-xs ${isDark ? "text-white" : "text-slate-900"}`}>
                             {product.name}
+                          </div>
+                          <div className={`text-[11px] truncate mt-0.5 ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+                            {product.varientValue || "Standard Edition"}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">
-                      {product.Category?.name || "-"}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                        isDark
+                          ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                          : "bg-amber-50 text-amber-800 border border-amber-200"
+                      }`}>
+                        {product.Category?.name || "Earbuds"}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                    <td className={`px-6 py-4 whitespace-nowrap text-xs line-through ${isDark ? "text-zinc-500" : "text-slate-400"}`}>
                       ₹{product.originalPrice}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-emerald-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-emerald-400">
                       ₹{product.discountPrice || product.originalPrice}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${
+                        className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full border ${
                           (product.stock ?? 0) === 0
-                            ? "bg-red-100 text-green-800"
+                            ? "bg-rose-500/15 text-rose-400 border-rose-500/30"
                             : (product.stock ?? 0) < 10
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-emerald-100 text-emerald-800"
+                            ? "bg-amber-500/15 text-amber-400 border-amber-500/30"
+                            : "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
                         }`}
                       >
-                        {product.stock ?? "0"}
+                        {(product.stock ?? 0) === 0
+                          ? "Sold Out"
+                          : `${product.stock} in stock`}
                       </span>
                     </td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">
-                      {product.brand || "-"}
-                    </td> */}
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${
-                          product.status === "active"
-                            ? "bg-emerald-100 text-emerald-800"
-                            : product.status === "inactive"
-                            ? "bg-red-100 text-green-800"
-                            : "bg-slate-100 text-slate-800"
-                        }`}
-                      >
-                        {product.status || "active"}
-                      </span>
+                      {product.trending_product ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                          <Flame size={12} />
+                          Trending
+                        </span>
+                      ) : (
+                        <span className={`text-xs ${isDark ? "text-zinc-600" : "text-slate-400"}`}>
+                          Regular
+                        </span>
+                      )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">
-                      {new Date(product.createdAt).toLocaleDateString()}
+                    <td className={`px-6 py-4 whitespace-nowrap text-xs ${isDark ? "text-zinc-400" : "text-slate-600"}`}>
+                      {new Date(product.createdAt).toLocaleDateString("en-IN", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
-                      <div className="flex items-center justify-center space-x-2">
-                        {" "}
-                        {product?.ProductVariants?.length > 0 && (
-                          <Link
-                            href={`/admin/dashboard/products/${product.id}`}
-                            className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
-                            title="Manage Variants"
-                          >
-                            <SeparatorVertical size={16} />
-                          </Link>
-                        )}
+                      <div className="flex items-center justify-center gap-1.5">
                         <button
-                          title="View"
+                          title="Preview Product"
                           onClick={() => handleViewProduct(product)}
-                          className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
+                          className={`p-2 rounded-lg transition-colors ${
+                            isDark
+                              ? "text-zinc-400 hover:text-white hover:bg-zinc-900"
+                              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                          }`}
                         >
-                          <Eye size={16} />
+                          <Eye size={15} />
                         </button>
+
                         <SidebarForm
-                          title="Edit Product"
+                          title={`Edit ${product.name}`}
                           trigger={
                             <button
-                              title="Edit"
-                              className="p-2 bg-amber-100 text-amber-600 rounded-lg hover:bg-amber-200 transition-colors"
+                              title="Edit Product"
+                              className={`p-2 rounded-lg transition-colors ${
+                                isDark
+                                  ? "text-zinc-400 hover:text-amber-400 hover:bg-zinc-900"
+                                  : "text-slate-600 hover:text-amber-600 hover:bg-amber-50"
+                              }`}
                             >
-                              <Edit size={16} />
+                              <Edit size={15} />
                             </button>
                           }
                         >
                           <EditProduct productId={product.id} />
                         </SidebarForm>
+
                         <button
-                          title="Delete"
+                          title="Delete Product"
                           onClick={() => handleDelete(product.id)}
-                          className="p-2 bg-red-100 text-green-700 rounded-lg hover:bg-red-200 transition-colors"
+                          className={`p-2 rounded-lg transition-colors ${
+                            isDark
+                              ? "text-zinc-400 hover:text-rose-400 hover:bg-zinc-900"
+                              : "text-slate-600 hover:text-rose-600 hover:bg-rose-50"
+                          }`}
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={15} />
                         </button>
                       </div>
                     </td>
@@ -603,14 +651,14 @@ export default function AdminProductsPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={10} className="px-6 py-12 text-center">
+                  <td colSpan={9} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center">
-                      <Package className="w-12 h-12 text-slate-400 mb-3" />
-                      <p className="text-slate-500 font-medium">
+                      <Package className="w-10 h-10 text-zinc-500 mb-2" />
+                      <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
                         No products found
                       </p>
-                      <p className="text-slate-400 text-sm">
-                        Try adjusting your search or filters
+                      <p className={`text-xs mt-1 ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+                        Try clearing search filters or click "Add Product" above
                       </p>
                     </div>
                   </td>
@@ -620,65 +668,64 @@ export default function AdminProductsPage() {
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Pagination Footer */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 bg-slate-50 border-t border-slate-200">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-slate-700">
-                Showing {(page - 1) * limit + 1} to{" "}
-                {Math.min(page * limit, totalProducts)} of {totalProducts}{" "}
-                results
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  disabled={page === 1}
-                  onClick={() => setPage((p) => p - 1)}
-                  className="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Previous
-                </button>
+          <div
+            className={`px-6 py-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4 ${
+              isDark
+                ? "bg-zinc-900/90 border-zinc-800"
+                : "bg-slate-50/60 border-slate-200"
+            }`}
+          >
+            <p className={`text-xs font-medium ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+              Showing{" "}
+              <span className={`font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
+                {(page - 1) * limit + 1}
+              </span>{" "}
+              to{" "}
+              <span className={`font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
+                {Math.min(page * limit, totalProducts)}
+              </span>{" "}
+              of{" "}
+              <span className={`font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
+                {totalProducts}
+              </span>{" "}
+              products
+            </p>
 
-                <div className="flex space-x-1">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (page <= 3) {
-                      pageNum = i + 1;
-                    } else if (page >= totalPages - 2) {
-                      pageNum = totalPages - 4 + i;
-                    } else {
-                      pageNum = page - 2 + i;
-                    }
+            <div className="flex items-center gap-2">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                  isDark
+                    ? "text-zinc-200 bg-zinc-900 border-zinc-800 hover:bg-zinc-800"
+                    : "text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+                }`}
+              >
+                Previous
+              </button>
 
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setPage(pageNum)}
-                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                          pageNum === page
-                            ? "bg-indigo-600 text-white"
-                            : "text-slate-700 bg-white border border-slate-300 hover:bg-slate-50"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-                </div>
+              <span className={`text-xs font-semibold px-2 ${isDark ? "text-zinc-300" : "text-slate-700"}`}>
+                Page {page} of {totalPages}
+              </span>
 
-                <button
-                  disabled={page === totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                  className="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Next
-                </button>
-              </div>
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                  isDark
+                    ? "text-zinc-200 bg-zinc-900 border-zinc-800 hover:bg-zinc-800"
+                    : "text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+                }`}
+              >
+                Next
+              </button>
             </div>
           </div>
         )}
       </div>
+
       <ProductPreviewModal
         product={selectedProduct}
         isOpen={isModalOpen}

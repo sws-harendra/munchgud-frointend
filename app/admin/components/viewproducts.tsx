@@ -1,55 +1,89 @@
-import React, { useState } from "react";
+"use client";
+import React from "react";
 import {
   Eye,
   X,
   Star,
   Tag,
   Package,
-  DollarSign,
   IndianRupee,
-  Currency,
-  CurrencyIcon,
+  Layers,
+  Sparkles,
+  CreditCard,
+  Calendar,
+  CheckCircle2,
 } from "lucide-react";
 import { getImageUrl } from "@/app/utils/getImageUrl";
+import { useAdminTheme } from "../context/AdminThemeContext";
 
-// Product Preview Modal Component
-const ProductPreviewModal = ({ product, isOpen, onClose }) => {
+interface ProductPreviewModalProps {
+  product: any;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({ product, isOpen, onClose }) => {
+  const { isDark } = useAdminTheme();
+
   if (!isOpen || !product) return null;
 
+  const originalPrice = parseFloat(product.originalPrice) || 0;
+  const salePrice = parseFloat(product.discountPrice) || 0;
+  const discountPercent =
+    originalPrice > 0 && salePrice > 0 && originalPrice > salePrice
+      ? Math.round(((originalPrice - salePrice) / originalPrice) * 100)
+      : 0;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+      <div className={`rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border shadow-2xl transition-all ${
+        isDark
+          ? "bg-[#09090b] border-zinc-800 text-white"
+          : "bg-white border-gray-100 text-gray-900"
+      }`}>
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Product Preview
-          </h2>
+        <div className={`flex items-center justify-between px-6 py-5 border-b sticky top-0 backdrop-blur-md z-10 ${
+          isDark ? "bg-[#09090b]/90 border-zinc-800" : "bg-white/90 border-gray-100"
+        }`}>
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <h2 className={`text-lg font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+              Product Preview
+            </h2>
+            <span className={`text-xs px-2.5 py-0.5 rounded-full font-mono font-medium ${
+              isDark ? "bg-zinc-800 text-zinc-400" : "bg-gray-100 text-gray-600"
+            }`}>
+              #{product.id}
+            </span>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className={`p-2 rounded-xl transition-colors ${
+              isDark ? "hover:bg-zinc-800 text-zinc-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-gray-900"
+            }`}
           >
-            <X size={20} className="text-gray-500" />
+            <X size={20} />
           </button>
         </div>
 
         {/* Modal Content */}
-        <div className="p-6">
+        <div className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Product Image */}
-            <div className="space-y-4">
-              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                {product.images ? (
+            <div className="space-y-3">
+              <div className={`aspect-square rounded-2xl overflow-hidden border ${
+                isDark ? "bg-zinc-900 border-zinc-800" : "bg-gray-50 border-gray-100"
+              }`}>
+                {product.images && product.images.length > 0 ? (
                   <img
                     src={getImageUrl(product.images?.[0])}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Package size={48} className="text-gray-400" />
-                    <div className="ml-2 text-gray-500 text-sm">
-                      No Image Available
-                    </div>
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-zinc-400">
+                    <Package size={48} className="stroke-[1.5]" />
+                    <span className="text-xs font-medium">No Image Uploaded</span>
                   </div>
                 )}
               </div>
@@ -58,194 +92,113 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
             {/* Product Details */}
             <div className="space-y-4">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className={`text-xl font-bold leading-tight ${isDark ? "text-white" : "text-gray-900"}`}>
                   {product.name}
                 </h3>
-
-                {/* Rating */}
-                {product.ratings && (
-                  <div className="flex items-center space-x-1 mb-3">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={16}
-                          className={
-                            i < Math.floor(product.ratings)
-                              ? "text-green-700 fill-current"
-                              : "text-gray-300"
-                          }
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm text-gray-600">
-                      ({product.ratings})
-                    </span>
-                  </div>
+                {product.varientValue && (
+                  <p className="text-xs text-amber-500 font-medium mt-1">
+                    {product.varientValue}
+                  </p>
                 )}
               </div>
 
               {/* Pricing */}
-              <div className="space-y-2">
-                <div className="flex items-center space-x-3">
-                  <IndianRupee size={20} className="text-green-600" />
-                  <div>
-                    {product.discountPrice &&
-                    parseFloat(product.discountPrice) !==
-                      parseFloat(product.originalPrice) ? (
-                      <div className="flex items-center space-x-2">
-                        <span className="text-2xl font-bold text-green-600">
-                          {parseFloat(product.discountPrice).toFixed(2)}
-                        </span>
-                        <span className="text-lg text-gray-500 line-through">
-                          {parseFloat(product.originalPrice).toFixed(2)}
-                        </span>
-                        <span className="text-sm bg-red-100 text-green-700 px-2 py-1 rounded">
-                          {Math.round(
-                            ((parseFloat(product.originalPrice) -
-                              parseFloat(product.discountPrice)) /
-                              parseFloat(product.originalPrice)) *
-                              100
-                          )}
-                          % OFF
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-2xl font-bold text-gray-900">
-                        $
-                        {parseFloat(
-                          product.originalPrice || product.discountPrice
-                        ).toFixed(2)}
+              <div className={`p-4 rounded-2xl border ${
+                isDark ? "bg-zinc-900/50 border-zinc-800" : "bg-gray-50 border-gray-100"
+              }`}>
+                <div className="flex items-baseline gap-2.5">
+                  <span className="text-2xl font-black text-amber-400">
+                    ₹{salePrice > 0 ? salePrice.toLocaleString("en-IN") : originalPrice.toLocaleString("en-IN")}
+                  </span>
+                  {originalPrice > salePrice && salePrice > 0 && (
+                    <>
+                      <span className={`text-sm line-through ${isDark ? "text-zinc-500" : "text-gray-400"}`}>
+                        ₹{originalPrice.toLocaleString("en-IN")}
                       </span>
-                    )}
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        {discountPercent}% OFF
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Status Pills */}
+              <div className="flex flex-wrap gap-2">
+                {/* Category */}
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${
+                  isDark ? "bg-zinc-800/80 border-zinc-700 text-zinc-300" : "bg-gray-100 border-gray-200 text-gray-700"
+                }`}>
+                  <Tag size={12} className="text-amber-400" />
+                  <span>{product.category?.name || `Category #${product.categoryId}`}</span>
+                </div>
+
+                {/* Stock Status */}
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
+                  product.stock > 0
+                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                    : "bg-red-500/10 text-red-400 border border-red-500/20"
+                }`}>
+                  <Package size={12} />
+                  <span>{product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}</span>
+                </div>
+
+                {/* Trending */}
+                {product.trending_product && (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <Sparkles size={12} />
+                    <span>Trending Product</span>
                   </div>
-                </div>
+                )}
               </div>
 
-              {/* Category */}
-              {product.category && (
-                <div className="flex items-center space-x-2">
-                  <Tag size={16} className="text-gray-600" />
-                  <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                    {product.category.name || product.category}
-                  </span>
-                </div>
-              )}
-
-              {/* Stock Status */}
-              {product.stock !== undefined && (
-                <div className="flex items-center space-x-2">
-                  <Package size={16} className="text-gray-600" />
-                  <span
-                    className={`text-sm px-3 py-1 rounded-full ${
-                      product.stock > 0 && !product.sold_out
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-green-700"
-                    }`}
-                  >
-                    {product.sold_out
-                      ? "Sold Out"
-                      : product.stock > 0
-                      ? `${product.stock} in stock`
-                      : "Out of stock"}
-                  </span>
-                </div>
-              )}
-
-              {/* Max Order Quantity */}
-              {product.max_quantity_to_order && (
-                <div className="flex items-center space-x-2">
-                  <Package size={16} className="text-gray-600" />
-                  <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-                    Max order: {product.max_quantity_to_order} units
-                  </span>
-                </div>
-              )}
-
-              {/* Trending Badge */}
-              {product.trending_product && (
-                <div className="inline-flex items-center space-x-1 bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm">
-                  <span>🔥</span>
-                  <span>Trending Product</span>
-                </div>
-              )}
-
-              {/* Active Status */}
-              <div className="flex items-center space-x-2">
-                <div
-                  className={`w-3 h-3 rounded-full ${
-                    product.isActive ? "bg-green-500" : "bg-green-600"
-                  }`}
-                ></div>
-                <span
-                  className={`text-sm font-medium ${
-                    product.isActive ? "text-green-700" : "text-green-700"
-                  }`}
-                >
-                  {product.isActive ? "Active" : "Inactive"}
-                </span>
-              </div>
-
-              {/* Payment Methods */}
+              {/* Payment Method */}
               {product.paymentMethods && (
-                <div className="flex items-center space-x-2">
-                  <CurrencyIcon size={16} className="text-gray-600" />
-                  <span className="text-sm bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
-                    Payment: {product.paymentMethods}
-                  </span>
-                </div>
-              )}
-
-              {/* Description */}
-              {product.description && (
-                <div className="mt-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Description
-                  </h4>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {product.description}
-                  </p>
-                </div>
-              )}
-
-              {/* Reviews */}
-              {product.reviews && typeof product.reviews === "string" && (
-                <div className="mt-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Reviews</h4>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {product.reviews}
-                  </p>
+                <div className={`flex items-center gap-2 text-xs ${isDark ? "text-zinc-400" : "text-gray-500"}`}>
+                  <CreditCard size={14} className="text-zinc-400" />
+                  <span>Payment: <strong className={isDark ? "text-zinc-200" : "text-gray-700"}>{product.paymentMethods}</strong></span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Product Stats */}
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-gray-200">
-            {product.createdAt && (
-              <div className="text-center">
-                <p className="text-sm text-gray-600">Created</p>
-                <p className="font-semibold text-gray-900">
-                  {new Date(product.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            )}
-            {product.updatedAt && (
-              <div className="text-center">
-                <p className="text-sm text-gray-600">Updated</p>
-                <p className="font-semibold text-gray-900">
-                  {new Date(product.updatedAt).toLocaleDateString()}
-                </p>
-              </div>
-            )}
-            <div className="text-center">
-              <p className="text-sm text-gray-600">Product ID</p>
-              <p className="font-semibold text-gray-900">#{product.id}</p>
+          {/* Description */}
+          {product.description && (
+            <div className={`p-4 rounded-2xl border ${
+              isDark ? "bg-zinc-900/30 border-zinc-800" : "bg-gray-50 border-gray-100"
+            }`}>
+              <h4 className={`text-xs font-semibold uppercase tracking-wider mb-2 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                Description & Specifications
+              </h4>
+              <div
+                className={`text-sm leading-relaxed ${isDark ? "text-zinc-300" : "text-gray-700"}`}
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
             </div>
-            <div className="text-center">
-              <p className="text-sm text-gray-600">Category ID</p>
-              <p className="font-semibold text-gray-900">
-                #{product.categoryId}
+          )}
+
+          {/* Footer Metadata */}
+          <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t ${
+            isDark ? "border-zinc-800 text-zinc-400" : "border-gray-200 text-gray-500"
+          }`}>
+            <div>
+              <p className="text-[11px] uppercase tracking-wider font-semibold">Product ID</p>
+              <p className={`text-sm font-bold mt-0.5 ${isDark ? "text-white" : "text-gray-900"}`}>#{product.id}</p>
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-wider font-semibold">Stock Count</p>
+              <p className={`text-sm font-bold mt-0.5 ${isDark ? "text-white" : "text-gray-900"}`}>{product.stock || 0} units</p>
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-wider font-semibold">Created</p>
+              <p className={`text-sm font-medium mt-0.5 ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
+                {product.createdAt ? new Date(product.createdAt).toLocaleDateString() : "—"}
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-wider font-semibold">Status</p>
+              <p className="text-sm font-bold mt-0.5 text-emerald-400">
+                {product.isActive !== false ? "Active" : "Disabled"}
               </p>
             </div>
           </div>
@@ -254,4 +207,5 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
     </div>
   );
 };
+
 export default ProductPreviewModal;
