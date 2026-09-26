@@ -84,7 +84,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
           
           {/* Column 1: Brand Info */}
-          <div className="lg:col-span-4 space-y-4">
+          <div className="lg:col-span-6 space-y-4">
             <Link href="/" className="flex items-center gap-2 group">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 flex items-center justify-center text-neutral-950 font-black text-sm shadow-xs">
                 <Headphones className="w-4 h-4" />
@@ -131,81 +131,8 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Audio Lineup */}
-          <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900">
-              Audio Series
-            </h4>
-            <ul className="space-y-2 text-xs text-neutral-600">
-              <li>
-                <a href="#flagship-series" className="hover:text-amber-600 transition-colors">
-                  Flazo Nirvana Pro ANC
-                </a>
-              </li>
-              <li>
-                <a href="#flagship-series" className="hover:text-amber-600 transition-colors">
-                  Flazo BassPod Extreme
-                </a>
-              </li>
-              <li>
-                <a href="#flagship-series" className="hover:text-amber-600 transition-colors">
-                  Flazo Aerobeat Sport
-                </a>
-              </li>
-              <li>
-                <a href="#acoustic-tech" className="hover:text-amber-600 transition-colors">
-                  BoomBass™ Tech
-                </a>
-              </li>
-              <li>
-                <a href="#reviews" className="hover:text-amber-600 transition-colors">
-                  Customer Reviews
-                </a>
-              </li>
-              <li>
-                <a href="#faq" className="hover:text-amber-600 transition-colors">
-                  Acoustic FAQs
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Support & Policy */}
-          <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900">
-              Customer Care
-            </h4>
-            <ul className="space-y-2 text-xs text-neutral-600">
-              <li>
-                <Link href="/orderhistory" className="hover:text-amber-600 transition-colors">
-                  Track Your Order
-                </Link>
-              </li>
-              <li>
-                <span className="hover:text-amber-600 transition-colors cursor-pointer">
-                  Warranty Claim
-                </span>
-              </li>
-              <li>
-                <Link href="/refund-policy" className="hover:text-amber-600 transition-colors">
-                  Refund & Swap Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms&conditions" className="hover:text-amber-600 transition-colors">
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy-policy" className="hover:text-amber-600 transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
-
           {/* Column 4: Newsletter & Exclusive Codes */}
-          <div className="lg:col-span-4 space-y-4">
+          <div className="lg:col-span-6 space-y-4">
             <div>
               <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900">
                 Join the Flazo Golden Club
