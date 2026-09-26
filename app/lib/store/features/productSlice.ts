@@ -312,15 +312,11 @@ const productSlice = createSlice({
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.status = "succeeded";
 
-        if (Array.isArray(state.products)) {
-          state.products = state.products.filter(
-            (p) => p.id !== action.meta.arg
-          );
-        } else if (state.products && Array.isArray(state.products.products)) {
+        if (state.products && Array.isArray(state.products.products)) {
           state.products.products = state.products.products.filter(
-            (p) => p.id !== action.meta.arg
+            (p) => String(p.id) !== String(action.meta.arg)
           );
-          state.products.total = state.products.products.length; // keep total in sync
+          state.products.totalItems = Math.max(0, (state.products.totalItems || 1) - 1);
         }
       });
   },

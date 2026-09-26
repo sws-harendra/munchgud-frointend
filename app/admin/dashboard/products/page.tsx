@@ -119,9 +119,40 @@ export default function AdminProductsPage() {
     setSelectedProduct(null);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm("Are you sure to delete this product?")) {
-      dispatch(deleteProduct(id));
+      try {
+        await dispatch(deleteProduct(id.toString())).unwrap();
+        toast.success("Product deleted successfully");
+        dispatch(
+          fetchProductsforadmin({
+            search,
+            categoryId,
+            minPrice,
+            maxPrice,
+            trending,
+            page,
+            limit,
+            minSellingPrice,
+            maxSellingPrice,
+            brand,
+            barcode,
+            tax,
+            unit,
+            status: statusFilter,
+            purchasable,
+            showStockOut,
+          })
+        );
+      } catch (err: unknown) {
+        const errorMsg =
+          typeof err === "string"
+            ? err
+            : err instanceof Error
+            ? err.message
+            : "Failed to delete product";
+        toast.error(errorMsg);
+      }
     }
   };
 
