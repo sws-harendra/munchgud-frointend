@@ -8,11 +8,11 @@ import { toast } from "react-hot-toast";
 
 interface EditUserProps {
   user: {
-    id: string;
+    id: string | number;
     fullname: string;
     email: string;
-    phoneNumber?: string;
-    avatar?: string;
+    phoneNumber?: string | null;
+    avatar?: string | null;
     role: string;
   };
   onSuccess: () => void;
@@ -62,7 +62,7 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
         fd.append("file", profileImage);
       }
 
-      await dispatch(updateUser({ userId: user.id, data: fd })).unwrap();
+      await dispatch(updateUser({ userId: String(user.id), data: fd })).unwrap();
       toast.success("User updated successfully");
       onSuccess();
     } catch (error: any) {

@@ -620,7 +620,7 @@ export default function AdminUsersPage() {
                           }
                         >
                           <EditUser
-                            user={{ ...u, id: String(u.id) }}
+                            user={u}
                             onSuccess={() => dispatch(fetchUsers(filters))}
                           />
                         </SidebarForm>

@@ -63,7 +63,7 @@ const ArtistDetailsProduct = () => {
     );
   }
 
-  const renderPaginationButton = (pageNum, isActive = false) => (
+  const renderPaginationButton = (pageNum: number, isActive = false) => (
     <a
       key={pageNum}
       href={`?page=${pageNum}`}

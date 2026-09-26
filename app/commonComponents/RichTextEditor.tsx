@@ -62,6 +62,8 @@ interface RichTextEditorProps {
   value?: string;
   onChange?: (html: string) => void;
   placeholder?: string;
+  className?: string;
+  required?: boolean;
 }
 
 const COLOR_PALETTE = [
@@ -88,6 +90,8 @@ export default function RichTextEditor({
   value = "",
   onChange,
   placeholder = "Write your article story here with rich formatting...",
+  className = "",
+  required,
 }: RichTextEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -223,7 +227,7 @@ export default function RichTextEditor({
         isFullscreen
           ? "fixed inset-0 z-50 rounded-none border-none p-4 bg-white"
           : "relative"
-      }`}
+      } ${className}`}
     >
       {/* ─────────────────────────────────────────────────────────────
           WORD-STYLE COMMAND TOOLBAR

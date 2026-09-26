@@ -48,8 +48,8 @@ export const placeOrder = createAsyncThunk(
       items: {
         productId: number;
         quantity: number;
-        variantId: number;
-        variantName: string;
+        variantId?: number;
+        variantName?: string;
       }[];
       paymentMethod: string;
       paymentProvider?: string;

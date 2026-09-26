@@ -273,6 +273,13 @@ const CheckoutPage = () => {
   };
 
   const generateOrderId = async (): Promise<string | null> => {
+    if (!user) {
+      toast.error("Please login to proceed with payment");
+      return null;
+    }
+
+    const currentUserId = user.id;
+
     try {
       // load script first
       const loaded = await loadRazorpayScript();
@@ -283,7 +290,7 @@ const CheckoutPage = () => {
       const orderData = {
         amount: total * 100,
         currency: "INR",
-        receipt: `receipt_${total * 100}_${user.id}_${Date.now()}`,
+        receipt: `receipt_${total * 100}_${currentUserId}_${Date.now()}`,
       };
 
       const response = await orderService.createRazorPayOrder(orderData);
@@ -305,7 +312,7 @@ const CheckoutPage = () => {
             // Now place order in backend / Redux
             let newres = await dispatch(
               placeOrder({
-                userId: user.id,
+                userId: currentUserId,
                 addressId: formData.selectedAddressId,
                 items: items.map((i) => ({
                   productId: i.id,
@@ -347,6 +354,11 @@ const CheckoutPage = () => {
 
   const handlePlaceOrderCOD = async () => {
     console.log("handlePlaceOrder");
+    if (!user) {
+      toast.error("Please login to place an order");
+      return;
+    }
+
     // if (validateStep(3)) {
     setIsProcessing(true);
 

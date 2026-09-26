@@ -2,7 +2,7 @@
 
 import { serverurl } from "../contants";
 
-export const getImageUrl = (path?: string): string => {
+export const getImageUrl = (path?: string | null): string => {
   if (!path) return "/logo.png";
   if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("blob:")) return path;
 
