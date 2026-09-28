@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Headphones,
@@ -23,8 +23,12 @@ import {
   Star,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAppSelector } from "@/app/lib/store/store";
+import { contactService } from "@/app/sercices/user/contact.service";
 
 export default function SupportWarrantyPage() {
+  const { user } = useAppSelector((state) => state.auth);
+
   // Search query for the "How can we help you today?" cards
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -59,6 +63,28 @@ export default function SupportWarrantyPage() {
     },
   ]);
   const [chatInput, setChatInput] = useState("");
+
+  // Contact Support Modal State (Form vs Chat)
+  const [contactMode, setContactMode] = useState<"form" | "chat">("form");
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    orderId: "",
+    message: "",
+  });
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setContactForm((prev) => ({
+        ...prev,
+        name: prev.name || user.fullname || "",
+        email: prev.email || user.email || "",
+        phone: prev.phone || (user.phoneNumber ? String(user.phoneNumber) : ""),
+      }));
+    }
+  }, [user]);
 
   // 5 Help Topic Cards
   const helpTopics = [
@@ -147,6 +173,20 @@ export default function SupportWarrantyPage() {
     ]);
     setChatInput("");
 
+    // Forward to backend contact inquiries
+    contactService
+      .sendContactInquiry({
+        name: user?.fullname || regForm.name || "Live Concierge Visitor",
+        email: user?.email || regForm.email || "concierge_visitor@flazo.in",
+        phone: user?.phoneNumber ? String(user.phoneNumber) : regForm.phone || undefined,
+        subject: "Flazo Live Concierge Chat",
+        message: userMsg,
+        source: "live_concierge",
+      })
+      .catch((err) => {
+        console.warn("Failed to persist live concierge message:", err);
+      });
+
     setTimeout(() => {
       setChatMessages((prev) => [
         ...prev,
@@ -157,6 +197,49 @@ export default function SupportWarrantyPage() {
         },
       ]);
     }, 1000);
+  };
+
+  const handleContactFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactForm.name.trim()) {
+      toast.error("Please enter your name.");
+      return;
+    }
+    if (!contactForm.email.trim()) {
+      toast.error("Please enter your email.");
+      return;
+    }
+    if (!contactForm.message.trim()) {
+      toast.error("Please write your message.");
+      return;
+    }
+
+    setIsSubmittingContact(true);
+    try {
+      await contactService.sendContactInquiry({
+        name: contactForm.name.trim(),
+        email: contactForm.email.trim(),
+        phone: contactForm.phone.trim() || undefined,
+        orderId: contactForm.orderId.trim() || undefined,
+        subject: "Support & Warranty Inquiry",
+        message: contactForm.message.trim(),
+        source: "support_warranty",
+      });
+
+      toast.success("Thank you! Your inquiry has been sent to Flazo Support team.");
+      setContactForm({
+        name: user?.fullname || "",
+        email: user?.email || "",
+        phone: user?.phoneNumber ? String(user.phoneNumber) : "",
+        orderId: "",
+        message: "",
+      });
+      setActiveModal(null);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to submit inquiry. Please try again.");
+    } finally {
+      setIsSubmittingContact(false);
+    }
   };
 
   return (
@@ -867,74 +950,209 @@ export default function SupportWarrantyPage() {
         </div>
       )}
 
-      {/* 4. Live Chat Modal */}
+      {/* 4. Contact Support / Live Concierge Modal */}
       {activeModal === "chat" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl border border-[#E5D4BC] max-w-md w-full shadow-2xl flex flex-col h-[520px] overflow-hidden">
-            {/* Chat Header */}
-            <div className="px-5 py-4 bg-[#FAF5EC] border-b border-[#E8D7BE] flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#9E6B20] text-white flex items-center justify-center font-bold text-xs">
+          <div className="bg-white rounded-3xl border border-[#E5D4BC] max-w-lg w-full shadow-2xl flex flex-col h-[560px] overflow-hidden">
+            {/* Modal Header */}
+            <div className="px-5 py-3.5 bg-[#FAF5EC] border-b border-[#E8D7BE] flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#9E6B20] text-white flex items-center justify-center font-bold text-xs shrink-0">
                   FLZ
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-[#1A1A1A]">Flazo Live Concierge</h4>
+                  <h4 className="text-xs font-bold text-[#1A1A1A]">Flazo Customer Support</h4>
                   <p className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     Online • Average reply 1 min
                   </p>
                 </div>
               </div>
 
-              <button
-                onClick={() => setActiveModal(null)}
-                className="text-neutral-400 hover:text-neutral-700"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Chat Body */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#FCFBF8]">
-              {chatMessages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex flex-col ${
-                    msg.sender === "user" ? "items-end" : "items-start"
-                  }`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-xs ${
-                      msg.sender === "user"
-                        ? "bg-[#9E6B20] text-white"
-                        : "bg-white border border-[#E8D7BE] text-neutral-800 shadow-2xs"
+              <div className="flex items-center gap-2">
+                {/* Mode Selector */}
+                <div className="flex items-center bg-[#EFE4D2] p-1 rounded-xl text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setContactMode("form")}
+                    className={`px-3 py-1 rounded-lg transition cursor-pointer text-xs ${
+                      contactMode === "form"
+                        ? "bg-[#9E6B20] text-white shadow-xs"
+                        : "text-[#704F18] hover:text-[#1A1A1A]"
                     }`}
                   >
-                    {msg.text}
-                  </div>
-                  <span className="text-[9px] text-neutral-400 mt-0.5 px-1">
-                    {msg.time}
-                  </span>
+                    Quick Form
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setContactMode("chat")}
+                    className={`px-3 py-1 rounded-lg transition cursor-pointer text-xs ${
+                      contactMode === "chat"
+                        ? "bg-[#9E6B20] text-white shadow-xs"
+                        : "text-[#704F18] hover:text-[#1A1A1A]"
+                    }`}
+                  >
+                    Live Chat
+                  </button>
                 </div>
-              ))}
+
+                <button
+                  type="button"
+                  onClick={() => setActiveModal(null)}
+                  className="text-neutral-400 hover:text-neutral-700 cursor-pointer p-1"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            {/* Chat Input */}
-            <form onSubmit={handleSendChat} className="p-3 bg-white border-t border-[#E8D7BE] flex gap-2">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Type your question here..."
-                className="flex-1 px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20]"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-[#9E6B20] text-white text-xs font-bold rounded-xl hover:bg-[#8A5B17] transition"
+            {/* Modal Body */}
+            {contactMode === "form" ? (
+              <form
+                onSubmit={handleContactFormSubmit}
+                className="flex-1 p-5 overflow-y-auto space-y-3.5 bg-[#FCFBF8] flex flex-col justify-between"
               >
-                Send
-              </button>
-            </form>
+                <div className="space-y-3">
+                  <p className="text-xs text-neutral-600 leading-relaxed">
+                    Leave your inquiry details below. Our customer care team will review your request and reach out promptly.
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Your name"
+                        value={contactForm.name}
+                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                        className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="Your email"
+                        value={contactForm.email}
+                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                        className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                        Phone Number (Optional)
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="Mobile number"
+                        value={contactForm.phone}
+                        onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                        className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                        Order ID (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="FLZ-1234"
+                        value={contactForm.orderId}
+                        onChange={(e) => setContactForm({ ...contactForm, orderId: e.target.value })}
+                        className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                      Your Message *
+                    </label>
+                    <textarea
+                      rows={4}
+                      required
+                      placeholder="Write your question, warranty issue, or request..."
+                      value={contactForm.message}
+                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                      className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900 resize-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-[#E8D7BE] flex items-center justify-between">
+                  <a
+                    href="/contactus"
+                    className="text-[11px] font-semibold text-[#9E6B20] hover:underline"
+                  >
+                    Open full contact page →
+                  </a>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmittingContact}
+                    className="px-5 py-2.5 bg-[#9E6B20] hover:bg-[#8A5B17] text-white text-xs font-bold rounded-xl transition cursor-pointer disabled:opacity-50"
+                  >
+                    {isSubmittingContact ? "Sending..." : "Submit Inquiry"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="flex-1 flex flex-col justify-between overflow-hidden">
+                {/* Chat Messages */}
+                <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#FCFBF8]">
+                  {chatMessages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex flex-col ${
+                        msg.sender === "user" ? "items-end" : "items-start"
+                      }`}
+                    >
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-xs ${
+                          msg.sender === "user"
+                            ? "bg-[#9E6B20] text-white"
+                            : "bg-white border border-[#E8D7BE] text-neutral-800 shadow-2xs"
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                      <span className="text-[9px] text-neutral-400 mt-0.5 px-1">
+                        {msg.time}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Chat Input */}
+                <form
+                  onSubmit={handleSendChat}
+                  className="p-3 bg-white border-t border-[#E8D7BE] flex gap-2"
+                >
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder="Type your question here..."
+                    className="flex-1 px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20]"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-[#9E6B20] text-white text-xs font-bold rounded-xl hover:bg-[#8A5B17] transition cursor-pointer"
+                  >
+                    Send
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
         </div>
       )}

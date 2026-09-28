@@ -28,6 +28,7 @@ import {
   Flame,
   FolderTree,
   MessagesSquare,
+  Mail,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -56,6 +57,11 @@ const menuItems: MenuItem[] = [
   { name: "Products", icon: Package, href: "/admin/dashboard/products" },
   { name: "Orders", icon: ShoppingBag, href: "/admin/dashboard/orders" },
   { name: "Users", icon: Users, href: "/admin/dashboard/users" },
+  {
+    name: "Customer Inquiries",
+    icon: Mail,
+    href: "/admin/dashboard/inquiries",
+  },
   {
     name: "Video Management",
     icon: Video,
