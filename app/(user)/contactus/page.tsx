@@ -141,18 +141,18 @@ export default function Page() {
 
             <div className="mt-8 space-y-6">
               <div className="flex items-center gap-4">
-                <div className="bg-green-100 p-3 rounded-full">
-                  <Mail className="text-green-700" size={20} />
+                <div className="bg-amber-100 p-3 rounded-full">
+                  <Mail className="text-amber-700" size={20} />
                 </div>
                 <div>
                   <p className="font-semibold">Email</p>
-                  <p className="text-gray-600">munchgud@gmail.com</p>
+                  <p className="text-gray-600">support@flazo.com</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="bg-green-100 p-3 rounded-full">
-                  <Phone className="text-green-700" size={20} />
+                <div className="bg-amber-100 p-3 rounded-full">
+                  <Phone className="text-amber-700" size={20} />
                 </div>
                 <div>
                   <p className="font-semibold">Phone</p>
@@ -161,8 +161,8 @@ export default function Page() {
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="bg-green-100 p-3 rounded-full">
-                  <MapPin className="text-green-700" size={20} />
+                <div className="bg-amber-100 p-3 rounded-full">
+                  <MapPin className="text-amber-700" size={20} />
                 </div>
                 <div>
                   <p className="font-semibold">Address</p>
@@ -244,7 +244,7 @@ export default function Page() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-green-700 text-white py-3 rounded-lg hover:bg-green-800 transition flex items-center justify-center gap-2 cursor-pointer font-semibold disabled:opacity-50"
+                className="w-full bg-amber-600 text-white py-3 rounded-lg hover:bg-amber-700 transition flex items-center justify-center gap-2 cursor-pointer font-semibold disabled:opacity-50 shadow-md shadow-amber-500/20"
               >
                 <Send className="w-4 h-4" />
                 <span>{isSubmitting ? "Submitting..." : "Submit Request"}</span>
@@ -265,15 +265,14 @@ export default function Page() {
             <div className="bg-white p-5 rounded-lg shadow">
               <p className="font-semibold">How long does delivery take?</p>
               <p className="text-gray-600 text-sm mt-2">
-                Orders are typically delivered within 2-5 business days
-                depending on your location.
+                Orders are typically delivered within 2-4 business days with Express Air shipping across India.
               </p>
             </div>
 
             <div className="bg-white p-5 rounded-lg shadow">
-              <p className="font-semibold">Can I return a product?</p>
+              <p className="font-semibold">Can I return or replace a product?</p>
               <p className="text-gray-600 text-sm mt-2">
-                Due to the perishable nature of food products, MunchGud does not accept returns once the product has been delivered. However, we want you to have the best experience, so we will assist you in case of any issues.
+                Yes! We offer a 7-day doorstep replacement guarantee for any manufacturing defects or audio issues. In addition, all Flazo earbuds come with an official 1-Year Comprehensive Warranty.
               </p>
             </div>
 

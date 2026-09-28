@@ -124,7 +124,7 @@ export default function BannerCarousel({
                 index === nextSlideIndex ? (
                   <img
                     src={getImageUrl(banner.imageUrl)}
-                    alt={banner.title || "MunchGud banner"}
+                    alt={banner.title || "Flazo banner"}
                     className={`absolute inset-0 w-full h-full object-cover  ${
                       imageLoaded[index] ? "opacity-100" : "opacity-0"
                     }`}

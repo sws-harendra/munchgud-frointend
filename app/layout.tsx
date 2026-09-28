@@ -5,7 +5,7 @@ import { StoreProvider } from "./lib/provider/StoreProvider";
 import AuthProvider from "./hooks/authProvider";
 import { Toaster } from "sonner";
 
-const siteUrl = "https://munchgud.com";
+const siteUrl = "https://flazo.com";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +39,10 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180" },
     ],
   },
   openGraph: {

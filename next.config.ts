@@ -46,10 +46,10 @@ const nextConfig: NextConfig = {
         has: [
           {
             type: "host",
-            value: "www.munchgud.com",
+            value: "www.flazo.com",
           },
         ],
-        destination: "https://munchgud.com/:path*",
+        destination: "https://flazo.com/:path*",
         permanent: true,
       },
     ];
