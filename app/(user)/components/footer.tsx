@@ -10,6 +10,7 @@ import {
   Sparkles,
   ArrowRight,
   Send,
+  MapPin,
 } from "lucide-react";
 import { FaInstagram, FaFacebookF, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { toast } from "sonner";
@@ -84,7 +85,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
           
           {/* Column 1: Brand Info */}
-          <div className="lg:col-span-6 space-y-4">
+          <div className="lg:col-span-4 space-y-4">
             <Link href="/" className="flex items-center gap-2 group">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 flex items-center justify-center text-neutral-950 font-black text-sm shadow-xs">
                 <Headphones className="w-4 h-4" />
@@ -131,8 +132,24 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 4: Newsletter & Exclusive Codes */}
-          <div className="lg:col-span-6 space-y-4">
+          {/* Column 2: Registered Office */}
+          <div className="lg:col-span-4 space-y-3">
+            <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
+                <MapPin className="w-3.5 h-3.5" />
+              </span>
+              Company Registered Office
+            </h4>
+            <div className="text-xs text-neutral-600 leading-relaxed bg-amber-50/40 border border-amber-200/70 rounded-xl p-3.5 space-y-1">
+              <p className="font-bold text-neutral-900">Flazo Technologies Pvt. Ltd.</p>
+              <p>A-116, URBTECH TRADE CENTER, SECTOR-132,</p>
+              <p>NOIDA, GAUTAM BUDDHA NAGAR,</p>
+              <p>UTTAR PRADESH, 201304</p>
+            </div>
+          </div>
+
+          {/* Column 3: Newsletter & Exclusive Codes */}
+          <div className="md:col-span-2 lg:col-span-4 space-y-4">
             <div>
               <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900">
                 Join the Flazo Golden Club
@@ -159,11 +176,11 @@ export default function Footer() {
               </button>
             </form>
 
-            <div className="text-[11px] text-neutral-500 flex items-center gap-1.5">
+            <div className="text-[11px] text-neutral-500 flex items-center gap-1.5 flex-wrap">
               <span>Customer Care:</span>
-              <strong className="text-neutral-900">support@flazo.com</strong>
+              <strong className="text-neutral-900">Support@flazo.in</strong>
               <span>•</span>
-              <strong className="text-neutral-900">1800-FLAZO-IN</strong>
+              <strong className="text-neutral-900">+91 9798909616</strong>
             </div>
           </div>
 
