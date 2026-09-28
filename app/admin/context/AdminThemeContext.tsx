@@ -116,6 +116,7 @@ interface AdminThemeContextType {
   updateSetting: <K extends keyof AdminThemeSettings>(key: K, value: AdminThemeSettings[K]) => void;
   resetToDefaults: () => void;
   isSidebarDark: boolean;
+  effectiveSidebarColor: string;
 }
 
 const AdminThemeContext = createContext<AdminThemeContextType | null>(null);
@@ -203,10 +204,32 @@ export function AdminThemeProvider({ children }: { children: React.ReactNode }) 
     );
   }, [settings.fontFamilyId]);
 
+  // Determine effective sidebar background color based on theme and settings
+  const effectiveSidebarColor = useMemo(() => {
+    if (settings.isSidebarGradient) return settings.sidebarGradient;
+    // When resolved theme is light, default black/dark-slate sidebar colors should be white unless user explicitly customized a different light color
+    if (
+      resolvedTheme === "light" &&
+      (settings.sidebarColor === "#000000" ||
+        settings.sidebarColor === "#0f172a" ||
+        !settings.sidebarColor)
+    ) {
+      return "#ffffff";
+    }
+    // When resolved theme is dark, white sidebar color should default to black
+    if (
+      resolvedTheme === "dark" &&
+      (settings.sidebarColor === "#ffffff" || !settings.sidebarColor)
+    ) {
+      return "#000000";
+    }
+    return settings.sidebarColor || (resolvedTheme === "dark" ? "#000000" : "#ffffff");
+  }, [settings.sidebarColor, settings.isSidebarGradient, settings.sidebarGradient, resolvedTheme]);
+
   // Determine if sidebar background is dark or light (for high-contrast text)
   const isSidebarDark = useMemo(() => {
     if (settings.isSidebarGradient) return true;
-    const hex = settings.sidebarColor.replace("#", "");
+    const hex = effectiveSidebarColor.replace("#", "");
     if (hex.length === 6) {
       const r = parseInt(hex.substring(0, 2), 16);
       const g = parseInt(hex.substring(2, 4), 16);
@@ -214,8 +237,8 @@ export function AdminThemeProvider({ children }: { children: React.ReactNode }) 
       const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
       return luminance < 0.6;
     }
-    return true;
-  }, [settings.sidebarColor, settings.isSidebarGradient]);
+    return resolvedTheme === "dark";
+  }, [effectiveSidebarColor, settings.isSidebarGradient, resolvedTheme]);
 
   // Dynamically load Google Font if needed
   useEffect(() => {
@@ -261,6 +284,7 @@ export function AdminThemeProvider({ children }: { children: React.ReactNode }) 
         updateSetting,
         resetToDefaults,
         isSidebarDark,
+        effectiveSidebarColor,
       }}
     >
       <div

@@ -148,7 +148,7 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function Sidebar() {
-  const { settings, updateSetting, isSidebarDark, resolvedTheme } = useAdminTheme();
+  const { settings, updateSetting, isSidebarDark, resolvedTheme, effectiveSidebarColor } = useAdminTheme();
   const open = !settings.sidebarCollapsed;
 
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
@@ -233,20 +233,14 @@ export default function Sidebar() {
     }
   };
 
-  const sidebarBg = settings.isSidebarGradient
-    ? settings.sidebarGradient
-    : resolvedTheme === "dark" && (settings.sidebarColor === "#0f172a" || !settings.sidebarColor || settings.sidebarColor === "#ffffff")
-    ? "#000000"
-    : resolvedTheme === "light" && (settings.sidebarColor === "#000000" || !settings.sidebarColor)
-    ? "#ffffff"
-    : settings.sidebarColor;
+  const sidebarBg = effectiveSidebarColor;
 
   return (
     <aside
       className="flex overflow-y-auto overflow-x-hidden h-full select-none shrink-0 transition-all duration-300 border-r z-30"
       style={{
         background: sidebarBg,
-        color: isSidebarDark ? "#f4f4f5" : "#1e293b",
+        color: isSidebarDark ? "#f4f4f5" : "#0f172a",
         borderColor: isSidebarDark ? "#27272a" : "#e2e8f0",
       }}
     >
@@ -266,8 +260,8 @@ export default function Sidebar() {
             className="absolute -right-3 top-8 w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer z-20 shadow-md border"
             style={{
               backgroundColor: isSidebarDark ? "#09090b" : "#ffffff",
-              borderColor: isSidebarDark ? "#27272a" : "#e2e8f0",
-              color: isSidebarDark ? "#f4f4f5" : "#475569",
+              borderColor: isSidebarDark ? "#27272a" : "#cbd5e1",
+              color: isSidebarDark ? "#f4f4f5" : "#334155",
             }}
           >
             {open ? <X size={15} /> : <Menu size={15} />}
@@ -292,7 +286,11 @@ export default function Sidebar() {
                   <li key={idx} className="pt-2">
                     <button
                       onClick={handleLogout}
-                      className="flex w-full items-center gap-3 p-2.5 rounded-xl transition text-left cursor-pointer group text-rose-400 hover:text-rose-300 hover:bg-rose-950/30"
+                      className={`flex w-full items-center gap-3 p-2.5 rounded-xl transition text-left cursor-pointer group ${
+                        isSidebarDark
+                          ? "text-rose-400 hover:text-rose-300 hover:bg-rose-950/30"
+                          : "text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                      }`}
                     >
                       <item.icon size={19} className="shrink-0 transition-transform group-hover:scale-110" />
                       <span
@@ -323,15 +321,21 @@ export default function Sidebar() {
                         hasActiveChild
                           ? "font-semibold shadow-xs"
                           : isSidebarDark
-                          ? "border-transparent hover:bg-white/10 text-slate-300"
-                          : "border-transparent hover:bg-black/5 text-slate-700"
+                          ? "border-transparent hover:bg-white/10 text-slate-300 hover:text-white"
+                          : "border-transparent hover:bg-slate-100 text-slate-800 hover:text-slate-950"
                       }`}
                       style={hasActiveChild ? getActiveItemStyles(true) : {}}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <item.icon
                           size={19}
-                          className="shrink-0 transition-transform duration-200 group-hover:scale-105"
+                          className={`shrink-0 transition-transform duration-200 group-hover:scale-105 ${
+                            hasActiveChild
+                              ? ""
+                              : isSidebarDark
+                              ? "text-slate-400 group-hover:text-slate-200"
+                              : "text-slate-600 group-hover:text-slate-950"
+                          }`}
                           style={{
                             color: hasActiveChild ? settings.accentColor : undefined,
                           }}
@@ -339,7 +343,13 @@ export default function Sidebar() {
                         <span
                           className={`${
                             !open && "hidden"
-                          } origin-left duration-200 text-sm font-medium truncate`}
+                          } origin-left duration-200 text-sm font-medium truncate ${
+                            !hasActiveChild
+                              ? isSidebarDark
+                                ? "text-slate-300 group-hover:text-white"
+                                : "text-slate-800 group-hover:text-slate-950"
+                              : ""
+                          }`}
                         >
                           {item.name}
                         </span>
@@ -350,17 +360,17 @@ export default function Sidebar() {
                           <span
                             className="text-[10px] font-bold px-1.5 py-0.5 rounded-md border transition-colors"
                             style={{
-                              backgroundColor: isSidebarDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
-                              borderColor: isSidebarDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
-                              color: hasActiveChild ? settings.accentColor : "inherit",
+                              backgroundColor: isSidebarDark ? "rgba(255,255,255,0.06)" : "#f1f5f9",
+                              borderColor: isSidebarDark ? "rgba(255,255,255,0.1)" : "#cbd5e1",
+                              color: hasActiveChild ? settings.accentColor : (isSidebarDark ? "#94a3b8" : "#334155"),
                             }}
                           >
                             {item.subItems.length}
                           </span>
                           <span
-                            className={`transition-transform duration-200 opacity-60 ${
-                              isExpanded ? "rotate-90" : ""
-                            }`}
+                            className={`transition-transform duration-200 ${
+                              isSidebarDark ? "opacity-60 text-slate-400" : "opacity-80 text-slate-600"
+                            } ${isExpanded ? "rotate-90" : ""}`}
                             style={{
                               color: isExpanded ? settings.accentColor : undefined,
                             }}
@@ -425,7 +435,7 @@ export default function Sidebar() {
                                     ? "font-bold shadow-xs"
                                     : isSidebarDark
                                     ? "text-slate-400 hover:text-slate-100 hover:bg-white/5"
-                                    : "text-slate-600 hover:text-slate-900 hover:bg-black/5"
+                                    : "text-slate-700 hover:text-slate-950 hover:bg-slate-100 font-medium"
                                 }`}
                                 style={
                                   isChildActive
@@ -440,14 +450,30 @@ export default function Sidebar() {
                                 <div className="flex items-center gap-2.5 min-w-0">
                                   <SubIcon
                                     size={14}
-                                    className="shrink-0 transition-transform"
+                                    className={`shrink-0 transition-transform ${
+                                      isChildActive
+                                        ? ""
+                                        : isSidebarDark
+                                        ? "text-slate-400 group-hover:text-slate-200"
+                                        : "text-slate-600 group-hover:text-slate-950"
+                                    }`}
                                     style={{
                                       color: isChildActive
                                         ? settings.accentColor
                                         : undefined,
                                     }}
                                   />
-                                  <span className="truncate">{sub.name}</span>
+                                  <span
+                                    className={`truncate ${
+                                      !isChildActive
+                                        ? isSidebarDark
+                                          ? "text-slate-400 group-hover:text-slate-100"
+                                          : "text-slate-700 group-hover:text-slate-950 font-medium"
+                                        : ""
+                                    }`}
+                                  >
+                                    {sub.name}
+                                  </span>
                                 </div>
                                 {sub.badge && (
                                   <span
@@ -462,9 +488,10 @@ export default function Sidebar() {
                                         : {
                                             backgroundColor: isSidebarDark
                                               ? "rgba(255,255,255,0.06)"
-                                              : "rgba(0,0,0,0.04)",
-                                            borderColor: "transparent",
-                                            opacity: 0.7,
+                                              : "#f1f5f9",
+                                            borderColor: isSidebarDark ? "transparent" : "#e2e8f0",
+                                            color: isSidebarDark ? "#94a3b8" : "#475569",
+                                            opacity: 1,
                                           }
                                     }
                                   >
@@ -492,14 +519,20 @@ export default function Sidebar() {
                       isActive
                         ? "font-semibold shadow-xs"
                         : isSidebarDark
-                        ? "border-transparent hover:bg-white/10 text-slate-300"
-                        : "border-transparent hover:bg-black/5 text-slate-700"
+                        ? "border-transparent hover:bg-white/10 text-slate-300 hover:text-white"
+                        : "border-transparent hover:bg-slate-100 text-slate-800 hover:text-slate-950"
                     }`}
                     style={isActive ? getActiveItemStyles(true) : {}}
                   >
                     <item.icon
                       size={19}
-                      className="shrink-0 transition-transform duration-200 group-hover:scale-105"
+                      className={`shrink-0 transition-transform duration-200 group-hover:scale-105 ${
+                        isActive
+                          ? ""
+                          : isSidebarDark
+                          ? "text-slate-400 group-hover:text-slate-200"
+                          : "text-slate-600 group-hover:text-slate-950"
+                      }`}
                       style={{
                         color: isActive ? settings.accentColor : undefined,
                       }}
@@ -507,7 +540,13 @@ export default function Sidebar() {
                     <span
                       className={`${
                         !open && "hidden"
-                      } origin-left duration-200 text-sm`}
+                      } origin-left duration-200 text-sm ${
+                        !isActive
+                          ? isSidebarDark
+                            ? "text-slate-300 group-hover:text-white font-medium"
+                            : "text-slate-800 group-hover:text-slate-950 font-medium"
+                          : ""
+                      }`}
                     >
                       {item.name}
                     </span>

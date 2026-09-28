@@ -6,20 +6,38 @@ export default function FlazoComparison() {
   const comparisonData = [
     {
       feature: "Acoustic Drivers",
-      flazo: "13mm Custom Titanium BoomBass™",
+      flazo: "13mm Custom Dynamic BoomBass™",
       ordinary: "10mm Generic Plastic Driver",
+      advantage: true,
+    },
+    {
+      feature: "Total Playtime",
+      flazo: "100 Hours with Case (8h Single Charge)",
+      ordinary: "20 - 28 Hours, Slow Charging",
+      advantage: true,
+    },
+    {
+      feature: "Water & Sweat Rating",
+      flazo: "IPX5 Sweat & Splash Resistance",
+      ordinary: "Basic IPX4 or no rating",
+      advantage: true,
+    },
+    {
+      feature: "Wireless Range & Bluetooth",
+      flazo: "10-15m Stable Bluetooth Distance",
+      ordinary: "Under 8-10m with audio drops",
+      advantage: true,
+    },
+    {
+      feature: "Charging Input",
+      flazo: "5V/1A Fast Type-C Hyper Charge",
+      ordinary: "Slow conventional charging",
       advantage: true,
     },
     {
       feature: "Noise Cancellation",
       flazo: "50dB Hybrid Dual-Mic ANC",
       ordinary: "Passive or weak ~20dB cut",
-      advantage: true,
-    },
-    {
-      feature: "Total Playtime",
-      flazo: "70 Hours + ASAP™ Hyper Charge",
-      ordinary: "20 - 28 Hours, Slow Charging",
       advantage: true,
     },
     {
@@ -32,12 +50,6 @@ export default function FlazoComparison() {
       feature: "Calling Clarity",
       flazo: "Quad-Mic ENC with AI Voice Isolator",
       ordinary: "Dual mic with wind distortion",
-      advantage: true,
-    },
-    {
-      feature: "Water & Sweat Rating",
-      flazo: "IPX7 Complete Workout Waterproofing",
-      ordinary: "Basic IPX4 or no rating",
       advantage: true,
     },
     {

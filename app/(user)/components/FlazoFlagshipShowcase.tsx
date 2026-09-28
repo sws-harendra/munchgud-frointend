@@ -53,11 +53,11 @@ const flagshipModels: EarbudModel[] = [
     reviewsCount: "48,290",
     image: "/images/hero-earbuds.jpg",
     specs: {
-      battery: "70 Hours Total",
+      battery: "100 Hours Total",
       driver: "13mm Titanium Bass",
       anc: "50dB Hybrid ANC",
       latency: "35ms Beast™ Mode",
-      waterproof: "IPX7 Sweat & Water",
+      waterproof: "IPX5 Sweat & Splash",
     },
     features: [
       "Custom Tuned 13mm BoomBass™ Drivers",

@@ -6,9 +6,9 @@ export default function FlazoMarqueeTicker() {
   const tickerItems = [
     { icon: Volume2, text: "13MM TITANIUM BOOMBASS™", highlight: true },
     { icon: Shield, text: "50DB HYBRID ACTIVE NOISE CANCELLATION", highlight: false },
-    { icon: Zap, text: "70 HOURS MONSTER PLAYTIME", highlight: true },
+    { icon: Zap, text: "100 HOURS MONSTER PLAYTIME", highlight: true },
     { icon: Gamepad2, text: "35MS BEAST™ GAMING LATENCY", highlight: false },
-    { icon: Droplets, text: "IPX7 WORKOUT WATERPROOFING", highlight: true },
+    { icon: Droplets, text: "IPX5 SWEAT & SPLASH RESISTANCE", highlight: true },
     { icon: Zap, text: "ASAP™ CHARGE: 10 MINS = 120 MINS", highlight: false },
     { icon: Award, text: "1-YEAR DOORSTEP REPLACEMENT", highlight: true },
     { icon: Truck, text: "FREE EXPRESS 48H DISPATCH", highlight: false },
