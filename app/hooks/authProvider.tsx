@@ -21,7 +21,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   // Check authentication on app load
   useEffect(() => {
-    const publicPages = ["/authentication/login", "/authentication/register"];
+    const publicPages = [
+      "/authentication/login",
+      "/authentication/register",
+      "/authentication/verify-otp",
+    ];
 
     if (publicPages.includes(pathname)) return;
 
@@ -36,6 +40,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     const publicPages = [
       "/authentication/login",
       "/authentication/register",
+      "/authentication/verify-otp",
       "/",
       "/blogs",
       "/cart",

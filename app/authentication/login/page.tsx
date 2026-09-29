@@ -65,12 +65,15 @@ function LoginFormContent() {
     let hasErrors = false;
     const newErrors = { email: "", password: "" };
 
-    const trimmedEmail = email.trim();
-    if (!trimmedEmail) {
-      newErrors.email = "Email address is required";
+    const trimmedInput = email.trim();
+    const isEmail = validateEmail(trimmedInput);
+    const isPhone = /^[6-9]\d{9}$/.test(trimmedInput.replace(/\D/g, ""));
+
+    if (!trimmedInput) {
+      newErrors.email = "Email or mobile number is required";
       hasErrors = true;
-    } else if (!validateEmail(trimmedEmail)) {
-      newErrors.email = "Please enter a valid email address";
+    } else if (!isEmail && !isPhone) {
+      newErrors.email = "Please enter a valid email address or 10-digit mobile number";
       hasErrors = true;
     }
 
@@ -91,7 +94,7 @@ function LoginFormContent() {
 
     try {
       const response = await dispatch(
-        emailLogin({ email: trimmedEmail, password })
+        emailLogin({ email: trimmedInput, password })
       ).unwrap();
 
       toast.success("Welcome back! Logged in successfully.");
@@ -155,7 +158,7 @@ function LoginFormContent() {
                 htmlFor="email"
                 className="text-xs font-bold uppercase tracking-wider text-neutral-700 block"
               >
-                Email Address
+                Email or Mobile Number
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -167,8 +170,8 @@ function LoginFormContent() {
                 </div>
                 <input
                   id="email"
-                  type="email"
-                  autoComplete="email"
+                  type="text"
+                  autoComplete="username"
                   value={email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   className={`w-full pl-11 pr-4 py-3 rounded-xl bg-neutral-50/50 border text-sm text-neutral-900 placeholder:text-neutral-400 transition-all duration-200 focus:outline-none focus:ring-3 ${
@@ -176,7 +179,7 @@ function LoginFormContent() {
                       ? "border-rose-400 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20"
                       : "border-neutral-200 hover:border-neutral-300 focus:border-amber-500 focus:ring-amber-200/50"
                   }`}
-                  placeholder="name@example.com"
+                  placeholder="name@example.com or 98765 43210"
                 />
               </div>
               {errors.email && (

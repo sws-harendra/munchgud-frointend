@@ -50,15 +50,18 @@ export const emailLogin = createAsyncThunk(
 
 export const sendOtpToPhone = createAsyncThunk(
   "auth/sendOtpToPhone",
-  async (phoneNumber: string, { rejectWithValue }) => {
+  async (data: string | FormData | any, { rejectWithValue }) => {
     try {
-      const response = await authService.sendOtpToPhone(phoneNumber);
-      return { ...response, phoneNumber };
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        return rejectWithValue(err.message);
-      }
-      return rejectWithValue("Email login failed");
+      const response = await authService.sendOtpToPhone(data);
+      const phoneNumber =
+        typeof data === "string"
+          ? data
+          : data instanceof FormData
+          ? data.get("phoneNumber") || data.get("phone")
+          : data?.phoneNumber || data?.phone;
+      return { ...response, phoneNumber: String(phoneNumber || "") };
+    } catch (err: any) {
+      return rejectWithValue(err?.message || "Failed to send OTP");
     }
   },
 );
@@ -69,11 +72,8 @@ export const verifyPhoneOtp = createAsyncThunk(
     try {
       const response = await authService.verifyPhoneOtp(phoneNumber, otp);
       return response;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        return rejectWithValue(err.message);
-      }
-      return rejectWithValue("OTP verification failed");
+    } catch (err: any) {
+      return rejectWithValue(err?.message || "OTP verification failed");
     }
   },
 );
@@ -84,11 +84,8 @@ export const resendOtp = createAsyncThunk(
     try {
       const response = await authService.resendOtp(phoneNumber);
       return response;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        return rejectWithValue(err.message);
-      }
-      return rejectWithValue("Email login failed");
+    } catch (err: any) {
+      return rejectWithValue(err?.message || "Failed to resend OTP");
     }
   },
 );
@@ -301,6 +298,8 @@ const authSlice = createSlice({
       .addCase(verifyPhoneOtp.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.isAuthenticated = true;
+        state.user = action.payload?.user || null;
+        state.role = action.payload?.user?.role || "user";
         state.otpSent = false;
         state.error = null;
       })

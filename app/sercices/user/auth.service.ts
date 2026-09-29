@@ -42,28 +42,75 @@ export const authService = {
     return response.data;
   },
   // Send OTP to phone
-  sendOtpToPhone: async (phoneNumber: string) => {
-    const response = await axiosInstance.post("/user/auth/send-otp", {
-      phoneNumber,
-    });
-    return response.data;
+  sendOtpToPhone: async (data: string | FormData | Record<string, any>) => {
+    try {
+      let response;
+      if (typeof data === "string") {
+        response = await axiosInstance.post("/user/auth/send-otp", {
+          phoneNumber: data,
+        });
+      } else if (data instanceof FormData) {
+        response = await axiosInstance.post("/user/auth/send-otp", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await axiosInstance.post("/user/auth/send-otp", data);
+      }
+      return response.data;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "Failed to send OTP";
+      throw { message };
+    }
   },
 
   // Verify phone OTP
   verifyPhoneOtp: async (phoneNumber: string, otp: string) => {
-    const response = await axiosInstance.post("/user/auth/verify-otp", {
-      phoneNumber,
-      otp,
-    });
-    return response.data;
+    try {
+      const response = await axiosInstance.post("/user/auth/verify-otp", {
+        phoneNumber,
+        otp,
+      });
+      if (typeof window !== "undefined") {
+        if (response.data?.accessToken) {
+          localStorage.setItem("accessToken", response.data.accessToken);
+        }
+        if (response.data?.refreshToken) {
+          localStorage.setItem("refreshToken", response.data.refreshToken);
+        }
+        if (response.data?.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+      }
+      return response.data;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "Failed to verify OTP";
+      throw { message };
+    }
   },
 
   // Resend OTP
   resendOtp: async (phoneNumber: string) => {
-    const response = await axiosInstance.post("/user/auth/resend-otp", {
-      phone: phoneNumber,
-    });
-    return response.data;
+    try {
+      const response = await axiosInstance.post("/user/auth/resend-otp", {
+        phoneNumber,
+      });
+      return response.data;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "Failed to resend OTP";
+      throw { message };
+    }
   },
 
   // Get user details

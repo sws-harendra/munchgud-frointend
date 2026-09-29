@@ -14,11 +14,12 @@ export interface VerifyOtpRequest {
 }
 
 export interface RegisterUserRequest {
-  email: string;
+  email?: string;
+  phoneNumber: string;
   password: string;
   fullname: string;
-  file: string;
-} // auth.types.ts
+  file?: string;
+}
 
 export interface AuthState {
   user: User | null; // replace 'any' with proper User type
@@ -51,7 +52,7 @@ export interface Address {
 
 export interface User {
   id: string;
-  email: string;
+  email?: string;
   fullname: string;
   role: "user" | "admin" | "driver";
   phoneNumber?: string;

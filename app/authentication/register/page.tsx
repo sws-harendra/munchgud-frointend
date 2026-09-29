@@ -7,6 +7,7 @@ import {
   Eye,
   EyeOff,
   User,
+  Phone,
   ArrowRight,
   Camera,
   X,
@@ -18,7 +19,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/app/lib/store/store";
-import { registerUser } from "@/app/lib/store/features/authSlice";
+import { authService } from "@/app/sercices/user/auth.service";
 import { toast } from "sonner";
 import { brandName } from "@/app/contants";
 
@@ -27,6 +28,7 @@ export default function RegisterForm() {
   const dispatch = useAppDispatch();
 
   const [fullname, setFullName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -41,6 +43,7 @@ export default function RegisterForm() {
 
   const [errors, setErrors] = useState({
     fullname: "",
+    phoneNumber: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -92,6 +95,7 @@ export default function RegisterForm() {
     setServerError("");
     setErrors({
       fullname: "",
+      phoneNumber: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -102,6 +106,7 @@ export default function RegisterForm() {
     let hasErrors = false;
     const newErrors = {
       fullname: "",
+      phoneNumber: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -118,11 +123,18 @@ export default function RegisterForm() {
       hasErrors = true;
     }
 
-    const trimmedEmail = email.trim();
-    if (!trimmedEmail) {
-      newErrors.email = "Email address is required";
+    const cleanPhone = phoneNumber.trim().replace(/\D/g, "");
+    if (!cleanPhone) {
+      newErrors.phoneNumber = "Mobile number is required";
       hasErrors = true;
-    } else if (!validateEmail(trimmedEmail)) {
+    } else if (cleanPhone.length !== 10) {
+      newErrors.phoneNumber = "Please enter a valid 10-digit mobile number";
+      hasErrors = true;
+    }
+
+    // Email is optional: validate only if provided
+    const trimmedEmail = email.trim();
+    if (trimmedEmail && !validateEmail(trimmedEmail)) {
       newErrors.email = "Please enter a valid email address";
       hasErrors = true;
     }
@@ -157,29 +169,41 @@ export default function RegisterForm() {
 
     try {
       const formData = new FormData();
-      formData.append("email", trimmedEmail);
-      formData.append("password", password);
       formData.append("fullname", trimmedName);
+      formData.append("phoneNumber", cleanPhone);
+      if (trimmedEmail) {
+        formData.append("email", trimmedEmail);
+      }
+      formData.append("password", password);
+      formData.append("purpose", "register");
       if (profileImage) {
         formData.append("file", profileImage);
       }
 
-      const response = await dispatch(registerUser(formData)).unwrap();
+      const response = await authService.sendOtpToPhone(formData);
 
       if (response && response.success) {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("flazo_verify_phone", cleanPhone);
+          sessionStorage.setItem("flazo_verify_name", trimmedName);
+          if (response?.devOtp) {
+            sessionStorage.setItem("flazo_dev_otp", response.devOtp);
+          }
+        }
+
         toast.success(
-          `Account created successfully! Welcome to ${brandName}.`
+          response?.message || "Verification code sent to your mobile number!"
         );
 
-        const createdRole = response?.user?.role;
-        if (createdRole === "admin") {
-          router.push("/admin/dashboard");
-        } else {
-          router.push("/");
-        }
+        router.push(
+          `/authentication/verify-otp?phone=${cleanPhone}${
+            response?.devOtp ? `&devOtp=${response.devOtp}` : ""
+          }`
+        );
       } else {
-        toast.success(response?.message || "Account created successfully!");
-        router.push("/authentication/login");
+        const msg = response?.message || "Failed to send verification code";
+        setServerError(msg);
+        toast.error(msg);
       }
     } catch (err: any) {
       console.error("Registration error:", err);
@@ -382,14 +406,66 @@ export default function RegisterForm() {
                   )}
                 </div>
 
-                {/* Email Address */}
+                {/* Mobile Number (Compulsory) */}
                 <div className="space-y-1.5">
-                  <label
-                    htmlFor="email"
-                    className="text-xs font-bold uppercase tracking-wider text-neutral-700 block"
-                  >
-                    Email Address
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="phoneNumber"
+                      className="text-xs font-bold uppercase tracking-wider text-neutral-700 block"
+                    >
+                      Mobile Number <span className="text-amber-600">*</span>
+                    </label>
+                    <span className="text-[11px] font-medium text-amber-600/90 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60">
+                      OTP will be sent
+                    </span>
+                  </div>
+                  <div className="relative flex rounded-xl shadow-xs">
+                    <div className="flex items-center pl-3.5 pr-2.5 rounded-l-xl bg-neutral-100/80 border border-r-0 border-neutral-200 text-neutral-700 text-sm font-semibold select-none">
+                      <Phone className="h-4 w-4 text-amber-500 mr-1.5" />
+                      <span>+91</span>
+                    </div>
+                    <input
+                      id="phoneNumber"
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
+                      autoComplete="tel"
+                      value={phoneNumber}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "");
+                        setPhoneNumber(val);
+                        if (errors.phoneNumber)
+                          setErrors((prev) => ({ ...prev, phoneNumber: "" }));
+                      }}
+                      className={`w-full pl-3 pr-4 py-3 rounded-r-xl bg-neutral-50/50 border text-sm text-neutral-900 placeholder:text-neutral-400 transition-all duration-200 focus:outline-none focus:ring-3 ${
+                        errors.phoneNumber
+                          ? "border-rose-400 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20"
+                          : "border-neutral-200 hover:border-neutral-300 focus:border-amber-500 focus:ring-amber-200/50"
+                      }`}
+                      placeholder="98765 43210"
+                    />
+                  </div>
+                  {errors.phoneNumber && (
+                    <div className="flex items-center gap-1.5 text-rose-600 text-xs font-medium mt-1">
+                      <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span>{errors.phoneNumber}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Email Address (Optional) */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="email"
+                      className="text-xs font-bold uppercase tracking-wider text-neutral-700 block"
+                    >
+                      Email Address
+                    </label>
+                    <span className="text-[11px] font-normal text-neutral-400">
+                      Optional
+                    </span>
+                  </div>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                       <Mail
@@ -413,7 +489,7 @@ export default function RegisterForm() {
                           ? "border-rose-400 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20"
                           : "border-neutral-200 hover:border-neutral-300 focus:border-amber-500 focus:ring-amber-200/50"
                       }`}
-                      placeholder="name@example.com"
+                      placeholder="name@example.com (optional)"
                     />
                   </div>
                   {errors.email && (
@@ -590,11 +666,11 @@ export default function RegisterForm() {
                     {isLoading ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" />
-                        <span>Creating Your Account...</span>
+                        <span>Sending Verification Code...</span>
                       </>
                     ) : (
                       <>
-                        <span>Create Account</span>
+                        <span>Create Account & Verify</span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
