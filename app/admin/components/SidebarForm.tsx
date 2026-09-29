@@ -80,7 +80,15 @@ export default function SidebarForm({
                   isDarkMode ? "bg-black text-white" : "bg-gray-50/50 text-gray-900"
                 }`}
               >
-                {children}
+                {React.isValidElement(children)
+                  ? React.cloneElement(children as React.ReactElement<any>, {
+                      onSuccess: () => {
+                        (children as any).props?.onSuccess?.();
+                        setOpen(false);
+                      },
+                      onClose: () => setOpen(false),
+                    })
+                  : children}
               </div>
             </div>
 

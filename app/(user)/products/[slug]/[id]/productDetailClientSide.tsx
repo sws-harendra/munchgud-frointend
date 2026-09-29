@@ -248,6 +248,27 @@ export default function ProductDetailClient({
     return "Wireless Earphones with 40H Playback, ASAP™ Charge, Dual Pairing, ENx™ Technology, BEAST™ Mode";
   }, [formattedTags]);
 
+  // Dynamically extract technical specifications (Key:Value) from formattedTags
+  const technicalSpecs = useMemo(() => {
+    if (!formattedTags || !Array.isArray(formattedTags)) return [];
+    return formattedTags
+      .filter(
+        (t) =>
+          typeof t === "string" &&
+          t.includes(":") &&
+          !t.startsWith("http://") &&
+          !t.startsWith("https://")
+      )
+      .map((t) => {
+        const firstColon = t.indexOf(":");
+        return {
+          label: t.slice(0, firstColon).trim(),
+          value: t.slice(firstColon + 1).trim(),
+        };
+      })
+      .filter((item) => item.label && item.value);
+  }, [formattedTags]);
+
   const shareUrl = `${clienturl}/products/${slugify(product.name)}/${product.id}`;
   const shareTitle = `Check out ${product.name} on Flazo!`;
 
@@ -750,8 +771,36 @@ export default function ProductDetailClient({
 
         </div>
 
+        {/* ================= DYNAMIC TECHNICAL SPECIFICATIONS SECTION ================= */}
+        {technicalSpecs.length > 0 && (
+          <div className="mt-16 pt-10 border-t border-neutral-200">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-2 h-7 bg-amber-500 rounded-full" />
+              <h2 className="text-xl sm:text-2xl font-black text-neutral-900 tracking-tight">
+                Audio & Technical Specifications
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
+              {technicalSpecs.map((spec, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/80 hover:border-amber-500/50 hover:bg-white hover:shadow-md transition-all group"
+                >
+                  <p className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider truncate mb-1">
+                    {spec.label}
+                  </p>
+                  <p className="text-xs sm:text-sm font-extrabold text-neutral-900 group-hover:text-amber-600 transition-colors">
+                    {spec.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* ================= PRODUCT DESCRIPTION SECTION ================= */}
-        <div className="mt-16 pt-10 border-t border-neutral-200">
+        <div className="mt-12 pt-10 border-t border-neutral-200">
           <Description description={product.description} />
         </div>
 

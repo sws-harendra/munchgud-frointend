@@ -80,6 +80,7 @@ const AddProducts = () => {
   const isDark = resolvedTheme === "dark";
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryInput, setCategoryInput] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -104,6 +105,30 @@ const AddProducts = () => {
     waterproof: "IPX5 Splashproof",
   });
 
+  // Additional Custom Tech Specifications (Dynamic Key-Value)
+  const [customSpecs, setCustomSpecs] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [newSpecLabel, setNewSpecLabel] = useState("");
+  const [newSpecValue, setNewSpecValue] = useState("");
+
+  const handleAddCustomSpec = () => {
+    if (!newSpecLabel.trim() || !newSpecValue.trim()) {
+      toast.error("Please enter both Specification Name and Value");
+      return;
+    }
+    setCustomSpecs([
+      ...customSpecs,
+      { label: newSpecLabel.trim(), value: newSpecValue.trim() },
+    ]);
+    setNewSpecLabel("");
+    setNewSpecValue("");
+  };
+
+  const handleRemoveCustomSpec = (index: number) => {
+    setCustomSpecs(customSpecs.filter((_, i) => i !== index));
+  };
+
   // Dynamic Feature Bullets
   const [features, setFeatures] = useState<string[]>([
     "24K Gold-Plated Diaphragm",
@@ -120,6 +145,37 @@ const AddProducts = () => {
     { name: "Champagne Gold", hex: "#E8C872" },
     { name: "Obsidian Black", hex: "#1F1F1F" },
   ]);
+  const [customColorName, setCustomColorName] = useState("");
+  const [customColorHex, setCustomColorHex] = useState("#2563EB");
+
+  const handleAddCustomColor = () => {
+    if (!customColorName.trim()) {
+      toast.error("Please enter a color name");
+      return;
+    }
+    const trimmedName = customColorName.trim();
+    if (
+      selectedColors.some(
+        (c) => c.name.toLowerCase() === trimmedName.toLowerCase()
+      )
+    ) {
+      toast.error(`Color "${trimmedName}" is already added`);
+      return;
+    }
+    setSelectedColors([
+      ...selectedColors,
+      { name: trimmedName, hex: customColorHex || "#2563EB" },
+    ]);
+    setCustomColorName("");
+  };
+
+  const handleRemoveColor = (indexToRemove: number) => {
+    if (selectedColors.length <= 1) {
+      toast.error("At least one color variant is recommended");
+      return;
+    }
+    setSelectedColors(selectedColors.filter((_, i) => i !== indexToRemove));
+  };
 
   // Sync with Homepage Trending Bestsellers Banner
   const [syncToTrendingImage, setSyncToTrendingImage] = useState(true);
@@ -138,16 +194,6 @@ const AddProducts = () => {
         const res = await categoryService.getAllCategories();
         if (res.success && res.categories) {
           setCategories(res.categories);
-          // If "Earbuds" category exists, pre-select it
-          const earbudsCat = res.categories.find(
-            (c: any) => c.name.toLowerCase() === "earbuds"
-          );
-          if (earbudsCat && !formData.categoryId) {
-            setFormData((prev) => ({
-              ...prev,
-              categoryId: String(earbudsCat.id),
-            }));
-          }
         }
       } catch (err) {
         console.error("Failed to load categories", err);
@@ -228,12 +274,17 @@ const AddProducts = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.categoryId) {
-      toast.error("Please select a Category!");
-      return;
-    }
-
     try {
+      // Resolve category: find existing category ID or pass categoryName
+      let finalCategoryId = "";
+      if (categoryInput.trim()) {
+        const matchedCat = categories.find(
+          (c) => c.name.toLowerCase() === categoryInput.trim().toLowerCase()
+        );
+        if (matchedCat) {
+          finalCategoryId = String(matchedCat.id);
+        }
+      }
       // Build comprehensive tags list incorporating specs & features
       const existingTags = formData.tags
         ? formData.tags.split(",").map((t) => t.trim())
@@ -243,10 +294,12 @@ const AddProducts = () => {
         new Set([
           "Earbuds",
           formData.badge,
-          `Driver:${specs.driver}`,
-          `ANC:${specs.anc}`,
-          `Battery:${specs.battery}`,
-          `Waterproof:${specs.waterproof}`,
+          ...(specs.driver ? [`Driver:${specs.driver}`] : []),
+          ...(specs.anc ? [`ANC:${specs.anc}`] : []),
+          ...(specs.battery ? [`Battery:${specs.battery}`] : []),
+          ...(specs.latency ? [`Latency:${specs.latency}`] : []),
+          ...(specs.waterproof ? [`Waterproof:${specs.waterproof}`] : []),
+          ...customSpecs.map((s) => `${s.label}:${s.value}`),
           ...features,
           ...selectedColors.map((c) => c.name),
           ...existingTags,
@@ -256,7 +309,12 @@ const AddProducts = () => {
       const data = new FormData();
       data.append("name", formData.name);
       data.append("description", formData.description);
-      data.append("categoryId", formData.categoryId);
+      if (finalCategoryId) {
+        data.append("categoryId", finalCategoryId);
+      }
+      if (categoryInput.trim()) {
+        data.append("categoryName", categoryInput.trim());
+      }
       data.append("tags", JSON.stringify(comprehensiveTags));
       data.append("originalPrice", formData.originalPrice);
       data.append("discountPrice", formData.discountPrice);
@@ -395,47 +453,65 @@ const AddProducts = () => {
                           isDark ? "text-zinc-300" : "text-slate-700"
                         }`}
                       >
-                        Category *
+                        Category <span className="text-zinc-500 font-normal lowercase">(optional)</span>
                       </label>
-                      {categories.some(
-                        (c) => c.name.toLowerCase() === "earbuds"
-                      ) && (
+                      {categoryInput && (
                         <button
                           type="button"
-                          onClick={() => {
-                            const eCat = categories.find(
-                              (c) => c.name.toLowerCase() === "earbuds"
-                            );
-                            if (eCat)
-                              setFormData({
-                                ...formData,
-                                categoryId: String(eCat.id),
-                              });
-                          }}
-                          className="text-[11px] font-bold text-amber-500 hover:text-amber-400 hover:underline"
+                          onClick={() => setCategoryInput("")}
+                          className="text-[11px] text-zinc-400 hover:text-red-400 cursor-pointer"
                         >
-                          ⚡ Quick Select: Earbuds
+                          Clear
                         </button>
                       )}
                     </div>
-                    <select
-                      name="categoryId"
-                      value={formData.categoryId}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all cursor-pointer ${
-                        isDark
-                          ? "bg-zinc-900 border-zinc-800 text-white"
-                          : "bg-slate-50 border-slate-200 text-slate-800"
-                      }`}
-                      required
-                    >
-                      <option value="">-- Choose Category --</option>
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="category"
+                        list="category-suggestions"
+                        value={categoryInput}
+                        onChange={(e) => setCategoryInput(e.target.value)}
+                        placeholder="Type category (e.g. Earbuds, Smartwatch, Accessories)..."
+                        className={`w-full px-4 py-3 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all ${
+                          isDark
+                            ? "bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500"
+                            : "bg-slate-50 border-slate-200 text-slate-800 placeholder:text-slate-400"
+                        }`}
+                      />
+                      <datalist id="category-suggestions">
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.name} />
+                        ))}
+                      </datalist>
+                    </div>
+
+                    {/* Quick Category Suggestion Chips */}
+                    {categories.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                        <span className="text-[10px] text-zinc-500 uppercase font-semibold">
+                          Suggestions:
+                        </span>
+                        {categories.map((cat) => (
+                          <button
+                            key={cat.id}
+                            type="button"
+                            onClick={() => setCategoryInput(cat.name)}
+                            className={`text-[11px] px-2.5 py-0.5 rounded-lg border transition-colors cursor-pointer ${
+                              categoryInput.toLowerCase() === cat.name.toLowerCase()
+                                ? isDark
+                                  ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                                  : "bg-amber-100 text-amber-900 border-amber-300"
+                                : isDark
+                                ? "bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700"
+                                : "bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300"
+                            }`}
+                          >
+                            {cat.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Variant / Subtitle */}
@@ -780,6 +856,122 @@ const AddProducts = () => {
                     />
                   </div>
                 </div>
+
+                {/* Dynamically Added Custom Specifications */}
+                {customSpecs.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+                    {customSpecs.map((cs, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-3 rounded-xl border relative transition-colors ${
+                          isDark
+                            ? "bg-zinc-900/60 border-zinc-800 text-white"
+                            : "bg-slate-50 border-slate-200 text-slate-800"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <span className="text-[11px] font-bold text-amber-500 uppercase tracking-wider truncate">
+                            {cs.label}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCustomSpec(idx)}
+                            className="p-1 rounded-md text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                            title="Remove specification"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <p className="text-xs font-semibold truncate">{cs.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add Custom Tech Specification Box */}
+                <div
+                  className={`p-4 rounded-2xl border space-y-3 transition-colors ${
+                    isDark
+                      ? "bg-zinc-900/40 border-zinc-800"
+                      : "bg-slate-50/70 border-slate-200"
+                  }`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <p
+                      className={`text-xs font-bold flex items-center gap-1.5 ${
+                        isDark ? "text-zinc-200" : "text-slate-700"
+                      }`}
+                    >
+                      <Plus className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Add Extra / Custom Tech Specification</span>
+                    </p>
+                    <span className="text-[11px] text-zinc-500">
+                      Add any custom spec (e.g. Bluetooth, Weight, Warranty)
+                    </span>
+                  </div>
+
+                  {/* Quick Preset Suggestion Chips */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: "Bluetooth", value: "v5.4 Ultra-Sync" },
+                      { label: "Microphone", value: "Quad Mic with AI ENC" },
+                      { label: "Fast Charging", value: "10 Mins = 10 Hours" },
+                      { label: "Total Weight", value: "44g Case + 4.2g Buds" },
+                      { label: "Charging Port", value: "Type-C High Speed" },
+                      { label: "Warranty", value: "1 Year Replacement" },
+                    ].map((preset, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setNewSpecLabel(preset.label);
+                          setNewSpecValue(preset.value);
+                        }}
+                        className={`text-[11px] px-2.5 py-1 rounded-lg border transition-colors cursor-pointer ${
+                          isDark
+                            ? "bg-zinc-800/80 border-zinc-700 text-zinc-300 hover:border-amber-500 hover:text-amber-400"
+                            : "bg-white border-slate-200 text-slate-600 hover:border-amber-500 hover:text-amber-600"
+                        }`}
+                      >
+                        + {preset.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Input Row */}
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="text"
+                      value={newSpecLabel}
+                      onChange={(e) => setNewSpecLabel(e.target.value)}
+                      placeholder="Spec Name (e.g. Bluetooth Version)"
+                      className={`flex-1 px-3 py-2 text-xs rounded-xl border focus:outline-none focus:ring-1 focus:ring-amber-500 ${
+                        isDark
+                          ? "bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600"
+                          : "bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
+                      }`}
+                    />
+                    <input
+                      type="text"
+                      value={newSpecValue}
+                      onChange={(e) => setNewSpecValue(e.target.value)}
+                      placeholder="Spec Value (e.g. 5.4 Dual Pairing)"
+                      className={`flex-1 px-3 py-2 text-xs rounded-xl border focus:outline-none focus:ring-1 focus:ring-amber-500 ${
+                        isDark
+                          ? "bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600"
+                          : "bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomSpec}
+                      className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-zinc-950 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-amber-500/20"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Spec</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* 4. KEY FEATURE HIGHLIGHTS BUILDER */}
@@ -873,40 +1065,241 @@ const AddProducts = () => {
 
               {/* 5. COLOR SHADES / SWATCHES */}
               <div className="space-y-4">
-                <div className="flex items-center gap-3 pb-3 border-b border-inherit">
-                  <div className="w-2 h-7 bg-pink-500 rounded-full" />
-                  <h3 className="text-lg font-bold tracking-tight">
-                    Color Variants & Swatches
-                  </h3>
+                <div className="flex items-center justify-between pb-3 border-b border-inherit">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-7 bg-pink-500 rounded-full" />
+                    <h3 className="text-lg font-bold tracking-tight">
+                      Color Variants & Swatches
+                    </h3>
+                  </div>
+                  <span className="text-xs text-pink-500 font-medium">
+                    {selectedColors.length} Colors Active
+                  </span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  {PRESET_COLOR_SWATCHES.map((swatch) => {
-                    const isSelected = selectedColors.some(
-                      (c) => c.hex === swatch.hex
-                    );
-                    return (
-                      <button
-                        key={swatch.hex}
-                        type="button"
-                        onClick={() => handleToggleColor(swatch)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold transition-all ${
-                          isSelected
-                            ? "border-amber-400 bg-amber-500/10 text-amber-400 ring-1 ring-amber-400/40"
-                            : isDark
-                            ? "border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white"
-                            : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+                {/* Active Selected Colors (with Remove option) */}
+                <div className="space-y-1.5">
+                  <p
+                    className={`text-xs font-semibold ${
+                      isDark ? "text-zinc-400" : "text-slate-600"
+                    }`}
+                  >
+                    Active Color Variants for this Product:
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {selectedColors.map((color, idx) => (
+                      <span
+                        key={idx}
+                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${
+                          isDark
+                            ? "bg-zinc-900 border-zinc-800 text-white"
+                            : "bg-white border-slate-200 text-slate-800 shadow-xs"
                         }`}
                       >
                         <span
-                          className="w-4 h-4 rounded-full border border-black/30 shadow-2xs"
-                          style={{ backgroundColor: swatch.hex }}
+                          className="w-3.5 h-3.5 rounded-full border border-black/20 shadow-inner"
+                          style={{ backgroundColor: color.hex }}
                         />
-                        <span>{swatch.name}</span>
-                        {isSelected && <CheckCircle2 className="w-3.5 h-3.5" />}
-                      </button>
-                    );
-                  })}
+                        <span>{color.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveColor(idx)}
+                          className="hover:text-red-400 text-zinc-400 ml-0.5 p-0.5 rounded cursor-pointer"
+                          title="Remove color"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Add Custom Color Input Box */}
+                <div
+                  className={`p-4 rounded-2xl border space-y-3 transition-colors ${
+                    isDark
+                      ? "bg-zinc-900/40 border-zinc-800"
+                      : "bg-slate-50/70 border-slate-200"
+                  }`}
+                >
+                  <p
+                    className={`text-xs font-bold flex items-center gap-1.5 ${
+                      isDark ? "text-zinc-200" : "text-slate-700"
+                    }`}
+                  >
+                    <Palette className="w-3.5 h-3.5 text-pink-500" />
+                    <span>Type Custom Color Name & Pick Shade</span>
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row items-center gap-2.5">
+                    {/* Color Picker Swatch Input */}
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <label
+                        htmlFor="color-picker-input"
+                        className="relative w-10 h-10 rounded-xl overflow-hidden border border-zinc-700 shadow-inner cursor-pointer shrink-0"
+                        title="Click to pick color shade"
+                      >
+                        <input
+                          id="color-picker-input"
+                          type="color"
+                          value={customColorHex}
+                          onChange={(e) => setCustomColorHex(e.target.value)}
+                          className="absolute -top-4 -left-4 w-20 h-20 cursor-pointer opacity-0"
+                        />
+                        <div
+                          className="w-full h-full"
+                          style={{ backgroundColor: customColorHex }}
+                        />
+                      </label>
+                      <span className="text-xs font-mono text-zinc-400 uppercase sm:hidden">
+                        {customColorHex}
+                      </span>
+                    </div>
+
+                    {/* Custom Color Name Input */}
+                    <input
+                      type="text"
+                      value={customColorName}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCustomColorName(val);
+                        // Smart auto-hex detection
+                        const lower = val.toLowerCase();
+                        if (lower.includes("blue") || lower.includes("navy"))
+                          setCustomColorHex("#2563EB");
+                        else if (
+                          lower.includes("red") ||
+                          lower.includes("crimson")
+                        )
+                          setCustomColorHex("#DC2626");
+                        else if (
+                          lower.includes("green") ||
+                          lower.includes("teal")
+                        )
+                          setCustomColorHex("#059669");
+                        else if (
+                          lower.includes("black") ||
+                          lower.includes("stealth") ||
+                          lower.includes("dark")
+                        )
+                          setCustomColorHex("#18181B");
+                        else if (
+                          lower.includes("white") ||
+                          lower.includes("silver")
+                        )
+                          setCustomColorHex("#F8FAFC");
+                        else if (
+                          lower.includes("gold") ||
+                          lower.includes("champagne")
+                        )
+                          setCustomColorHex("#D97706");
+                        else if (
+                          lower.includes("purple") ||
+                          lower.includes("violet")
+                        )
+                          setCustomColorHex("#7C3AED");
+                        else if (
+                          lower.includes("pink") ||
+                          lower.includes("rose")
+                        )
+                          setCustomColorHex("#DB2777");
+                        else if (lower.includes("orange"))
+                          setCustomColorHex("#EA580C");
+                        else if (lower.includes("yellow"))
+                          setCustomColorHex("#CA8A04");
+                        else if (
+                          lower.includes("grey") ||
+                          lower.includes("gray")
+                        )
+                          setCustomColorHex("#4B5563");
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCustomColor();
+                        }
+                      }}
+                      placeholder="Type color name (e.g. Midnight Blue, Rose Gold, Space Grey)..."
+                      className={`flex-1 px-4 py-2.5 text-xs rounded-xl border focus:outline-none focus:ring-2 focus:ring-pink-500/30 w-full transition-all ${
+                        isDark
+                          ? "bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500"
+                          : "bg-white border-slate-200 text-slate-800 placeholder:text-slate-400"
+                      }`}
+                    />
+
+                    {/* Hex Code Input */}
+                    <div className="relative w-full sm:w-28 shrink-0">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs">
+                        #
+                      </span>
+                      <input
+                        type="text"
+                        value={customColorHex.replace("#", "")}
+                        onChange={(e) =>
+                          setCustomColorHex(
+                            `#${e.target.value.replace(/[^0-9A-Fa-f]/g, "")}`
+                          )
+                        }
+                        maxLength={6}
+                        placeholder="HEX"
+                        className={`w-full pl-6 pr-2 py-2.5 text-xs font-mono uppercase rounded-xl border focus:outline-none focus:ring-1 focus:ring-pink-500 ${
+                          isDark
+                            ? "bg-zinc-900 border-zinc-800 text-white"
+                            : "bg-white border-slate-200 text-slate-800"
+                        }`}
+                      />
+                    </div>
+
+                    {/* Add Color Button */}
+                    <button
+                      type="button"
+                      onClick={handleAddCustomColor}
+                      className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-pink-500/20 shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Color</span>
+                    </button>
+                  </div>
+
+                  {/* Preset Swatches Suggestion Chips */}
+                  <div className="pt-1">
+                    <p className="text-[11px] text-zinc-500 mb-1.5">
+                      Or pick from quick preset shades:
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {PRESET_COLOR_SWATCHES.map((swatch) => {
+                        const isSelected = selectedColors.some(
+                          (c) =>
+                            c.name.toLowerCase() === swatch.name.toLowerCase()
+                        );
+                        return (
+                          <button
+                            key={swatch.name}
+                            type="button"
+                            onClick={() => handleToggleColor(swatch)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${
+                              isSelected
+                                ? isDark
+                                  ? "border-amber-400 bg-amber-500/15 text-amber-400"
+                                  : "border-amber-400 bg-amber-50 text-amber-900"
+                                : isDark
+                                ? "border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white"
+                                : "border-slate-200 bg-white text-slate-600 hover:text-slate-900"
+                            }`}
+                          >
+                            <span
+                              className="w-3 h-3 rounded-full border border-black/20"
+                              style={{ backgroundColor: swatch.hex }}
+                            />
+                            <span>{swatch.name}</span>
+                            {isSelected && (
+                              <CheckCircle2 className="w-3 h-3 text-amber-400" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
 
