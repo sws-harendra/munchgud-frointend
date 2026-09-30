@@ -293,7 +293,7 @@ const AddProducts = () => {
       const comprehensiveTags = Array.from(
         new Set([
           "Earbuds",
-          formData.badge,
+          ...(formData.badge?.trim() ? [formData.badge.trim()] : []),
           ...(specs.driver ? [`Driver:${specs.driver}`] : []),
           ...(specs.anc ? [`ANC:${specs.anc}`] : []),
           ...(specs.battery ? [`Battery:${specs.battery}`] : []),
@@ -537,7 +537,7 @@ const AddProducts = () => {
                     />
                   </div>
 
-                  {/* Badge Preset */}
+                  {/* Dynamic Badge Ribbon */}
                   <div>
                     <label
                       className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${
@@ -546,22 +546,53 @@ const AddProducts = () => {
                     >
                       Flagship Badge Ribbon
                     </label>
-                    <select
-                      name="badge"
-                      value={formData.badge}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all cursor-pointer ${
-                        isDark
-                          ? "bg-zinc-900 border-zinc-800 text-white"
-                          : "bg-slate-50 border-slate-200 text-slate-800"
-                      }`}
-                    >
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="badge"
+                        list="badge-suggestions"
+                        value={formData.badge}
+                        onChange={handleChange}
+                        placeholder="e.g. 🔥 Bestseller, ⚡ New Launch, 50% OFF..."
+                        className={`w-full px-4 py-3 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all ${
+                          isDark
+                            ? "bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500"
+                            : "bg-slate-50 border-slate-200 text-slate-800 placeholder:text-slate-400"
+                        }`}
+                      />
+                      <datalist id="badge-suggestions">
+                        {BADGE_OPTIONS.map((b) => (
+                          <option key={b} value={b} />
+                        ))}
+                      </datalist>
+                    </div>
+
+                    {/* Quick Badge Suggestion Chips */}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      <span className="text-[10px] text-zinc-500 uppercase font-semibold">
+                        Suggestions:
+                      </span>
                       {BADGE_OPTIONS.map((b) => (
-                        <option key={b} value={b}>
+                        <button
+                          key={b}
+                          type="button"
+                          onClick={() =>
+                            setFormData((prev) => ({ ...prev, badge: b }))
+                          }
+                          className={`text-[11px] px-2.5 py-0.5 rounded-lg border transition-colors cursor-pointer ${
+                            formData.badge?.trim() === b
+                              ? isDark
+                                ? "bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold"
+                                : "bg-amber-100 text-amber-900 border-amber-300 font-bold"
+                              : isDark
+                              ? "bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700"
+                              : "bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300"
+                          }`}
+                        >
                           {b}
-                        </option>
+                        </button>
                       ))}
-                    </select>
+                    </div>
                   </div>
 
                   {/* Payment Mode */}
