@@ -726,7 +726,7 @@ const AddProducts = () => {
                 <div className="flex items-center gap-3 pb-3 border-b border-inherit">
                   <div className="w-2 h-7 bg-indigo-500 rounded-full" />
                   <h3 className="text-lg font-bold tracking-tight">
-                    Audio & Tech Specifications (Earbuds Features)
+                    Technical Specifications & Features
                   </h3>
                 </div>
 
