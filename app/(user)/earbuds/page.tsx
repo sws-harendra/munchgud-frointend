@@ -12,6 +12,7 @@ import {
   List,
   ChevronDown,
   Sparkles,
+  Package,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { fetchProducts } from "@/app/lib/store/features/productSlice";
@@ -34,150 +35,6 @@ interface EarbudProduct {
   image: string;
   colors: { name: string; hex: string; image?: string }[];
 }
-
-const earbudCatalog: EarbudProduct[] = [
-  {
-    id: 301,
-    name: "Flazo BassPod Extreme",
-    tagline: "13.4mm Titanium Club Bass",
-    badge: "🔥 Bestseller",
-    badgeType: "bestseller",
-    price: 1499,
-    originalPrice: 2999,
-    discount: "50% Off",
-    rating: 4.8,
-    reviews: "2.4K",
-    image: "/images/real_earbud_product.png",
-    colors: [
-      { name: "Champagne Gold", hex: "#E7CCA0" },
-      { name: "Midnight Ash", hex: "#333333" },
-      { name: "Desert Sand", hex: "#D6C7A1" },
-      { name: "Pale Ivory", hex: "#F5EFE0" },
-    ],
-  },
-  {
-    id: 302,
-    name: "Flazo Nirvana HD",
-    tagline: "13mm Dynamic Driver",
-    badge: "🌱 New Launch",
-    badgeType: "new",
-    price: 1299,
-    originalPrice: 2499,
-    discount: "48% Off",
-    rating: 4.7,
-    reviews: "1.8K",
-    image: "/images/spotlight-earbud.jpg",
-    colors: [
-      { name: "Obsidian Black", hex: "#1A1A1A" },
-      { name: "Charcoal Slate", hex: "#3A3D40" },
-      { name: "Emerald Green", hex: "#1B4D3E" },
-    ],
-  },
-  {
-    id: 303,
-    name: "Flazo ZenPods",
-    tagline: "ENx™ Noise Cancelling",
-    badge: "⭐ Top Pick",
-    badgeType: "top",
-    price: 1199,
-    originalPrice: 2199,
-    discount: "45% Off",
-    rating: 4.6,
-    reviews: "956",
-    image: "/images/hero-earbuds.jpg",
-    colors: [
-      { name: "Navy Blue", hex: "#1B2A4A" },
-      { name: "Silver Frost", hex: "#C0C0C0" },
-      { name: "Matte Black", hex: "#222222" },
-    ],
-  },
-  {
-    id: 304,
-    name: "Flazo Aura",
-    tagline: "40H Total Playback",
-    badge: "⚡ Trending",
-    badgeType: "trending",
-    price: 999,
-    originalPrice: 1999,
-    discount: "50% Off",
-    rating: 4.5,
-    reviews: "1.2K",
-    image: "/images/lineup-showcase.jpg",
-    colors: [
-      { name: "Lilac Mist", hex: "#C8B6E2" },
-      { name: "Lavender", hex: "#9F88C7" },
-      { name: "Royal Violet", hex: "#5C3A92" },
-    ],
-  },
-  {
-    id: 305,
-    name: "Flazo Neo",
-    tagline: "Low Latency Gaming Mode",
-    badge: "⚡ Trending",
-    badgeType: "trending",
-    price: 1099,
-    originalPrice: 1999,
-    discount: "45% Off",
-    rating: 4.4,
-    reviews: "862",
-    image: "/images/driver-tech.jpg",
-    colors: [
-      { name: "Sage Green", hex: "#587B6D" },
-      { name: "Mint Frost", hex: "#A8DADC" },
-    ],
-  },
-  {
-    id: 306,
-    name: "Flazo Core",
-    tagline: "Balanced Sound Signature",
-    badge: "🔥 Bestseller",
-    badgeType: "bestseller",
-    price: 899,
-    originalPrice: 1499,
-    discount: "40% Off",
-    rating: 4.3,
-    reviews: "620",
-    image: "/images/spotlight-earbud-stage-clean.png",
-    colors: [
-      { name: "Pitch Black", hex: "#111111" },
-      { name: "Stone Gray", hex: "#777777" },
-    ],
-  },
-  {
-    id: 307,
-    name: "Flazo Air",
-    tagline: "Lightweight & Comfortable",
-    badge: "🌱 New Launch",
-    badgeType: "new",
-    price: 1399,
-    originalPrice: 2499,
-    discount: "44% Off",
-    rating: 4.5,
-    reviews: "1.1K",
-    image: "/images/newsletter_flazo_earbud.png",
-    colors: [
-      { name: "Pearl White", hex: "#FFFFFF" },
-      { name: "Gold Trim", hex: "#D4AF37" },
-    ],
-  },
-  {
-    id: 308,
-    name: "Flazo Max",
-    tagline: "60H Battery Life",
-    badge: "⚡ Trending",
-    badgeType: "trending",
-    price: 1599,
-    originalPrice: 2999,
-    discount: "46% Off",
-    rating: 4.6,
-    reviews: "730",
-    image: "/images/real_earbud_product.webp",
-    colors: [
-      { name: "Midnight Navy", hex: "#0F1E36" },
-      { name: "Steel Blue", hex: "#2C3E50" },
-    ],
-  },
-];
 
 export default function EarbudsPage() {
   const dispatch = useAppDispatch();
@@ -217,78 +74,73 @@ export default function EarbudsPage() {
     }
   };
 
-  // Combine backend products with catalog
+  // Map products strictly from database (0 mock data)
   const products: EarbudProduct[] = useMemo(() => {
     const rawList: any[] = Array.isArray(storeProducts)
       ? storeProducts
       : (storeProducts as any)?.products || [];
 
-    const earbudsFromDb = rawList.filter((p: any) => {
-      const catName = p.Category?.name?.toLowerCase() || "";
-      const name = p.name?.toLowerCase() || "";
-      const tags = Array.isArray(p.tags)
-        ? p.tags.join(" ").toLowerCase()
-        : (p.tags || "").toLowerCase();
-      return (
-        catName.includes("earbud") ||
-        name.includes("earbud") ||
-        name.includes("nirvana") ||
-        name.includes("basspod") ||
-        name.includes("zenpod") ||
-        name.includes("aura") ||
-        tags.includes("earbud")
-      );
-    });
-
-    if (earbudsFromDb.length === 0) {
-      return earbudCatalog;
+    if (rawList.length === 0) {
+      return [];
     }
 
-    // Merge backend products with template visuals
-    const mappedDbProducts: EarbudProduct[] = earbudsFromDb.map((p: any, idx: number) => {
-      const template = earbudCatalog[idx % earbudCatalog.length];
-      const origPrice = parseFloat(p.originalPrice) || parseFloat(p.discountPrice) * 1.6;
-      const salePrice = parseFloat(p.discountPrice) || template.price;
-      const discountPct = Math.round(((origPrice - salePrice) / origPrice) * 100);
+    const activeList = rawList;
 
-      let imgPath = template.image;
-      if (p.images && p.images.length > 0) {
-        const firstImg = p.images[0];
-        if (
-          typeof firstImg === "string" &&
-          (firstImg.startsWith("http") || firstImg.startsWith("/"))
-        ) {
-          imgPath = firstImg;
-        } else {
-          imgPath = getImageUrl(firstImg);
+    return activeList.map((p: any) => {
+      const origPrice =
+        parseFloat(p.originalPrice) ||
+        parseFloat(p.discountPrice || p.price || 0) * 1.3;
+      const salePrice = parseFloat(p.discountPrice || p.price || 0);
+      const discountPct =
+        origPrice > salePrice && origPrice > 0
+          ? Math.round(((origPrice - salePrice) / origPrice) * 100)
+          : 0;
+
+      let imgPath = "/images/lifestyle-model.jpg";
+      let rawImg = p.images;
+      if (typeof rawImg === "string") {
+        try {
+          const parsed = JSON.parse(rawImg);
+          if (Array.isArray(parsed) && parsed.length > 0) rawImg = parsed[0];
+          else if (typeof parsed === "string") rawImg = parsed;
+        } catch {
+          if (rawImg.includes(",")) rawImg = rawImg.split(",")[0].trim();
         }
+      } else if (Array.isArray(rawImg) && rawImg.length > 0) {
+        rawImg = rawImg[0];
       }
+
+      if (rawImg) {
+        imgPath = getImageUrl(rawImg);
+      } else if (p.imageUrl) {
+        imgPath = getImageUrl(p.imageUrl);
+      }
+
+      const defaultColors = [
+        { name: p.varientValue || "Standard Edition", hex: "#D4AF37" },
+      ];
 
       return {
         id: p.id,
         name: p.name,
         tagline: p.description
           ? p.description.replace(/<[^>]*>?/gm, "").slice(0, 60) + "..."
-          : template.tagline,
-        badge: p.trending_product ? "🔥 Bestseller" : template.badge,
-        badgeType: p.trending_product ? "bestseller" : template.badgeType,
+          : p.Category?.name || "Official Collection",
+        badge: p.trending_product
+          ? "🔥 Bestseller"
+          : (Array.isArray(p.tags) && p.tags[0]) ||
+            (typeof p.tags === "string" && p.tags.split(",")[0]) ||
+            "✨ Official",
+        badgeType: p.trending_product ? "bestseller" : "new",
         price: salePrice,
         originalPrice: origPrice,
-        discount: `${discountPct > 0 ? discountPct : 50}% Off`,
-        rating: p.ratings || template.rating || 4.7,
-        reviews: template.reviews || "1.5K",
+        discount: discountPct > 0 ? `${discountPct}% Off` : "",
+        rating: p.ratings || 4.8,
+        reviews: p.reviews ? `${p.reviews.length}` : "1.2K",
         image: imgPath,
-        colors: template.colors,
+        colors: defaultColors,
       };
     });
-
-    // If DB products are fewer than 8, append templates for a rich grid
-    if (mappedDbProducts.length < 8) {
-      const remainingTemplates = earbudCatalog.slice(mappedDbProducts.length);
-      return [...mappedDbProducts, ...remainingTemplates];
-    }
-
-    return mappedDbProducts;
   }, [storeProducts]);
 
   // Handle sorting
@@ -406,7 +258,35 @@ export default function EarbudsPage() {
       {/* PRODUCTS CONTAINER */}
       <main className="w-full max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         
-        {viewMode === "grid" ? (
+        {status === "loading" && products.length === 0 ? (
+          <div className="py-24 flex items-center justify-center">
+            <Loader />
+          </div>
+        ) : sortedProducts.length === 0 ? (
+          <div className="py-20 text-center space-y-4 bg-white rounded-3xl border border-neutral-200 p-8 shadow-xs my-6">
+            <div className="w-16 h-16 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto text-amber-700">
+              <Package className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold text-neutral-900">No Products in this Collection</h3>
+            <p className="text-sm text-neutral-500 max-w-md mx-auto">
+              Products deleted from the Admin Panel have been removed. Add new products from the Admin Panel to display them live in this collection.
+            </p>
+            <div className="pt-2 flex flex-wrap justify-center gap-3">
+              <Link
+                href="/admin/dashboard/products"
+                className="px-6 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs shadow-xs transition-colors"
+              >
+                + Add Product in Admin
+              </Link>
+              <Link
+                href="/"
+                className="px-6 py-2.5 rounded-full bg-neutral-950 hover:bg-neutral-800 text-white font-bold text-xs transition-colors"
+              >
+                Back to Home
+              </Link>
+            </div>
+          </div>
+        ) : viewMode === "grid" ? (
           /* GRID VIEW - Exactly like Image 1 (4 columns) */
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {sortedProducts.map((product) => {
@@ -460,11 +340,12 @@ export default function EarbudsPage() {
                       href={`/products/${slugify(product.name)}/${product.id}`}
                       className="block relative w-full h-44 sm:h-48 my-1 flex items-center justify-center cursor-pointer overflow-hidden"
                     >
-                      <Image
+                      <img
                         src={product.image}
                         alt={product.name}
-                        width={240}
-                        height={240}
+                        onError={(e) => {
+                          e.currentTarget.src = "/images/lifestyle-model.jpg";
+                        }}
                         className="object-contain max-h-40 w-auto group-hover:scale-108 transition-transform duration-500 drop-shadow-sm select-none"
                       />
                     </Link>
@@ -558,11 +439,12 @@ export default function EarbudsPage() {
                       href={`/products/${slugify(product.name)}/${product.id}`}
                       className="relative w-28 h-28 sm:w-36 sm:h-36 shrink-0 bg-neutral-50 rounded-xl p-2 flex items-center justify-center overflow-hidden"
                     >
-                      <Image
+                      <img
                         src={product.image}
                         alt={product.name}
-                        width={140}
-                        height={140}
+                        onError={(e) => {
+                          e.currentTarget.src = "/images/lifestyle-model.jpg";
+                        }}
                         className="object-contain max-h-32 w-auto group-hover:scale-108 transition-transform duration-500 drop-shadow-xs"
                       />
                     </Link>

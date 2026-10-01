@@ -48,7 +48,7 @@ export default function EcommerceNavbar() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
-      router.push(`/products?search=${encodeURIComponent(searchInput.trim())}`);
+      router.push(`/earbuds?search=${encodeURIComponent(searchInput.trim())}`);
       setIsSearchOpen(false);
     }
   };

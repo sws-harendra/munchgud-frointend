@@ -12,6 +12,7 @@ import {
   CreditCard,
   Calendar,
   CheckCircle2,
+  ExternalLink,
 } from "lucide-react";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { useAdminTheme } from "../context/AdminThemeContext";
@@ -176,6 +177,58 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({ product, isOp
               />
             </div>
           )}
+
+          {/* Marketplace Selling Links */}
+          {(() => {
+            let links: any[] = [];
+            if (Array.isArray(product.platformLinks)) links = product.platformLinks;
+            else if (typeof product.platformLinks === "string") {
+              try { links = JSON.parse(product.platformLinks); } catch { links = []; }
+            }
+            if (links.length === 0) return null;
+            return (
+              <div className={`p-4 rounded-2xl border space-y-3 ${
+                isDark ? "bg-zinc-900/30 border-zinc-800" : "bg-gray-50 border-gray-100"
+              }`}>
+                <div className="flex items-center justify-between">
+                  <h4 className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                    Available on Marketplaces ({links.length})
+                  </h4>
+                  <span className="text-[10px] text-amber-500 font-bold">External Links</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {links.map((link: any, idx: number) => (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`flex items-center justify-between p-2.5 rounded-xl border text-xs transition-colors group ${
+                        isDark
+                          ? "bg-zinc-800/80 border-zinc-700 hover:border-amber-400"
+                          : "bg-white border-gray-200 hover:border-amber-500 shadow-2xs"
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className="font-bold text-amber-500 flex items-center gap-1.5">
+                          <span>{link.name}</span>
+                          {link.badge && (
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium">
+                              {link.badge}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-zinc-400 truncate block max-w-[200px] group-hover:text-amber-400">
+                          {link.url}
+                        </span>
+                      </div>
+                      <ExternalLink size={14} className="text-zinc-400 group-hover:text-amber-400 shrink-0" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Footer Metadata */}
           <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t ${

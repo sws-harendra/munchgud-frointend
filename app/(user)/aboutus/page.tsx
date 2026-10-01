@@ -28,7 +28,7 @@ export default function Page() {
 
           <div className="pt-4 flex justify-center gap-4">
             <Link
-              href="/products"
+              href="/earbuds"
               className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-neutral-950 font-bold hover:brightness-110 shadow-lg shadow-amber-500/20 transition-all hover:scale-105"
             >
               Explore Lineup

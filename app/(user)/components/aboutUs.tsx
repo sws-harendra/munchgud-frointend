@@ -43,7 +43,7 @@ const AboutUs = () => {
           </p>
 
           <Link
-            href="/products"
+            href="/earbuds"
             className="mt-4 inline-block px-8 py-3.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-neutral-950 font-bold rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition cursor-pointer"
           >
             Explore Earbuds Lineup

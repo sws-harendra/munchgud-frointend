@@ -166,7 +166,7 @@ export default function FlazoSaleIsLive() {
           </div>
 
           <Link
-            href="/products"
+            href="/earbuds"
             className="group flex items-center gap-1.5 text-xs sm:text-sm font-bold text-neutral-800 hover:text-amber-600 transition-colors"
           >
             <span>View All</span>

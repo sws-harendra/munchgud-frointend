@@ -46,6 +46,7 @@ import { toast } from "sonner";
 import { getFileType } from "@/app/utils/getMediaType";
 import { clienturl } from "@/app/contants";
 import ProductCard from "@/app/(user)/components/productCard";
+import ProductMarketplaceLinks from "@/app/(user)/components/ProductMarketplaceLinks";
 import { fetchRelatedProducts } from "@/app/lib/store/features/relatedProductSlice";
 
 interface ProductDetailClientProps {
@@ -850,6 +851,12 @@ export default function ProductDetailClient({
                 <span>Buy Now</span>
               </button>
             </div>
+
+            {/* Also Available on External Marketplaces (Amazon, Flipkart, Myntra, etc.) */}
+            <ProductMarketplaceLinks
+              platformLinks={product?.platformLinks}
+              productName={product?.name}
+            />
 
             {/* Check Delivery Box */}
             <div className="pt-2 space-y-2">

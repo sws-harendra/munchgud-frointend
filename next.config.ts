@@ -16,6 +16,16 @@ const imageRemotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] =
   {
     protocol: "http",
     hostname: "localhost",
+    port: "8008",
+  },
+  {
+    protocol: "http",
+    hostname: "127.0.0.1",
+    port: "8008",
+  },
+  {
+    protocol: "http",
+    hostname: "localhost",  
   },
   {
     protocol: "https",
@@ -63,6 +73,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    unoptimized: true,
     remotePatterns: imageRemotePatterns,
   },
 };

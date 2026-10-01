@@ -15,6 +15,10 @@ import {
   Sparkles,
   Percent,
   CheckCircle2,
+  ShoppingBag,
+  Trash2,
+  ExternalLink,
+  Plus,
 } from "lucide-react";
 import { categoryService } from "@/app/sercices/category.service";
 import { getImageUrl } from "@/app/utils/getImageUrl";
@@ -59,6 +63,50 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
   const [newMediaPreviews, setNewMediaPreviews] = useState<
     { url: string; type: "image" | "video" }[]
   >([]);
+
+  // Platform Links (Amazon, Flipkart, etc.)
+  interface PlatformLinkItem {
+    name: string;
+    url: string;
+    badge?: string;
+  }
+  const [platformLinks, setPlatformLinks] = useState<PlatformLinkItem[]>([]);
+  const [newPlatformName, setNewPlatformName] = useState("Amazon");
+  const [newPlatformUrl, setNewPlatformUrl] = useState("");
+  const [newPlatformBadge, setNewPlatformBadge] = useState("");
+
+  const handleAddPlatformLink = () => {
+    if (!newPlatformUrl.trim()) {
+      toast.error("Please enter a valid product URL");
+      return;
+    }
+    if (!newPlatformName.trim()) {
+      toast.error("Please enter a platform name");
+      return;
+    }
+
+    let cleanUrl = newPlatformUrl.trim();
+    if (!cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
+      cleanUrl = "https://" + cleanUrl;
+    }
+
+    setPlatformLinks((prev) => [
+      ...prev,
+      {
+        name: newPlatformName.trim(),
+        url: cleanUrl,
+        badge: newPlatformBadge.trim() || undefined,
+      },
+    ]);
+
+    setNewPlatformUrl("");
+    setNewPlatformBadge("");
+    toast.success(`${newPlatformName} link added!`);
+  };
+
+  const handleRemovePlatformLink = (index: number) => {
+    setPlatformLinks((prev) => prev.filter((_, i) => i !== index));
+  };
 
   // Fetch categories
   useEffect(() => {
@@ -110,6 +158,19 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
       setRemovedMedia([]);
       setNewMedia([]);
       setNewMediaPreviews([]);
+
+      // Initialize platform links
+      let initialLinks: PlatformLinkItem[] = [];
+      if (Array.isArray(product.platformLinks)) {
+        initialLinks = product.platformLinks;
+      } else if (typeof product.platformLinks === "string") {
+        try {
+          initialLinks = JSON.parse(product.platformLinks);
+        } catch {
+          initialLinks = [];
+        }
+      }
+      setPlatformLinks(initialLinks);
     }
   }, [productId, products]);
 
@@ -196,6 +257,7 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
       data.append("varientValue", formData.varientValue);
       data.append("existingMedia", JSON.stringify(existingMedia));
       data.append("removedMedia", JSON.stringify(removedMedia));
+      data.append("platformLinks", JSON.stringify(platformLinks));
 
       newMedia.forEach((file) => {
         data.append("media", file);
@@ -631,6 +693,176 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
                     </select>
                   </div>
                 </div>
+              </div>
+
+              {/* MULTI-PLATFORM MARKETPLACE LINKS (Amazon, Flipkart, etc.) */}
+              <div
+                className={`p-5 rounded-2xl border space-y-4 ${
+                  isDark
+                    ? "bg-zinc-900/60 border-zinc-800"
+                    : "bg-slate-50 border-slate-200"
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 shrink-0">
+                      <ShoppingBag className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className={`text-sm font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
+                        Sell on Other Marketplaces (Amazon, Flipkart, etc.)
+                      </h4>
+                      <p className={`text-xs ${isDark ? "text-zinc-400" : "text-gray-500"}`}>
+                        Add direct purchase links to external platforms. Customers can buy on their favorite marketplace.
+                      </p>
+                    </div>
+                  </div>
+                  {platformLinks.length > 0 && (
+                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0 self-start sm:self-auto">
+                      {platformLinks.length} Platform{platformLinks.length > 1 ? "s" : ""} Added
+                    </span>
+                  )}
+                </div>
+
+                {/* Quick Platform Presets */}
+                <div>
+                  <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1.5 ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                    Quick Select Preset:
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {["Amazon", "Flipkart", "Myntra", "Meesho", "JioMart", "Tata CLiQ", "Custom"].map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setNewPlatformName(p === "Custom" ? "" : p)}
+                        className={`text-xs px-3 py-1.5 rounded-xl font-bold transition-all border cursor-pointer ${
+                          newPlatformName === p
+                            ? "bg-amber-500 text-black border-amber-400 shadow-sm"
+                            : isDark
+                            ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border-zinc-700"
+                            : "bg-white hover:bg-slate-100 text-slate-700 border-slate-200"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Input Fields Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                  <div className="sm:col-span-3">
+                    <label className={`block text-[11px] font-bold mb-1 ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
+                      Platform Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Amazon, Flipkart"
+                      value={newPlatformName}
+                      onChange={(e) => setNewPlatformName(e.target.value)}
+                      className={`w-full px-3.5 py-2.5 text-xs rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500/30 ${
+                        isDark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-white border-slate-300 text-slate-900"
+                      }`}
+                    />
+                  </div>
+
+                  <div className="sm:col-span-5">
+                    <label className={`block text-[11px] font-bold mb-1 ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
+                      Product Page URL / Link *
+                    </label>
+                    <input
+                      type="url"
+                      placeholder="https://www.amazon.in/dp/..."
+                      value={newPlatformUrl}
+                      onChange={(e) => setNewPlatformUrl(e.target.value)}
+                      className={`w-full px-3.5 py-2.5 text-xs rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500/30 ${
+                        isDark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-white border-slate-300 text-slate-900"
+                      }`}
+                    />
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label className={`block text-[11px] font-bold mb-1 ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
+                      Badge / Note (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Prime Delivery, Assured"
+                      value={newPlatformBadge}
+                      onChange={(e) => setNewPlatformBadge(e.target.value)}
+                      className={`w-full px-3.5 py-2.5 text-xs rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500/30 ${
+                        isDark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-white border-slate-300 text-slate-900"
+                      }`}
+                    />
+                  </div>
+
+                  <div className="sm:col-span-1">
+                    <button
+                      type="button"
+                      onClick={handleAddPlatformLink}
+                      className="w-full py-2.5 px-3 bg-amber-500 hover:bg-amber-400 text-black font-black text-xs rounded-xl flex items-center justify-center gap-1 transition-all cursor-pointer shadow-sm"
+                      title="Add Marketplace Link"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* List of Added Platform Links */}
+                {platformLinks.length > 0 ? (
+                  <div className="space-y-2 pt-3 border-t border-zinc-800/80">
+                    <label className={`block text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
+                      Configured Marketplace Links ({platformLinks.length}):
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {platformLinks.map((link, idx) => (
+                        <div
+                          key={idx}
+                          className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                            isDark
+                              ? "bg-zinc-800/80 border-zinc-700 text-white"
+                              : "bg-white border-slate-200 text-slate-900 shadow-2xs"
+                          }`}
+                        >
+                          <div className="min-w-0 pr-2 space-y-0.5 text-left">
+                            <div className="flex items-center gap-2">
+                              <span className="font-extrabold text-xs text-amber-500">
+                                {link.name}
+                              </span>
+                              {link.badge && (
+                                <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">
+                                  {link.badge}
+                                </span>
+                              )}
+                            </div>
+                            <a
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[11px] text-zinc-400 hover:text-amber-400 truncate flex items-center gap-1 max-w-[240px]"
+                            >
+                              <span className="truncate">{link.url}</span>
+                              <ExternalLink className="w-3 h-3 shrink-0" />
+                            </a>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePlatformLink(idx)}
+                            className="p-1.5 text-zinc-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
+                            title="Remove link"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className={`text-xs italic ${isDark ? "text-zinc-500" : "text-gray-500"}`}>
+                    No marketplace links added yet. Add your Amazon, Flipkart, etc. product URLs above so customers can buy across platforms!
+                  </p>
+                )}
               </div>
             </div>
 

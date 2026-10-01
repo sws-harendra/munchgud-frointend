@@ -157,7 +157,7 @@ export default function FlazoBrandSpotlight() {
     originalPrice > price ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
   const productLink = currentProduct
     ? `/products/${slugify(currentProduct.name)}/${currentProduct.id}`
-    : "/products";
+    : "/earbuds";
 
   return (
     <section className="py-12 sm:py-16 bg-[#FCFBF8] border-b border-[#EFE8DC] relative overflow-hidden">
@@ -437,7 +437,7 @@ export default function FlazoBrandSpotlight() {
                 </div>
 
                 <Link
-                  href="/products"
+                  href="/earbuds"
                   className="text-xs font-bold text-[#B8860B] hover:text-neutral-950 transition-colors flex items-center gap-1 group/all"
                 >
                   <span>All</span>
@@ -450,7 +450,7 @@ export default function FlazoBrandSpotlight() {
                 {categoryList.map((cat, idx) => (
                   <Link
                     key={cat.id || idx}
-                    href={cat.id ? `/products?categoryId=${cat.id}` : "/products"}
+                    href="/earbuds"
                     className="flex items-center justify-between p-3 rounded-2xl border border-neutral-100 bg-[#FAF9F5]/70 hover:bg-white hover:border-amber-300 hover:shadow-sm transition-all group/item"
                   >
                     <div className="flex items-center gap-3">
@@ -509,7 +509,7 @@ export default function FlazoBrandSpotlight() {
                 </div>
 
                 <Link
-                  href="/products"
+                  href="/earbuds"
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 hover:text-white transition-colors"
                 >
                   <span>Explore Catalog</span>

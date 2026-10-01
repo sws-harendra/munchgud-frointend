@@ -37,6 +37,12 @@ export interface Review {
   };
 }
 
+export interface PlatformLink {
+  name: string; // "Amazon", "Flipkart", "Myntra", "Meesho", etc.
+  url: string;
+  badge?: string;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -58,6 +64,7 @@ export interface Product {
   paymentMethods: string;
   varientValue: string;
   ProductVariants?: ProductVariant[]; // 👈 add this
+  platformLinks?: PlatformLink[];
 }
 
 export interface Category {
