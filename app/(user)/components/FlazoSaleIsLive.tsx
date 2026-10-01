@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -11,71 +10,83 @@ import {
   ChevronRight,
   Info,
   ShoppingCart,
-  Check,
   Flame,
-  Zap,
-  Timer,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { addToCart } from "@/app/lib/store/features/cartSlice";
-import { fetchActiveTrendingImages } from "@/app/lib/store/features/trendingImageSlice";
-import { TrendingImageItem } from "@/app/sercices/user/trendingImage.service";
+import { getTrendingProduct } from "@/app/lib/store/features/productSlice";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { toast } from "sonner";
 
+const slugify = (text: string) =>
+  (text || "product")
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/--+/g, "-")
+    .trim();
+
 export default function FlazoSaleIsLive() {
   const dispatch = useAppDispatch();
-  const { items, status } = useAppSelector((state) => state.trendingImages);
-  const [timeLeft, setTimeLeft] = useState({ hours: 6, minutes: 42, seconds: 19 });
+  const { trendingProducts, status } = useAppSelector((state) => state.product);
 
   useEffect(() => {
-    dispatch(fetchActiveTrendingImages());
+    dispatch(getTrendingProduct());
   }, [dispatch]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
-        if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        return { hours: 12, minutes: 0, seconds: 0 };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  const productsList: any[] = Array.isArray(trendingProducts)
+    ? trendingProducts
+    : (trendingProducts as any)?.products &&
+      Array.isArray((trendingProducts as any).products)
+    ? (trendingProducts as any).products
+    : [];
 
-  const handleQuickAdd = (product: TrendingImageItem) => {
+  const getProductImage = (p: any): string => {
+    if (Array.isArray(p.images) && p.images.length > 0) {
+      return getImageUrl(p.images[0]);
+    }
+    if (typeof p.images === "string" && p.images.trim()) {
+      try {
+        const parsed = JSON.parse(p.images);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return getImageUrl(parsed[0]);
+        }
+      } catch {
+        return getImageUrl(p.images);
+      }
+    }
+    if (p.imageUrl) return getImageUrl(p.imageUrl);
+    return "/placeholder.png";
+  };
+
+  const handleQuickAdd = (product: any) => {
+    const finalPrice = Number(product.discountPrice || product.price || 0);
+    const finalImage = getProductImage(product);
+
     dispatch(
       addToCart({
-        id: product.productId || product.id,
+        id: product.id,
         name: product.name,
-        price: product.price,
-        imageUrl: getImageUrl(product.imageUrl),
+        price: finalPrice,
+        imageUrl: finalImage,
         quantity: 1,
-        paymentMethods: "Prepaid, COD",
+        paymentMethods: product.paymentMethods || "Prepaid, COD",
       })
     );
     toast.success(`${product.name} added to cart!`);
   };
 
-  const parseColors = (colorsStr?: string): string[] => {
-    if (!colorsStr) return ["#FFFFFF", "#D4AF37"];
-    try {
-      const parsed = JSON.parse(colorsStr);
-      return Array.isArray(parsed) ? parsed : [colorsStr];
-    } catch {
-      return ["#FFFFFF", "#D4AF37"];
-    }
-  };
+  // If not loading and no trending products selected by admin, hide section cleanly
+  if (status !== "loading" && productsList.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-12 bg-white border-b border-amber-100/70">
       <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-8 lg:px-12 space-y-8">
-        
-        {/* Top Trust & Value Assurance Strip (Exact boAt Style) */}
+        {/* Top Trust & Value Assurance Strip (boAt Style) */}
         <div className="bg-gradient-to-r from-amber-50/50 via-white to-amber-50/50 border border-amber-200/70 rounded-2xl p-4 sm:p-6 shadow-2xs">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 items-center">
-            
             {/* Warranty */}
             <div className="flex items-center gap-3.5 p-2 rounded-xl transition-all duration-300 hover:bg-white hover:shadow-2xs hover:-translate-y-0.5 group cursor-default">
               <div className="w-11 h-11 rounded-xl bg-amber-100/80 border border-amber-300 flex items-center justify-center text-neutral-900 shrink-0 shadow-2xs group-hover:scale-110 group-hover:rotate-6 transition-transform">
@@ -83,10 +94,14 @@ export default function FlazoSaleIsLive() {
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm sm:text-base font-black text-neutral-950">12+3 Months</span>
+                  <span className="text-sm sm:text-base font-black text-neutral-950">
+                    12+3 Months
+                  </span>
                   <Info className="w-3.5 h-3.5 text-neutral-400 cursor-pointer hover:text-amber-600" />
                 </div>
-                <span className="text-xs text-neutral-500 font-medium">Warranty</span>
+                <span className="text-xs text-neutral-500 font-medium">
+                  Warranty
+                </span>
               </div>
             </div>
 
@@ -96,8 +111,12 @@ export default function FlazoSaleIsLive() {
                 <FileText className="w-5 h-5 text-amber-700" />
               </div>
               <div>
-                <div className="text-sm sm:text-base font-black text-neutral-950">GST</div>
-                <span className="text-xs text-neutral-500 font-medium">Billing</span>
+                <div className="text-sm sm:text-base font-black text-neutral-950">
+                  GST
+                </div>
+                <span className="text-xs text-neutral-500 font-medium">
+                  Billing
+                </span>
               </div>
             </div>
 
@@ -107,8 +126,12 @@ export default function FlazoSaleIsLive() {
                 <Truck className="w-5 h-5 text-amber-700" />
               </div>
               <div>
-                <div className="text-sm sm:text-base font-black text-neutral-950">Free Express</div>
-                <span className="text-xs text-neutral-500 font-medium">Delivery*</span>
+                <div className="text-sm sm:text-base font-black text-neutral-950">
+                  Free Express
+                </div>
+                <span className="text-xs text-neutral-500 font-medium">
+                  Delivery*
+                </span>
               </div>
             </div>
 
@@ -118,17 +141,18 @@ export default function FlazoSaleIsLive() {
                 <RotateCcw className="w-5 h-5 text-amber-700" />
               </div>
               <div>
-                <div className="text-sm sm:text-base font-black text-neutral-950">7-day</div>
-                <span className="text-xs text-neutral-500 font-medium">Replacement</span>
+                <div className="text-sm sm:text-base font-black text-neutral-950">
+                  7-day
+                </div>
+                <span className="text-xs text-neutral-500 font-medium">
+                  Replacement
+                </span>
               </div>
             </div>
-
           </div>
         </div>
 
-
-
-        {/* Section Header: "Sale Is Live" + "View All" (Exact boAt Style) */}
+        {/* Section Header */}
         <div className="flex items-center justify-between pt-2">
           <div className="space-y-1">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-neutral-950 flex items-center gap-2">
@@ -141,20 +165,20 @@ export default function FlazoSaleIsLive() {
             </h2>
           </div>
 
-          <a
-            href="#flagship-series"
+          <Link
+            href="/products"
             className="group flex items-center gap-1.5 text-xs sm:text-sm font-bold text-neutral-800 hover:text-amber-600 transition-colors"
           >
             <span>View All</span>
             <div className="w-5 h-5 rounded-full border border-neutral-300 group-hover:border-amber-500 flex items-center justify-center transition-colors">
               <ChevronRight className="w-3.5 h-3.5 text-neutral-600 group-hover:text-amber-600 transition-transform group-hover:translate-x-1" />
             </div>
-          </a>
+          </Link>
         </div>
 
         {/* Product Cards Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-5">
-          {status === "loading" && items.length === 0
+          {status === "loading" && productsList.length === 0
             ? Array.from({ length: 6 }).map((_, idx) => (
                 <div
                   key={idx}
@@ -166,11 +190,22 @@ export default function FlazoSaleIsLive() {
                   <div className="h-8 bg-gray-200 rounded w-full" />
                 </div>
               ))
-            : items.map((p) => {
-                const colorList = parseColors(p.colors);
-                const targetLink =
-                  p.link ||
-                  (p.productId ? `/products/${p.productId}` : "#bestsellers");
+            : productsList.map((p) => {
+                const targetLink = `/products/${slugify(p.name)}/${p.id}`;
+                const price = Number(p.discountPrice || p.price || 0);
+                const originalPrice = Number(p.originalPrice || 0);
+                const discountPercent =
+                  originalPrice > price
+                    ? Math.round(((originalPrice - price) / originalPrice) * 100)
+                    : 0;
+                const imageSrc = getProductImage(p);
+
+                // Badge tag
+                const badgeText = Array.isArray(p.tags) && p.tags.length > 0
+                  ? p.tags[0]
+                  : typeof p.tags === "string" && p.tags
+                  ? p.tags.split(",")[0]
+                  : "🔥 Bestseller";
 
                 return (
                   <div
@@ -179,12 +214,9 @@ export default function FlazoSaleIsLive() {
                   >
                     {/* Product Top: Image with Corner Tag */}
                     <div className="relative w-full aspect-square bg-gradient-to-b from-neutral-50 to-white flex items-center justify-center p-4 overflow-hidden">
-                      {/* boAt Style Top-Left Tag */}
                       <div className="absolute top-2.5 left-2.5 z-10">
-                        <span
-                          className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-sm shadow-xs ${p.badgeBg}`}
-                        >
-                          {p.badge}
+                        <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-sm shadow-xs bg-neutral-950 text-white">
+                          {badgeText}
                         </span>
                       </div>
 
@@ -194,19 +226,21 @@ export default function FlazoSaleIsLive() {
                         className="w-full h-full flex items-center justify-center"
                       >
                         <img
-                          src={getImageUrl(p.imageUrl)}
+                          src={imageSrc}
                           alt={p.name}
                           className="object-contain w-full h-full max-h-[160px] drop-shadow-md group-hover:scale-110 group-hover:-translate-y-1 transition-transform duration-500"
                         />
                       </Link>
                     </div>
 
-                    {/* Distinctive Yellow/Golden Feature Bar */}
+                    {/* Feature Bar */}
                     <div className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 px-3 py-1.5 flex items-center justify-between text-neutral-950 font-bold text-[11px] sm:text-xs">
-                      <span className="truncate pr-1">{p.featureBar}</span>
+                      <span className="truncate pr-1">
+                        {p.varientValue || p.Category?.name || "Official Bestseller"}
+                      </span>
                       <span className="flex items-center gap-0.5 bg-white/90 px-1.5 py-0.5 rounded-sm text-[10px] shrink-0 font-black shadow-2xs">
                         <Star className="w-2.5 h-2.5 fill-amber-500 text-amber-500" />
-                        {p.rating}
+                        {p.ratings || "4.9"}
                       </span>
                     </div>
 
@@ -219,55 +253,37 @@ export default function FlazoSaleIsLive() {
                           </h3>
                         </Link>
 
-                        {/* Price & Color Preview Row */}
+                        {/* Price Row */}
                         <div className="flex items-end justify-between gap-1 pt-2 border-t border-neutral-100">
                           <div>
                             <div className="flex items-baseline gap-1.5">
                               <span className="text-base sm:text-lg font-black text-neutral-950">
-                                ₹{p.price.toLocaleString("en-IN")}
+                                ₹{price.toLocaleString("en-IN")}
                               </span>
-                              {p.originalPrice && p.originalPrice > p.price && (
+                              {originalPrice > price && (
                                 <span className="text-xs text-neutral-400 line-through font-medium">
-                                  ₹{p.originalPrice.toLocaleString("en-IN")}
+                                  ₹{originalPrice.toLocaleString("en-IN")}
                                 </span>
                               )}
                             </div>
                             <div className="flex items-center gap-1.5 mt-0.5">
-                              {p.discount && (
-                                <span className="text-[11px] font-extrabold text-amber-500 block">
-                                  {p.discount}
+                              {discountPercent > 0 && (
+                                <span className="text-[11px] font-extrabold text-amber-600 block">
+                                  {discountPercent}% off
                                 </span>
                               )}
-                              {p.originalPrice && p.originalPrice > p.price && (
+                              {originalPrice > price && (
                                 <span className="text-[10px] font-extrabold text-amber-900 bg-amber-100/90 px-1.5 py-0.5 rounded-sm">
                                   Save ₹
-                                  {(p.originalPrice - p.price).toLocaleString(
-                                    "en-IN"
-                                  )}
+                                  {(originalPrice - price).toLocaleString("en-IN")}
                                 </span>
                               )}
                             </div>
                           </div>
-
-                          {/* Circular Color Swatches Preview */}
-                          <div className="flex items-center -space-x-1 shrink-0 pb-1">
-                            {colorList.map((c, idx) => (
-                              <span
-                                key={idx}
-                                className="w-3 h-3 rounded-full border border-white shadow-2xs"
-                                style={{ backgroundColor: c }}
-                              />
-                            ))}
-                            {p.extraColorsCount ? (
-                              <span className="text-[10px] text-neutral-500 font-bold pl-1.5">
-                                +{p.extraColorsCount}
-                              </span>
-                            ) : null}
-                          </div>
                         </div>
                       </div>
 
-                      {/* Professional Bottom Add to Cart Button */}
+                      {/* Bottom Add to Cart Button */}
                       <button
                         onClick={() => handleQuickAdd(p)}
                         className="w-full mt-3.5 py-2.5 px-3 rounded-xl bg-neutral-950 hover:bg-amber-400 text-amber-300 hover:text-neutral-950 border border-amber-400/40 hover:border-amber-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer active:scale-[0.98] group/btn"
@@ -280,8 +296,6 @@ export default function FlazoSaleIsLive() {
                 );
               })}
         </div>
-
-
       </div>
     </section>
   );

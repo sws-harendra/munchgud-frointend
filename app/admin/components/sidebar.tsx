@@ -73,22 +73,9 @@ const menuItems: MenuItem[] = [
   //   href: "/admin/dashboard/banner-management",
   // },
   {
-    name: "Images",
-    icon: ImageIcon,
-    subItems: [
-      {
-        name: "Hero Section",
-        href: "/admin/dashboard/hero-images",
-        icon: Sparkles,
-        badge: "Slides",
-      },
-      {
-        name: "Trending Images",
-        href: "/admin/dashboard/trending-images",
-        icon: Flame,
-        badge: "Hot",
-      },
-    ],
+    name: "Hero Section",
+    icon: Sparkles,
+    href: "/admin/dashboard/hero-images",
   },
   {
     name: "Section Control",

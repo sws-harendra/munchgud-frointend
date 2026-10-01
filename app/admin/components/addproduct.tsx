@@ -5,7 +5,6 @@ import {
   createProduct,
   fetchProductsforadmin,
 } from "@/app/lib/store/features/productSlice";
-import { createTrendingImage } from "@/app/lib/store/features/trendingImageSlice";
 import { toast } from "sonner";
 import {
   ImagePlus,
@@ -177,8 +176,6 @@ const AddProducts = () => {
     setSelectedColors(selectedColors.filter((_, i) => i !== indexToRemove));
   };
 
-  // Sync with Homepage Trending Bestsellers Banner
-  const [syncToTrendingImage, setSyncToTrendingImage] = useState(true);
 
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const { artists, status } = useAppSelector((state) => state.artist);
@@ -333,37 +330,6 @@ const AddProducts = () => {
       const createdProd = res?.product || res;
       toast.success("✅ Product added to catalog successfully!");
 
-      // If user enabled sync to Homepage Trending Bestsellers:
-      if (syncToTrendingImage && mediaFiles.length > 0) {
-        try {
-          const trendingFormData = new FormData();
-          trendingFormData.append("name", formData.name);
-          trendingFormData.append("badge", formData.badge || "🔥 Bestseller");
-          trendingFormData.append("badgeBg", "bg-neutral-950 text-white");
-          trendingFormData.append("featureBar", specs.battery || "70H Monster Play");
-          trendingFormData.append("rating", "4.9");
-          trendingFormData.append("price", String(formData.discountPrice));
-          trendingFormData.append("originalPrice", String(formData.originalPrice));
-          trendingFormData.append(
-            "discount",
-            savingsInfo ? `${savingsInfo.percent}% off` : "60% off"
-          );
-          trendingFormData.append(
-            "colors",
-            JSON.stringify(selectedColors.map((c) => c.hex))
-          );
-          trendingFormData.append("link", "/earbuds");
-          if (createdProd?.id) {
-            trendingFormData.append("productId", String(createdProd.id));
-          }
-          trendingFormData.append("image", mediaFiles[0].file);
-
-          await dispatch(createTrendingImage(trendingFormData)).unwrap();
-          toast.success("🌟 Also synced to Homepage Trending Bestsellers!");
-        } catch (syncErr) {
-          console.error("Failed to auto-sync to trending banner", syncErr);
-        }
-      }
 
       // Refresh admin products list
       dispatch(fetchProductsforadmin({ page: 1, limit: 10 }));
@@ -1431,7 +1397,7 @@ const AddProducts = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <label className="flex items-center gap-3 cursor-pointer">
+                  <label className="flex items-center gap-3 cursor-pointer select-none">
                     <input
                       type="checkbox"
                       name="trendingProduct"
@@ -1442,25 +1408,17 @@ const AddProducts = () => {
                           trendingProduct: e.target.checked,
                         })
                       }
-                      className="w-4 h-4 rounded text-amber-500 border-zinc-700 focus:ring-amber-500"
+                      className="w-5 h-5 rounded text-amber-500 border-zinc-700 focus:ring-amber-500 cursor-pointer"
                     />
-                    <span className="text-xs font-semibold">
-                      Mark as Official Trending Product (Shows in Trending
-                      Pills)
-                    </span>
-                  </label>
-
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={syncToTrendingImage}
-                      onChange={(e) => setSyncToTrendingImage(e.target.checked)}
-                      className="w-4 h-4 rounded text-amber-500 border-zinc-700 focus:ring-amber-500"
-                    />
-                    <span className="text-xs font-semibold text-amber-400">
-                      🌟 Also Auto-Sync to Homepage "Trending Bestsellers"
-                      Showcase Banner
-                    </span>
+                    <div>
+                      <span className={`text-sm font-bold flex items-center gap-1.5 ${isDark ? "text-white" : "text-gray-900"}`}>
+                        <Sparkles className="w-4 h-4 text-amber-500" />
+                        Mark as Trending Product
+                      </span>
+                      <p className={`text-xs ${isDark ? "text-zinc-400" : "text-gray-500"}`}>
+                        Display this product dynamically in the Homepage "Trending Bestsellers" section
+                      </p>
+                    </div>
                   </label>
                 </div>
               </div>

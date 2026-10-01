@@ -605,7 +605,7 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
                         Mark as Trending Product
                       </span>
                       <p className={`text-xs ${isDark ? "text-zinc-400" : "text-gray-500"}`}>
-                        Display with featured highlight tags across the store
+                        Display this product dynamically in the Homepage "Trending Bestsellers" section
                       </p>
                     </div>
                   </label>
