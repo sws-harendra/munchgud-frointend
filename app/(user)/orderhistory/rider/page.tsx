@@ -26,9 +26,9 @@ import { useAppDispatch } from "@/app/lib/store/store";
 const OrderHistoryRiderPage = () => {
   const dispatch = useAppDispatch();
   const { orders, currentOrder, status, error } = useSelector(selectOrders);
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [animatedCards, setAnimatedCards] = useState([]);
+  const [animatedCards, setAnimatedCards] = useState<number[]>([]);
 
   useEffect(() => {
     dispatch(fetchRidersOrders());
@@ -38,7 +38,7 @@ const OrderHistoryRiderPage = () => {
     // Animate cards in sequence when orders are loaded
     if (orders && orders.length > 0) {
       setAnimatedCards([]); // Reset animations
-      orders.forEach((_, index) => {
+      orders.forEach((_: any, index: number) => {
         setTimeout(() => {
           setAnimatedCards((prev) => [...prev, index]);
         }, index * 200);
@@ -46,7 +46,7 @@ const OrderHistoryRiderPage = () => {
     }
   }, [orders]);
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString?: string | null) => {
     if (!dateString) return "N/A";
     try {
       return new Date(dateString).toLocaleDateString("en-US", {
@@ -61,16 +61,16 @@ const OrderHistoryRiderPage = () => {
     }
   };
 
-  const formatAmount = (amount) => {
+  const formatAmount = (amount?: number | string | null) => {
     // Check if amount is already in correct format (assuming it's in paisa/cents)
     // If amount is like 29998, it should display as ₹299.98
     // If amount is already like 299.98, it should display as ₹299.98
 
-    if (!amount || isNaN(amount)) return "₹0.00";
+    if (!amount || isNaN(Number(amount))) return "₹0.00";
 
     // If amount is greater than 1000 and seems to be in paisa format
 
-    const finalAmount = parseFloat(amount);
+    const finalAmount = parseFloat(amount.toString());
 
     return `₹${finalAmount.toLocaleString("en-IN", {
       minimumFractionDigits: 2,
@@ -78,7 +78,7 @@ const OrderHistoryRiderPage = () => {
     })}`;
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status?: string | null) => {
     if (!status || typeof status !== "string") {
       return <Package className="w-5 h-5 text-gray-500" />;
     }
@@ -95,7 +95,7 @@ const OrderHistoryRiderPage = () => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status?: string | null) => {
     if (!status || typeof status !== "string") {
       return "bg-gray-100 text-gray-800 border-gray-200";
     }
@@ -112,7 +112,7 @@ const OrderHistoryRiderPage = () => {
     }
   };
 
-  const getPaymentMethodIcon = (method) => {
+  const getPaymentMethodIcon = (method?: string | null) => {
     if (!method || typeof method !== "string") {
       return "💰";
     }
@@ -129,7 +129,7 @@ const OrderHistoryRiderPage = () => {
     }
   };
 
-  const handleViewDetails = async (orderId) => {
+  const handleViewDetails = async (orderId: number | string) => {
     try {
       await dispatch(fetchOrderById(orderId.toString()));
       setSelectedOrderId(orderId);
@@ -206,7 +206,7 @@ const OrderHistoryRiderPage = () => {
       <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="grid gap-6">
           {orders &&
-            orders.map((order, index) => (
+            orders.map((order: any, index: number) => (
               <div
                 key={order.id}
                 className={`transform transition-all duration-500 ${
@@ -295,7 +295,7 @@ const OrderHistoryRiderPage = () => {
                         <div className="flex items-center space-x-4 overflow-x-auto">
                           {order.OrderItems &&
                             order.OrderItems.slice(0, 3).map(
-                              (item, itemIndex) => (
+                              (item: any, itemIndex: number) => (
                                 <div
                                   key={itemIndex}
                                   className="flex items-center space-x-3 bg-gray-50 rounded-lg p-3 min-w-max"
@@ -309,9 +309,10 @@ const OrderHistoryRiderPage = () => {
                                         alt={item.Product.name || "Product"}
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
-                                          e.target.style.display = "none";
-                                          e.target.nextElementSibling.style.display =
-                                            "flex";
+                                          const target = e.currentTarget;
+                                          target.style.display = "none";
+                                          const next = target.nextElementSibling as HTMLElement | null;
+                                          if (next) next.style.display = "flex";
                                         }}
                                       />
                                     ) : null}
@@ -348,7 +349,7 @@ const OrderHistoryRiderPage = () => {
             ))}
         </div>
 
-        {(!orders || orders.length === 0) && status !== "loading" && (
+        {(!orders || orders.length === 0) && (
           <div className="text-center py-16">
             <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md mx-auto">
               <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">

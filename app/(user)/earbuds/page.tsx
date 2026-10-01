@@ -335,15 +335,15 @@ export default function EarbudsPage() {
     <div className="min-h-screen bg-[#FDFBF7] text-neutral-900 pb-20">
       
       {/* HEADER SECTION */}
-      <section className="bg-white border-b border-neutral-200/70 pt-8 pb-6 px-4 sm:px-8 lg:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <section className="bg-white border-b border-neutral-200/70 pt-8 pb-6 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-[1560px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-800 text-[11px] font-bold tracking-wider uppercase mb-1">
+            {/* <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-800 text-[11px] font-bold tracking-wider uppercase mb-1">
               <Sparkles className="w-3 h-3 text-amber-600" />
               <span>Flazo True Wireless Audio</span>
-            </div>
+            </div> */}
             <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 tracking-tight">
-              Wireless Earbuds Collection
+               Collection
             </h1>
           </div>
 
@@ -404,11 +404,11 @@ export default function EarbudsPage() {
       </section>
 
       {/* PRODUCTS CONTAINER */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pt-8">
+      <main className="w-full max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         
         {viewMode === "grid" ? (
           /* GRID VIEW - Exactly like Image 1 (4 columns) */
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {sortedProducts.map((product) => {
               const isWishlisted = wishlist.includes(product.id);
               const activeColorIndex = selectedColors[product.id] || 0;

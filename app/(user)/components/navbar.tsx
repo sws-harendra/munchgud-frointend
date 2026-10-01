@@ -39,7 +39,7 @@ export default function EcommerceNavbar() {
   }, []);
 
   const navLinks = [
-    { name: "Earbuds", href: "/earbuds" },
+    { name: "Products", href: "/earbuds" },
     { name: "Support & Warranty", href: "/support-warranty" },
     { name: "Blogs", href: "/blogs" },
     { name: "Flazo Community", href: "/community" },

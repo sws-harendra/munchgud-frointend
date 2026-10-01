@@ -91,7 +91,7 @@ export default function Footer() {
               Company Registered Office
             </h4>
             <div className="text-xs text-neutral-600 leading-relaxed bg-amber-50/40 border border-amber-200/70 rounded-xl p-3.5 space-y-1">
-              <p className="font-bold text-neutral-900">Flazo Technologies Pvt. Ltd.</p>
+              <p className="font-bold text-neutral-900">Flazo Pvt. Ltd.</p>
               <p>A-116, URBTECH TRADE CENTER, SECTOR-132,</p>
               <p>NOIDA, GAUTAM BUDDHA NAGAR,</p>
               <p>UTTAR PRADESH, 201304</p>
@@ -138,7 +138,7 @@ export default function Footer() {
 
         {/* Bottom Copyright */}
         <div className="mt-12 pt-6 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-neutral-400 gap-4">
-          <p>© {new Date().getFullYear()} Flazo Technologies Pvt. Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Flazo Pvt. Ltd. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Designed in Golden & White</span>
             <span>•</span>
