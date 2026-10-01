@@ -47,7 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const productImage =
     product.images && product.images.length > 0
       ? `${getImageUrl(product.images[0])}`
-      : `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop&crop=center`;
+      : `/images/lifestyle-model.jpg`;
 
   return (
     <Link href={`/products/${slugify(product.name)}/${product.id}`}>
@@ -103,7 +103,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             onError={(e) => {
-              e.currentTarget.src = `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop&crop=center`;
+              e.currentTarget.src = `/images/lifestyle-model.jpg`;
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

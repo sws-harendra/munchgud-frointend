@@ -289,7 +289,7 @@ const AddProducts = () => {
 
       const comprehensiveTags = Array.from(
         new Set([
-          "Earbuds",
+          ...(categoryInput.trim() ? [categoryInput.trim()] : []),
           ...(formData.badge?.trim() ? [formData.badge.trim()] : []),
           ...(specs.driver ? [`Driver:${specs.driver}`] : []),
           ...(specs.anc ? [`ANC:${specs.anc}`] : []),
