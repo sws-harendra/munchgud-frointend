@@ -25,6 +25,7 @@ import HorizontalRule from "@tiptap/extension-horizontal-rule";
 
 import { blogService } from "../sercices/user/blog.service";
 import { getImageUrl } from "../utils/getImageUrl";
+import { useSafeAdminTheme } from "@/app/admin/context/AdminThemeContext";
 import {
   Bold,
   Italic,
@@ -64,6 +65,7 @@ interface RichTextEditorProps {
   placeholder?: string;
   className?: string;
   required?: boolean;
+  isDarkMode?: boolean;
 }
 
 const COLOR_PALETTE = [
@@ -92,6 +94,7 @@ export default function RichTextEditor({
   placeholder = "Write your article story here with rich formatting...",
   className = "",
   required,
+  isDarkMode: propIsDark,
 }: RichTextEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -221,26 +224,62 @@ export default function RichTextEditor({
   const wordCount = textContent.trim() ? textContent.trim().split(/\s+/).length : 0;
   const charCount = textContent.length;
 
+  const adminTheme = useSafeAdminTheme();
+  const isDarkMode =
+    propIsDark !== undefined
+      ? propIsDark
+      : adminTheme
+      ? Boolean(adminTheme.isDark || adminTheme.resolvedTheme === "dark")
+      : false;
+
+  const getBtnClass = (isActive = false, isDanger = false) => {
+    if (isDanger) {
+      return isDarkMode
+        ? "p-1.5 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 transition cursor-pointer"
+        : "p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition cursor-pointer";
+    }
+    if (isActive) {
+      return isDarkMode
+        ? "p-1.5 rounded-lg bg-amber-500/20 text-amber-400 font-bold transition cursor-pointer"
+        : "p-1.5 rounded-lg bg-amber-100 text-amber-900 font-bold transition cursor-pointer";
+    }
+    return isDarkMode
+      ? "p-1.5 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition cursor-pointer"
+      : "p-1.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-white transition cursor-pointer";
+  };
+
+  const dividerClass = isDarkMode ? "border-zinc-800" : "border-gray-200";
+
   return (
     <div
-      className={`border border-gray-300 rounded-2xl bg-white shadow-xs transition-all duration-200 flex flex-col ${
+      className={`border rounded-2xl shadow-xs transition-all duration-200 flex flex-col ${
+        isDarkMode
+          ? "border-zinc-800 bg-zinc-950 text-zinc-100 shadow-xl shadow-black/40"
+          : "border-gray-300 bg-white text-gray-900"
+      } ${
         isFullscreen
-          ? "fixed inset-0 z-50 rounded-none border-none p-4 bg-white"
+          ? isDarkMode
+            ? "fixed inset-0 z-50 rounded-none border-none p-4 bg-zinc-950"
+            : "fixed inset-0 z-50 rounded-none border-none p-4 bg-white"
           : "relative"
       } ${className}`}
     >
       {/* ─────────────────────────────────────────────────────────────
           WORD-STYLE COMMAND TOOLBAR
          ───────────────────────────────────────────────────────────── */}
-      <div className="p-2 border-b border-gray-200 bg-slate-50/80 rounded-t-2xl flex flex-wrap items-center gap-1 text-xs select-none">
+      <div className={`p-2 border-b rounded-t-2xl flex flex-wrap items-center gap-1 text-xs select-none transition-colors ${
+        isDarkMode
+          ? "bg-zinc-900 border-zinc-800 text-zinc-300"
+          : "bg-slate-50/80 border-gray-200 text-gray-700"
+      }`}>
         {/* Undo / Redo Group */}
-        <div className="flex items-center gap-0.5 pr-1.5 border-r border-gray-200">
+        <div className={`flex items-center gap-0.5 pr-1.5 border-r ${dividerClass}`}>
           <button
             type="button"
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
             title="Undo (Ctrl+Z)"
-            className="p-1.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-white disabled:opacity-30 transition cursor-pointer"
+            className={`${getBtnClass(false)} disabled:opacity-30`}
           >
             <Undo2 className="w-3.5 h-3.5" />
           </button>
@@ -249,14 +288,14 @@ export default function RichTextEditor({
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
             title="Redo (Ctrl+Y)"
-            className="p-1.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-white disabled:opacity-30 transition cursor-pointer"
+            className={`${getBtnClass(false)} disabled:opacity-30`}
           >
             <Redo2 className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Text Style / Heading Hierarchy Dropdown */}
-        <div className="pr-1.5 border-r border-gray-200">
+        <div className={`pr-1.5 border-r ${dividerClass}`}>
           <select
             value={
               editor.isActive("heading", { level: 1 })
@@ -277,27 +316,27 @@ export default function RichTextEditor({
               else if (val === "h4") editor.chain().focus().toggleHeading({ level: 4 }).run();
               else editor.chain().focus().setParagraph().run();
             }}
-            className="px-2.5 py-1.5 rounded-lg bg-white border border-gray-300 text-gray-700 font-semibold focus:outline-none focus:border-amber-500 cursor-pointer"
+            className={`px-2.5 py-1.5 rounded-lg border text-xs font-semibold focus:outline-none focus:border-amber-500 cursor-pointer ${
+              isDarkMode
+                ? "bg-zinc-950 border-zinc-700 text-zinc-100"
+                : "bg-white border-gray-300 text-gray-700"
+            }`}
           >
-            <option value="p">Normal Text</option>
-            <option value="h1">Heading 1 (Main Title)</option>
-            <option value="h2">Heading 2 (Section)</option>
-            <option value="h3">Heading 3 (Sub-section)</option>
-            <option value="h4">Heading 4 (Minor)</option>
+            <option value="p" className={isDarkMode ? "bg-zinc-900 text-zinc-100" : ""}>Normal Text</option>
+            <option value="h1" className={isDarkMode ? "bg-zinc-900 text-zinc-100" : ""}>Heading 1 (Main Title)</option>
+            <option value="h2" className={isDarkMode ? "bg-zinc-900 text-zinc-100" : ""}>Heading 2 (Section)</option>
+            <option value="h3" className={isDarkMode ? "bg-zinc-900 text-zinc-100" : ""}>Heading 3 (Sub-section)</option>
+            <option value="h4" className={isDarkMode ? "bg-zinc-900 text-zinc-100" : ""}>Heading 4 (Minor)</option>
           </select>
         </div>
 
         {/* Character Formatting: Bold, Italic, Underline, Strike, Code */}
-        <div className="flex items-center gap-0.5 pr-1.5 border-r border-gray-200">
+        <div className={`flex items-center gap-0.5 pr-1.5 border-r ${dividerClass}`}>
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
             title="Bold (Ctrl+B)"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("bold")
-                ? "bg-amber-100 text-amber-900 font-bold"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("bold"))}
           >
             <Bold className="w-3.5 h-3.5" />
           </button>
@@ -306,11 +345,7 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().toggleItalic().run()}
             title="Italic (Ctrl+I)"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("italic")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("italic"))}
           >
             <Italic className="w-3.5 h-3.5" />
           </button>
@@ -319,11 +354,7 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().toggleUnderline().run()}
             title="Underline (Ctrl+U)"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("underline")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("underline"))}
           >
             <UnderlineIcon className="w-3.5 h-3.5" />
           </button>
@@ -332,11 +363,7 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().toggleStrike().run()}
             title="Strikethrough"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("strike")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("strike"))}
           >
             <Strikethrough className="w-3.5 h-3.5" />
           </button>
@@ -345,11 +372,7 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().toggleCode().run()}
             title="Inline Code"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("code")
-                ? "bg-amber-100 text-amber-900 font-mono"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("code"))}
           >
             <Code className="w-3.5 h-3.5" />
           </button>
@@ -365,14 +388,16 @@ export default function RichTextEditor({
               setShowTableMenu(false);
             }}
             title="Text Color"
-            className="flex items-center gap-1 p-1.5 rounded-lg text-gray-700 hover:bg-white transition cursor-pointer"
+            className={`flex items-center gap-1 ${getBtnClass(showColorPicker)}`}
           >
-            <Palette className="w-3.5 h-3.5 text-amber-700" />
-            <ChevronDown className="w-3 h-3 text-gray-400" />
+            <Palette className="w-3.5 h-3.5 text-amber-500" />
+            <ChevronDown className="w-3 h-3 opacity-60" />
           </button>
 
           {showColorPicker && (
-            <div className="absolute top-full left-0 mt-1 z-30 bg-white border border-gray-200 rounded-xl shadow-lg p-2.5 w-44 grid grid-cols-4 gap-1.5">
+            <div className={`absolute top-full left-0 mt-1 z-30 border rounded-xl shadow-xl p-2.5 w-44 grid grid-cols-4 gap-1.5 ${
+              isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-200"
+            }`}>
               {COLOR_PALETTE.map((item) => (
                 <button
                   key={item.color}
@@ -382,7 +407,7 @@ export default function RichTextEditor({
                     setShowColorPicker(false);
                   }}
                   title={item.name}
-                  className="w-7 h-7 rounded-lg border border-gray-300 hover:scale-110 transition cursor-pointer flex items-center justify-center"
+                  className="w-7 h-7 rounded-lg border border-gray-300 dark:border-zinc-700 hover:scale-110 transition cursor-pointer flex items-center justify-center"
                   style={{ backgroundColor: item.color }}
                 />
               ))}
@@ -392,7 +417,9 @@ export default function RichTextEditor({
                   editor.chain().focus().unsetColor().run();
                   setShowColorPicker(false);
                 }}
-                className="col-span-4 mt-1 py-1 text-[11px] font-semibold text-gray-600 hover:bg-gray-100 rounded text-center"
+                className={`col-span-4 mt-1 py-1 text-[11px] font-semibold rounded text-center transition ${
+                  isDarkMode ? "text-zinc-400 hover:text-white hover:bg-zinc-800" : "text-gray-600 hover:bg-gray-100"
+                }`}
               >
                 Reset Color
               </button>
@@ -401,7 +428,7 @@ export default function RichTextEditor({
         </div>
 
         {/* Text Highlight Marker */}
-        <div className="relative pr-1.5 border-r border-gray-200">
+        <div className={`relative pr-1.5 border-r ${dividerClass}`}>
           <button
             type="button"
             onClick={() => {
@@ -410,14 +437,16 @@ export default function RichTextEditor({
               setShowTableMenu(false);
             }}
             title="Highlight Marker"
-            className="flex items-center gap-1 p-1.5 rounded-lg text-gray-700 hover:bg-white transition cursor-pointer"
+            className={`flex items-center gap-1 ${getBtnClass(showHighlightPicker)}`}
           >
-            <Highlighter className="w-3.5 h-3.5 text-yellow-600" />
-            <ChevronDown className="w-3 h-3 text-gray-400" />
+            <Highlighter className="w-3.5 h-3.5 text-yellow-500" />
+            <ChevronDown className="w-3 h-3 opacity-60" />
           </button>
 
           {showHighlightPicker && (
-            <div className="absolute top-full left-0 mt-1 z-30 bg-white border border-gray-200 rounded-xl shadow-lg p-2.5 w-44 grid grid-cols-3 gap-2">
+            <div className={`absolute top-full left-0 mt-1 z-30 border rounded-xl shadow-xl p-2.5 w-44 grid grid-cols-3 gap-2 ${
+              isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-white border-gray-200"
+            }`}>
               {HIGHLIGHT_PALETTE.map((item) => (
                 <button
                   key={item.color}
@@ -427,7 +456,7 @@ export default function RichTextEditor({
                     setShowHighlightPicker(false);
                   }}
                   title={item.name}
-                  className="h-6 rounded-md border border-gray-300 hover:scale-105 transition cursor-pointer"
+                  className="h-6 rounded-md border border-gray-300 dark:border-zinc-700 hover:scale-105 transition cursor-pointer"
                   style={{ backgroundColor: item.color }}
                 />
               ))}
@@ -437,7 +466,9 @@ export default function RichTextEditor({
                   editor.chain().focus().unsetHighlight().run();
                   setShowHighlightPicker(false);
                 }}
-                className="col-span-3 mt-1 py-1 text-[11px] font-semibold text-gray-600 hover:bg-gray-100 rounded text-center"
+                className={`col-span-3 mt-1 py-1 text-[11px] font-semibold rounded text-center transition ${
+                  isDarkMode ? "text-zinc-400 hover:text-white hover:bg-zinc-800" : "text-gray-600 hover:bg-gray-100"
+                }`}
               >
                 Remove Highlight
               </button>
@@ -446,16 +477,12 @@ export default function RichTextEditor({
         </div>
 
         {/* Alignment Group: Left, Center, Right, Justify */}
-        <div className="flex items-center gap-0.5 pr-1.5 border-r border-gray-200">
+        <div className={`flex items-center gap-0.5 pr-1.5 border-r ${dividerClass}`}>
           <button
             type="button"
             onClick={() => editor.chain().focus().setTextAlign("left").run()}
             title="Align Left"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive({ textAlign: "left" })
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive({ textAlign: "left" }))}
           >
             <AlignLeft className="w-3.5 h-3.5" />
           </button>
@@ -464,11 +491,7 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().setTextAlign("center").run()}
             title="Align Center"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive({ textAlign: "center" })
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive({ textAlign: "center" }))}
           >
             <AlignCenter className="w-3.5 h-3.5" />
           </button>
@@ -477,11 +500,7 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().setTextAlign("right").run()}
             title="Align Right"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive({ textAlign: "right" })
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive({ textAlign: "right" }))}
           >
             <AlignRight className="w-3.5 h-3.5" />
           </button>
@@ -490,27 +509,19 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().setTextAlign("justify").run()}
             title="Justify"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive({ textAlign: "justify" })
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive({ textAlign: "justify" }))}
           >
             <AlignJustify className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Lists & Tasks Group */}
-        <div className="flex items-center gap-0.5 pr-1.5 border-r border-gray-200">
+        <div className={`flex items-center gap-0.5 pr-1.5 border-r ${dividerClass}`}>
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             title="Bulleted List"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("bulletList")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("bulletList"))}
           >
             <List className="w-3.5 h-3.5" />
           </button>
@@ -519,11 +530,7 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             title="Numbered List"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("orderedList")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("orderedList"))}
           >
             <ListOrdered className="w-3.5 h-3.5" />
           </button>
@@ -532,27 +539,19 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().toggleTaskList().run()}
             title="Task / Checklist"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("taskList")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("taskList"))}
           >
             <ListTodo className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Inserts: Quotes, Code Block, Divider, Link */}
-        <div className="flex items-center gap-0.5 pr-1.5 border-r border-gray-200">
+        <div className={`flex items-center gap-0.5 pr-1.5 border-r ${dividerClass}`}>
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
             title="Blockquote"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("blockquote")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("blockquote"))}
           >
             <Quote className="w-3.5 h-3.5" />
           </button>
@@ -561,11 +560,7 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().toggleCodeBlock().run()}
             title="Code Block"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("codeBlock")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("codeBlock"))}
           >
             <FileCode className="w-3.5 h-3.5" />
           </button>
@@ -574,7 +569,7 @@ export default function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().setHorizontalRule().run()}
             title="Horizontal Divider"
-            className="p-1.5 rounded-lg text-gray-700 hover:bg-white transition cursor-pointer"
+            className={getBtnClass(false)}
           >
             <Minus className="w-3.5 h-3.5" />
           </button>
@@ -583,11 +578,7 @@ export default function RichTextEditor({
             type="button"
             onClick={handleSetLink}
             title="Insert / Edit Link"
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("link")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={getBtnClass(editor.isActive("link"))}
           >
             <LinkIcon className="w-3.5 h-3.5" />
           </button>
@@ -597,7 +588,7 @@ export default function RichTextEditor({
               type="button"
               onClick={() => editor.chain().focus().unsetLink().run()}
               title="Remove Link"
-              className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition cursor-pointer"
+              className={getBtnClass(false, true)}
             >
               <Unlink className="w-3.5 h-3.5" />
             </button>
@@ -605,14 +596,14 @@ export default function RichTextEditor({
         </div>
 
         {/* Media: Image Upload & Image URL */}
-        <div className="flex items-center gap-0.5 pr-1.5 border-r border-gray-200">
+        <div className={`flex items-center gap-0.5 pr-1.5 border-r ${dividerClass}`}>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             title="Upload Image from Device"
-            className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-gray-700 hover:bg-white transition cursor-pointer"
+            className={`flex items-center gap-1 px-2 ${getBtnClass(false)}`}
           >
-            <Upload className="w-3.5 h-3.5 text-amber-700" />
+            <Upload className="w-3.5 h-3.5 text-amber-500" />
             <span className="hidden sm:inline">Image</span>
           </button>
 
@@ -620,7 +611,7 @@ export default function RichTextEditor({
             type="button"
             onClick={handleInsertImageUrl}
             title="Insert Image by URL"
-            className="p-1.5 rounded-lg text-gray-600 hover:bg-white transition cursor-pointer"
+            className={getBtnClass(false)}
           >
             <ImageIcon className="w-3.5 h-3.5" />
           </button>
@@ -635,7 +626,7 @@ export default function RichTextEditor({
         </div>
 
         {/* Table Operations Menu */}
-        <div className="relative pr-1.5 border-r border-gray-200">
+        <div className={`relative pr-1.5 border-r ${dividerClass}`}>
           <button
             type="button"
             onClick={() => {
@@ -644,19 +635,17 @@ export default function RichTextEditor({
               setShowHighlightPicker(false);
             }}
             title="Table Tools"
-            className={`flex items-center gap-1 p-1.5 rounded-lg transition cursor-pointer ${
-              editor.isActive("table")
-                ? "bg-amber-100 text-amber-900"
-                : "text-gray-700 hover:bg-white"
-            }`}
+            className={`flex items-center gap-1 ${getBtnClass(editor.isActive("table") || showTableMenu)}`}
           >
-            <TableIcon className="w-3.5 h-3.5 text-amber-700" />
+            <TableIcon className="w-3.5 h-3.5 text-amber-500" />
             <span className="hidden sm:inline font-medium">Table</span>
-            <ChevronDown className="w-3 h-3 text-gray-400" />
+            <ChevronDown className="w-3 h-3 opacity-60" />
           </button>
 
           {showTableMenu && (
-            <div className="absolute top-full left-0 mt-1 z-30 bg-white border border-gray-200 rounded-2xl shadow-xl p-2 w-52 space-y-1">
+            <div className={`absolute top-full left-0 mt-1 z-30 border rounded-2xl shadow-xl p-2 w-52 space-y-1 ${
+              isDarkMode ? "bg-zinc-900 border-zinc-800 text-zinc-200" : "bg-white border-gray-200 text-gray-800"
+            }`}>
               {!editor.isActive("table") ? (
                 <button
                   type="button"
@@ -668,7 +657,11 @@ export default function RichTextEditor({
                       .run();
                     setShowTableMenu(false);
                   }}
-                  className="w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-800 hover:bg-amber-50 hover:text-amber-800 flex items-center gap-2"
+                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition ${
+                    isDarkMode
+                      ? "hover:bg-zinc-800 hover:text-amber-400 text-zinc-200"
+                      : "hover:bg-amber-50 hover:text-amber-800 text-gray-800"
+                  }`}
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Insert Table (3 × 3)
@@ -681,10 +674,12 @@ export default function RichTextEditor({
                       editor.chain().focus().addRowAfter().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-700 hover:bg-gray-100 flex items-center justify-between"
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs flex items-center justify-between transition ${
+                      isDarkMode ? "text-zinc-300 hover:bg-zinc-800" : "text-gray-700 hover:bg-gray-100"
+                    }`}
                   >
                     <span>Add Row Below</span>
-                    <span className="text-[10px] text-gray-400">+Row</span>
+                    <span className="text-[10px] opacity-60">+Row</span>
                   </button>
                   <button
                     type="button"
@@ -692,13 +687,15 @@ export default function RichTextEditor({
                       editor.chain().focus().deleteRow().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-red-600 hover:bg-red-50 flex items-center justify-between"
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs flex items-center justify-between transition ${
+                      isDarkMode ? "text-rose-400 hover:bg-rose-950/40" : "text-red-600 hover:bg-red-50"
+                    }`}
                   >
                     <span>Delete Row</span>
                     <Trash2 className="w-3 h-3" />
                   </button>
 
-                  <div className="border-t border-gray-100 my-1" />
+                  <div className={`border-t my-1 ${dividerClass}`} />
 
                   <button
                     type="button"
@@ -706,10 +703,12 @@ export default function RichTextEditor({
                       editor.chain().focus().addColumnAfter().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-700 hover:bg-gray-100 flex items-center justify-between"
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs flex items-center justify-between transition ${
+                      isDarkMode ? "text-zinc-300 hover:bg-zinc-800" : "text-gray-700 hover:bg-gray-100"
+                    }`}
                   >
                     <span>Add Column Right</span>
-                    <span className="text-[10px] text-gray-400">+Col</span>
+                    <span className="text-[10px] opacity-60">+Col</span>
                   </button>
                   <button
                     type="button"
@@ -717,13 +716,15 @@ export default function RichTextEditor({
                       editor.chain().focus().deleteColumn().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-red-600 hover:bg-red-50 flex items-center justify-between"
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs flex items-center justify-between transition ${
+                      isDarkMode ? "text-rose-400 hover:bg-rose-950/40" : "text-red-600 hover:bg-red-50"
+                    }`}
                   >
                     <span>Delete Column</span>
                     <Trash2 className="w-3 h-3" />
                   </button>
 
-                  <div className="border-t border-gray-100 my-1" />
+                  <div className={`border-t my-1 ${dividerClass}`} />
 
                   <button
                     type="button"
@@ -731,7 +732,9 @@ export default function RichTextEditor({
                       editor.chain().focus().deleteTable().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-100 flex items-center justify-between"
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-between transition ${
+                      isDarkMode ? "text-rose-400 hover:bg-rose-950/40" : "text-red-600 hover:bg-red-100"
+                    }`}
                   >
                     <span>Delete Table</span>
                     <Trash2 className="w-3.5 h-3.5" />
@@ -747,7 +750,7 @@ export default function RichTextEditor({
           type="button"
           onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
           title="Clear All Formatting"
-          className="p-1.5 rounded-lg text-gray-600 hover:text-red-600 hover:bg-white transition cursor-pointer"
+          className={getBtnClass(false, true)}
         >
           <RemoveFormatting className="w-3.5 h-3.5" />
         </button>
@@ -758,10 +761,10 @@ export default function RichTextEditor({
             type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen Mode"}
-            className="p-1.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-white transition cursor-pointer"
+            className={getBtnClass(isFullscreen)}
           >
             {isFullscreen ? (
-              <Minimize2 className="w-3.5 h-3.5 text-amber-700" />
+              <Minimize2 className="w-3.5 h-3.5 text-amber-500" />
             ) : (
               <Maximize2 className="w-3.5 h-3.5" />
             )}
@@ -772,32 +775,40 @@ export default function RichTextEditor({
       {/* ─────────────────────────────────────────────────────────────
           EDITOR EDITABLE CONTENT CANVAS
          ───────────────────────────────────────────────────────────── */}
-      <div className={`p-4 sm:p-6 overflow-y-auto ${isFullscreen ? "flex-1" : "min-h-[320px] max-h-[600px]"}`}>
+      <div className={`p-4 sm:p-6 overflow-y-auto ${isFullscreen ? "flex-1" : "min-h-[320px] max-h-[600px]"} ${
+        isDarkMode ? "bg-zinc-950 text-zinc-100" : "bg-white text-gray-900"
+      }`}>
         <EditorContent
           editor={editor}
-          className="prose prose-sm sm:prose-base max-w-none focus:outline-none min-h-[280px]"
+          className={`prose prose-sm sm:prose-base max-w-none focus:outline-none min-h-[280px] ${
+            isDarkMode ? "prose-invert text-zinc-100" : "text-gray-900"
+          }`}
         />
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
           FOOTER STATS STRIP (Word Count, Character Count, Keyboard Shortcuts)
          ───────────────────────────────────────────────────────────── */}
-      <div className="px-4 py-2 bg-slate-50 border-t border-gray-200 rounded-b-2xl flex flex-wrap items-center justify-between text-[11px] text-gray-500">
+      <div className={`px-4 py-2 border-t rounded-b-2xl flex flex-wrap items-center justify-between text-[11px] transition-colors ${
+        isDarkMode
+          ? "bg-zinc-900/60 border-zinc-800 text-zinc-400"
+          : "bg-slate-50 border-gray-200 text-gray-500"
+      }`}>
         <div className="flex items-center gap-4">
           <span>
-            Words: <strong className="text-gray-800">{wordCount}</strong>
+            Words: <strong className={isDarkMode ? "text-zinc-200" : "text-gray-800"}>{wordCount}</strong>
           </span>
           <span>•</span>
           <span>
-            Characters: <strong className="text-gray-800">{charCount}</strong>
+            Characters: <strong className={isDarkMode ? "text-zinc-200" : "text-gray-800"}>{charCount}</strong>
           </span>
           <span>•</span>
-          <span className="hidden sm:inline text-gray-400">
+          <span className={`hidden sm:inline ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
             Est. Read Time: ~{Math.max(1, Math.round(wordCount / 200))} min
           </span>
         </div>
 
-        <div className="hidden md:flex items-center gap-3 text-gray-400">
+        <div className={`hidden md:flex items-center gap-3 ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
           <span>Ctrl+B (Bold)</span>
           <span>•</span>
           <span>Ctrl+I (Italic)</span>
@@ -815,6 +826,9 @@ export default function RichTextEditor({
           font-family: inherit;
           color: #1f2937;
         }
+        .admin-theme-root.dark .ProseMirror {
+          color: #f4f4f5 !important;
+        }
         .ProseMirror p {
           margin-bottom: 0.85em;
         }
@@ -826,6 +840,9 @@ export default function RichTextEditor({
           margin-bottom: 0.5em;
           line-height: 1.25;
         }
+        .admin-theme-root.dark .ProseMirror h1 {
+          color: #ffffff !important;
+        }
         .ProseMirror h2 {
           font-size: 1.5rem;
           font-weight: 700;
@@ -834,6 +851,9 @@ export default function RichTextEditor({
           margin-bottom: 0.4em;
           line-height: 1.3;
         }
+        .admin-theme-root.dark .ProseMirror h2 {
+          color: #ffffff !important;
+        }
         .ProseMirror h3 {
           font-size: 1.25rem;
           font-weight: 600;
@@ -841,12 +861,18 @@ export default function RichTextEditor({
           margin-top: 1em;
           margin-bottom: 0.35em;
         }
+        .admin-theme-root.dark .ProseMirror h3 {
+          color: #f4f4f5 !important;
+        }
         .ProseMirror h4 {
           font-size: 1.1rem;
           font-weight: 600;
           color: #4b5563;
           margin-top: 0.9em;
           margin-bottom: 0.3em;
+        }
+        .admin-theme-root.dark .ProseMirror h4 {
+          color: #e4e4e7 !important;
         }
         .ProseMirror ul {
           list-style-type: disc;
@@ -868,6 +894,11 @@ export default function RichTextEditor({
           padding: 0.75rem 1rem;
           border-radius: 0 0.75rem 0.75rem 0;
         }
+        .admin-theme-root.dark .ProseMirror blockquote {
+          background: rgba(245, 158, 11, 0.1) !important;
+          color: #fde68a !important;
+          border-left-color: #f59e0b !important;
+        }
         .ProseMirror pre {
           background: #0f172a;
           color: #f8fafc;
@@ -882,11 +913,17 @@ export default function RichTextEditor({
           border-top: 2px solid #e5e7eb;
           margin: 1.5rem 0;
         }
+        .admin-theme-root.dark .ProseMirror hr {
+          border-top-color: #27272a !important;
+        }
         .ProseMirror table {
           border-collapse: collapse;
           width: 100%;
           margin: 1.25rem 0;
           border: 1px solid #d1d5db;
+        }
+        .admin-theme-root.dark .ProseMirror table {
+          border-color: #27272a !important;
         }
         .ProseMirror th,
         .ProseMirror td {
@@ -894,10 +931,19 @@ export default function RichTextEditor({
           padding: 0.6rem 0.8rem;
           text-align: left;
         }
+        .admin-theme-root.dark .ProseMirror th,
+        .admin-theme-root.dark .ProseMirror td {
+          border-color: #27272a !important;
+          color: #e4e4e7 !important;
+        }
         .ProseMirror th {
           background-color: #fef3c7;
           font-weight: bold;
           color: #78350f;
+        }
+        .admin-theme-root.dark .ProseMirror th {
+          background-color: #27272a !important;
+          color: #fbbf24 !important;
         }
         .ProseMirror ul[data-type="taskList"] {
           list-style: none;

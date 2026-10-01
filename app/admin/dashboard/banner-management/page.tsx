@@ -25,6 +25,8 @@ import SidebarForm from "../../components/SidebarForm";
 import BannerForm from "../../components/bannerForm";
 import EditBannerForm from "../../components/editbanerform";
 
+import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
+
 interface Category {
   id: number;
   name: string;
@@ -32,6 +34,9 @@ interface Category {
 
 export default function AdminBannersPage() {
   const dispatch = useAppDispatch();
+  const { isDark, resolvedTheme } = useAdminTheme();
+  const isDarkMode = Boolean(isDark || resolvedTheme === "dark");
+
   const { banners, status } = useAppSelector((state) => state.banners);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
   const [isEditSidebarOpen, setIsEditSidebarOpen] = useState(false);
@@ -73,8 +78,12 @@ export default function AdminBannersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div
+      className={`min-h-screen p-4 sm:p-6 lg:p-8 space-y-8 transition-colors duration-200 ${
+        isDarkMode ? "bg-black text-zinc-100" : "bg-slate-50/70 text-slate-800"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -215,7 +224,11 @@ export default function AdminBannersPage() {
                   trigger={
                     <button
                       onClick={() => handleEdit(banner)}
-                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                      className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm font-medium cursor-pointer ${
+                        isDarkMode
+                          ? "bg-zinc-800 text-amber-400 hover:bg-zinc-700"
+                          : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+                      }`}
                     >
                       <Edit size={14} />
                       Edit
@@ -230,7 +243,11 @@ export default function AdminBannersPage() {
 
                 <button
                   onClick={() => handleDelete(banner.id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-green-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
+                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm font-medium cursor-pointer ${
+                    isDarkMode
+                      ? "bg-rose-950/40 text-rose-300 hover:bg-rose-950/70"
+                      : "bg-red-50 text-red-600 hover:bg-red-100"
+                  }`}
                 >
                   <Trash2 size={14} />
                   Delete

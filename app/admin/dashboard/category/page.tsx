@@ -8,9 +8,21 @@ import {
   fetchCategories,
   updateCategory,
 } from "@/app/lib/store/features/categorySlice";
+import {
+  FolderTree,
+  Edit,
+  Trash2,
+  Plus,
+  X,
+  Layers,
+} from "lucide-react";
+import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
 
 const Category = () => {
   const dispatch = useAppDispatch();
+  const { isDark, resolvedTheme } = useAdminTheme();
+  const isDarkMode = Boolean(isDark || resolvedTheme === "dark");
+
   const { categories, loading } = useAppSelector((state) => state.category);
 
   const [form, setForm] = useState({
@@ -122,74 +134,124 @@ const Category = () => {
   const tableCategories = flattenCategoriesForTable(categories);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+    <div
+      className={`min-h-screen p-4 sm:p-6 lg:p-8 space-y-8 transition-colors duration-200 ${
+        isDarkMode ? "bg-black text-zinc-100" : "bg-slate-50/70 text-slate-800"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div
+          className={`p-6 sm:p-8 rounded-3xl border transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+            isDarkMode
+              ? "bg-zinc-950 border-zinc-800/90 text-white shadow-xl shadow-black/40"
+              : "bg-white border-slate-200/80 text-gray-900 shadow-sm"
+          }`}
+        >
+          <div className="flex items-center gap-4">
+            <div className="bg-gradient-to-br from-amber-500 via-amber-600 to-yellow-600 p-3.5 rounded-2xl shadow-lg shadow-amber-500/25 flex items-center justify-center text-zinc-950 font-bold">
+              <FolderTree className="h-7 w-7 text-zinc-950" />
+            </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
-              <p className="mt-1 text-sm text-gray-600">
-                Manage your categories and their descriptions
+              <div className="flex items-center gap-2">
+                <h1
+                  className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                    isDarkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Categories
+                </h1>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                  Taxonomy
+                </span>
+              </div>
+              <p
+                className={`text-xs sm:text-sm mt-1 ${
+                  isDarkMode ? "text-zinc-400" : "text-gray-500"
+                }`}
+              >
+                Manage your store product categories, hierarchy, and navigation tags
               </p>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-medium">
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div
+              className={`px-4 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${
+                isDarkMode
+                  ? "bg-zinc-900 border-zinc-800 text-zinc-300"
+                  : "bg-gray-100 border-gray-200/60 text-gray-700"
+              }`}
+            >
+              <span>
                 {tableCategories.length}{" "}
                 {tableCategories.length === 1 ? "Category" : "Categories"}
               </span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Form Section */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {editId ? "Edit Category" : "Add New Category"}
-                </h2>
+            <div
+              className={`rounded-3xl border p-6 sm:p-7 transition-all duration-200 sticky top-6 ${
+                isDarkMode
+                  ? "bg-zinc-950 border-zinc-800/90 text-white shadow-xl shadow-black/40"
+                  : "bg-white border-slate-200/80 text-gray-900 shadow-sm"
+              }`}
+            >
+              <div
+                className={`flex items-center justify-between mb-6 pb-4 border-b ${
+                  isDarkMode ? "border-zinc-800/80" : "border-gray-100"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2 h-5 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full" />
+                  <h2
+                    className={`text-lg font-bold tracking-tight ${
+                      isDarkMode ? "text-white" : "text-gray-900"
+                    }`}
+                  >
+                    {editId ? "Edit Category" : "Add New Category"}
+                  </h2>
+                </div>
                 {editId && (
                   <button
                     onClick={handleCancel}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className={`p-1.5 rounded-xl border transition-colors cursor-pointer ${
+                      isDarkMode
+                        ? "bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800"
+                        : "bg-gray-100 border-gray-200 text-gray-500 hover:text-gray-900"
+                    }`}
                     title="Cancel editing"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    <X className="w-4 h-4" />
                   </button>
                 )}
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${
+                      isDarkMode ? "text-zinc-300" : "text-gray-700"
+                    }`}
                   >
-                    Category Name
+                    Category Name <span className="text-rose-500">*</span>
                   </label>
                   <input
                     id="name"
                     type="text"
-                    placeholder="Enter category name"
+                    placeholder="e.g. Snacks, Beverages, Organic"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/50 ${
+                      isDarkMode
+                        ? "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-500"
+                        : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-amber-500"
+                    }`}
                     required
                   />
                 </div>
@@ -197,19 +259,25 @@ const Category = () => {
                 <div>
                   <label
                     htmlFor="description"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${
+                      isDarkMode ? "text-zinc-300" : "text-gray-700"
+                    }`}
                   >
-                    Description
+                    Description <span className="text-rose-500">*</span>
                   </label>
                   <textarea
                     id="description"
-                    placeholder="Enter category description"
+                    placeholder="Enter category description..."
                     value={form.description}
                     onChange={(e) =>
                       setForm({ ...form, description: e.target.value })
                     }
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                    className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none ${
+                      isDarkMode
+                        ? "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-500"
+                        : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-amber-500"
+                    }`}
                     required
                   />
                 </div>
@@ -217,9 +285,11 @@ const Category = () => {
                 <div>
                   <label
                     htmlFor="parentId"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${
+                      isDarkMode ? "text-zinc-300" : "text-gray-700"
+                    }`}
                   >
-                    Parent Category (optional)
+                    Parent Category (Optional)
                   </label>
                   <select
                     id="parentId"
@@ -232,50 +302,55 @@ const Category = () => {
                           : null,
                       })
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/50 ${
+                      isDarkMode
+                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-amber-500"
+                        : "bg-white border-gray-200 text-gray-900 focus:border-amber-500"
+                    }`}
                     style={{ fontFamily: "monospace" }}
                   >
-                    <option value="">None (Top-level)</option>
+                    <option value="">None (Top-level Category)</option>
                     {dropdownCategories.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.displayName}
                       </option>
                     ))}
                   </select>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Categories are shown in hierarchical order
+                  <p
+                    className={`mt-1.5 text-xs ${
+                      isDarkMode ? "text-zinc-500" : "text-gray-500"
+                    }`}
+                  >
+                    Categories are shown in hierarchical nesting order
                   </p>
                 </div>
 
-                <div className="flex space-x-3">
+                <div className="flex items-center gap-3 pt-2">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                    className="flex-1 bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-zinc-950 font-bold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2 cursor-pointer text-sm"
                   >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d={
-                          editId
-                            ? "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            : "M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        }
-                      />
-                    </svg>
-                    <span>{editId ? "Update Category" : "Add Category"}</span>
+                    {editId ? (
+                      <>
+                        <Edit size={16} />
+                        <span>Update Category</span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus size={16} />
+                        <span>Add Category</span>
+                      </>
+                    )}
                   </button>
                   {editId && (
                     <button
                       type="button"
                       onClick={handleCancel}
-                      className="px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                      className={`px-4 py-3 border text-sm font-semibold rounded-xl transition-colors cursor-pointer ${
+                        isDarkMode
+                          ? "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
+                          : "bg-gray-100 border-gray-200 text-gray-700 hover:bg-gray-200"
+                      }`}
                     >
                       Cancel
                     </button>
@@ -287,161 +362,190 @@ const Category = () => {
 
           {/* Table Section */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  All Categories (Hierarchical View)
-                </h2>
+            <div
+              className={`rounded-3xl border overflow-hidden transition-all duration-200 ${
+                isDarkMode
+                  ? "bg-zinc-950 border-zinc-800/90 shadow-xl shadow-black/40"
+                  : "bg-white border-slate-200/80 shadow-sm"
+              }`}
+            >
+              <div
+                className={`px-6 py-5 border-b flex items-center justify-between ${
+                  isDarkMode ? "border-zinc-800/80" : "border-gray-100"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Layers className="h-5 w-5 text-amber-500" />
+                  <h2
+                    className={`text-lg font-bold tracking-tight ${
+                      isDarkMode ? "text-white" : "text-gray-900"
+                    }`}
+                  >
+                    All Categories (Hierarchical View)
+                  </h2>
+                </div>
               </div>
 
               {loading ? (
-                <div className="flex items-center justify-center py-12">
-                  <div className="flex items-center space-x-3 text-gray-500">
-                    <svg
-                      className="animate-spin w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                <div className="flex items-center justify-center py-16">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-500 mx-auto mb-3"></div>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-zinc-400" : "text-gray-500"
+                      }`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
-                    <span>Loading categories...</span>
+                      Loading categories...
+                    </p>
                   </div>
                 </div>
               ) : tableCategories.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <svg
-                      className="w-8 h-8 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                      />
-                    </svg>
+                <div className="text-center py-16 px-4">
+                  <div
+                    className={`w-20 h-20 rounded-3xl border mx-auto mb-4 flex items-center justify-center ${
+                      isDarkMode
+                        ? "bg-zinc-900 border-zinc-800 text-zinc-400"
+                        : "bg-gray-100 border-gray-200 text-gray-400"
+                    }`}
+                  >
+                    <FolderTree className="w-10 h-10" />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3
+                    className={`text-lg font-bold mb-1.5 ${
+                      isDarkMode ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     No categories yet
                   </h3>
-                  <p className="text-gray-500">
-                    Create your first category to get started.
+                  <p
+                    className={`text-sm max-w-sm mx-auto ${
+                      isDarkMode ? "text-zinc-400" : "text-gray-500"
+                    }`}
+                  >
+                    Create your first category using the form on the left.
                   </p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50">
+                  <table className="w-full text-left">
+                    <thead
+                      className={`border-b text-xs font-semibold uppercase tracking-wider ${
+                        isDarkMode
+                          ? "bg-zinc-900/60 border-zinc-800 text-zinc-400"
+                          : "bg-gray-50/80 border-gray-200 text-gray-500"
+                      }`}
+                    >
                       <tr>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          ID
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Name
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Description
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Parent
-                        </th>
-                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
-                        </th>
+                        <th className="px-6 py-3.5">ID</th>
+                        <th className="px-6 py-3.5">Name</th>
+                        <th className="px-6 py-3.5">Description</th>
+                        <th className="px-6 py-3.5">Parent</th>
+                        <th className="px-6 py-3.5 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {tableCategories.map((cat: any, index: number) => (
+                    <tbody
+                      className={`divide-y text-sm ${
+                        isDarkMode
+                          ? "divide-zinc-800/60 text-zinc-200"
+                          : "divide-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {tableCategories.map((cat: any) => (
                         <tr
                           key={cat.id}
-                          className={`hover:bg-gray-50 transition-colors ${
+                          className={`transition-colors ${
                             editId === cat.id
-                              ? "bg-blue-50 border-l-4 border-blue-500"
-                              : ""
+                              ? isDarkMode
+                                ? "bg-amber-500/10 border-l-4 border-amber-500"
+                                : "bg-amber-50/70 border-l-4 border-amber-500"
+                              : isDarkMode
+                              ? "hover:bg-zinc-900/40"
+                              : "hover:bg-slate-50"
                           }`}
                         >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          <td
+                            className={`px-6 py-4 whitespace-nowrap text-xs font-semibold ${
+                              isDarkMode ? "text-zinc-400" : "text-gray-500"
+                            }`}
+                          >
                             #{cat.id}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div
-                              className="text-sm font-medium text-gray-900"
+                              className={`font-semibold text-sm ${
+                                isDarkMode ? "text-white" : "text-gray-900"
+                              }`}
                               style={{ fontFamily: "monospace" }}
                             >
                               {cat.displayName}
                             </div>
                             {cat.level > 0 && (
-                              <div className="text-xs text-gray-500 mt-1">
+                              <div
+                                className={`text-xs mt-0.5 ${
+                                  isDarkMode ? "text-zinc-500" : "text-gray-400"
+                                }`}
+                              >
                                 Subcategory (Level {cat.level})
                               </div>
                             )}
                           </td>
                           <td className="px-6 py-4">
-                            <div className="text-sm text-gray-600 max-w-xs truncate">
-                              {cat.description}
+                            <div
+                              className={`text-xs max-w-xs truncate ${
+                                isDarkMode ? "text-zinc-400" : "text-gray-600"
+                              }`}
+                            >
+                              {cat.description || "—"}
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap">
                             {cat.parentId ? (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                                  isDarkMode
+                                    ? "bg-zinc-900 border-zinc-800 text-zinc-400"
+                                    : "bg-gray-100 border-gray-200 text-gray-600"
+                                }`}
+                              >
                                 #{cat.parentId}
                               </span>
                             ) : (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                                  isDarkMode
+                                    ? "bg-emerald-950/60 border-emerald-800/60 text-emerald-400"
+                                    : "bg-emerald-50 border-emerald-200 text-emerald-700"
+                                }`}
+                              >
                                 Root
                               </span>
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="flex items-center justify-end space-x-2">
+                          <td className="px-6 py-4 whitespace-nowrap text-right">
+                            <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => handleEdit(cat)}
-                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 transition-colors duration-200"
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                                  isDarkMode
+                                    ? "bg-zinc-900 border-zinc-800 text-amber-400 hover:bg-zinc-800 hover:border-zinc-700"
+                                    : "bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
+                                }`}
                                 title="Edit category"
                               >
-                                <svg
-                                  className="w-3 h-3 mr-1"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                  />
-                                </svg>
-                                Edit
+                                <Edit size={13} />
+                                <span>Edit</span>
                               </button>
                               <button
                                 onClick={() => handleDelete(cat.id)}
-                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-green-700 bg-red-100 hover:bg-red-200 transition-colors duration-200"
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                                  isDarkMode
+                                    ? "bg-zinc-900 border-zinc-800 text-rose-400 hover:bg-rose-950/40 hover:border-rose-900"
+                                    : "bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100"
+                                }`}
                                 title="Delete category"
                               >
-                                <svg
-                                  className="w-3 h-3 mr-1"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                  />
-                                </svg>
-                                Delete
+                                <Trash2 size={13} />
+                                <span>Delete</span>
                               </button>
                             </div>
                           </td>

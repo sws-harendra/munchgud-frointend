@@ -170,7 +170,7 @@ export default function ProductDetailPage() {
                 </button>
                 <button
                   onClick={() => handleDeleteVariant(variant.id)}
-                  className="px-3 py-1 bg-red-100 text-green-700 rounded"
+                  className="px-3 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded transition-colors"
                 >
                   Delete
                 </button>

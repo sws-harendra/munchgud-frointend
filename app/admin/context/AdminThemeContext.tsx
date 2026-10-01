@@ -314,3 +314,7 @@ export function useAdminTheme() {
   }
   return context;
 }
+
+export function useSafeAdminTheme() {
+  return useContext(AdminThemeContext) || null;
+}

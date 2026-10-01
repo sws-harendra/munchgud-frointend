@@ -9,7 +9,8 @@ import {
 } from "@/app/lib/store/features/mediaCoverageSlice";
 import { toast } from "sonner";
 import { getImageUrl } from "@/app/utils/getImageUrl";
-import { X, Image as ImageIcon } from "lucide-react";
+import { X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { useSafeAdminTheme } from "@/app/admin/context/AdminThemeContext";
 
 interface MediaCoverageFormProps {
   onSuccess: () => void;
@@ -25,6 +26,9 @@ const MediaCoverageForm = ({
   isEditMode,
 }: MediaCoverageFormProps) => {
   const dispatch = useAppDispatch();
+  const themeContext = useSafeAdminTheme();
+  const isDarkMode = Boolean(themeContext?.isDark || themeContext?.resolvedTheme === "dark");
+
   const [title, setTitle] = useState(initialData?.title || "");
   const [url, setUrl] = useState(initialData?.url || "");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -63,8 +67,6 @@ const MediaCoverageForm = ({
       }
 
       if (isEditMode && initialData) {
-        console.log(initialData);
-        console.log("formdata==>", formData);
         await dispatch(
           updateMediaCoverage({ id: initialData.id, formData })
         ).unwrap();
@@ -76,8 +78,6 @@ const MediaCoverageForm = ({
 
       onSuccess();
     } catch (error: any) {
-      console.log(error);
-
       toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
@@ -85,10 +85,14 @@ const MediaCoverageForm = ({
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={onSubmit} className="space-y-5">
       {/* Title */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${
+            isDarkMode ? "text-zinc-400" : "text-gray-700"
+          }`}
+        >
           Title
         </label>
         <input
@@ -96,14 +100,22 @@ const MediaCoverageForm = ({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/20 ${
+            isDarkMode
+              ? "bg-zinc-900/90 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-500/60"
+              : "bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-amber-500"
+          }`}
           placeholder="Enter title"
         />
       </div>
 
       {/* URL */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${
+            isDarkMode ? "text-zinc-400" : "text-gray-700"
+          }`}
+        >
           URL
         </label>
         <input
@@ -111,24 +123,40 @@ const MediaCoverageForm = ({
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/20 ${
+            isDarkMode
+              ? "bg-zinc-900/90 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-500/60"
+              : "bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-amber-500"
+          }`}
           placeholder="https://example.com"
         />
       </div>
 
       {/* Image */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Image {!isEditMode && "(Required)"}
+        <label
+          className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${
+            isDarkMode ? "text-zinc-400" : "text-gray-700"
+          }`}
+        >
+          Image {!isEditMode && <span className="text-amber-500">* (Required)</span>}
         </label>
-        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-          <div className="space-y-1 text-center">
+        <div
+          className={`mt-1 flex justify-center px-6 pt-6 pb-6 border-2 border-dashed rounded-2xl transition-all ${
+            isDarkMode
+              ? "border-zinc-800 bg-zinc-900/40 hover:border-amber-500/40 hover:bg-zinc-900/70"
+              : "border-gray-300 bg-gray-50/60 hover:border-amber-500/40 hover:bg-gray-50"
+          }`}
+        >
+          <div className="space-y-2 text-center w-full">
             {previewImage ? (
-              <div className="relative">
+              <div className="relative inline-block max-w-full">
                 <img
                   src={previewImage}
                   alt="Preview"
-                  className="max-h-48 mx-auto"
+                  className={`max-h-48 rounded-xl object-contain mx-auto border shadow-md ${
+                    isDarkMode ? "border-zinc-800 bg-zinc-950/60" : "border-gray-200 bg-white"
+                  }`}
                 />
                 <button
                   type="button"
@@ -136,20 +164,31 @@ const MediaCoverageForm = ({
                     setPreviewImage(null);
                     setSelectedFile(null);
                   }}
-                  className="absolute -top-2 -right-2 bg-green-600 text-white rounded-full p-1"
+                  className="absolute -top-2.5 -right-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-full p-1.5 shadow-lg transition-transform hover:scale-110 cursor-pointer"
+                  title="Remove image"
                 >
-                  <X size={16} />
+                  <X size={15} />
                 </button>
               </div>
             ) : (
               <>
                 <div className="flex justify-center">
-                  <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
+                  <div
+                    className={`p-3 rounded-2xl ${
+                      isDarkMode ? "bg-zinc-800/80 text-amber-400" : "bg-amber-50 text-amber-600"
+                    }`}
+                  >
+                    <ImageIcon className="h-8 w-8" />
+                  </div>
                 </div>
-                <div className="flex text-sm text-gray-600">
+                <div className="flex items-center justify-center text-sm">
                   <label
                     htmlFor="file-upload"
-                    className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"
+                    className={`relative cursor-pointer font-semibold transition-colors focus-within:outline-none ${
+                      isDarkMode
+                        ? "text-amber-400 hover:text-amber-300"
+                        : "text-amber-600 hover:text-amber-700"
+                    }`}
                   >
                     <span>Upload a file</span>
                     <input
@@ -161,9 +200,13 @@ const MediaCoverageForm = ({
                       required={!isEditMode}
                     />
                   </label>
-                  <p className="pl-1">or drag and drop</p>
+                  <p className={`pl-1.5 ${isDarkMode ? "text-zinc-400" : "text-gray-500"}`}>
+                    or drag and drop
+                  </p>
                 </div>
-                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                <p className={`text-xs ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
+                  PNG, JPG, GIF up to 5MB
+                </p>
               </>
             )}
           </div>
@@ -171,20 +214,27 @@ const MediaCoverageForm = ({
       </div>
 
       {/* Buttons */}
-      <div className="flex justify-end space-x-3 pt-4">
+      <div className={`flex justify-end items-center gap-3 pt-4 border-t ${
+        isDarkMode ? "border-zinc-800/80" : "border-gray-200"
+      }`}>
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
+            isDarkMode
+              ? "border-zinc-800 bg-zinc-900/60 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+              : "border-gray-200 bg-white text-gray-700 hover:bg-gray-100"
+          }`}
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-zinc-950 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 shadow-md shadow-amber-500/20 disabled:opacity-50 transition-all cursor-pointer"
         >
-          {isSubmitting ? "Saving..." : isEditMode ? "Update" : "Create"}
+          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+          {isSubmitting ? "Saving..." : isEditMode ? "Update Coverage" : "Create Coverage"}
         </button>
       </div>
     </form>

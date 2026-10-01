@@ -30,16 +30,16 @@ import {
   LayoutGrid,
   List,
   Filter,
-  Layers,
-  Sparkles,
   FileText,
   User,
-  Tag,
-  AlertCircle,
 } from "lucide-react";
+import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
 
 export default function AdminBlogManagement() {
   const dispatch = useAppDispatch();
+  const { isDark, resolvedTheme } = useAdminTheme();
+  const isDarkMode = Boolean(isDark || resolvedTheme === "dark");
+
   const posts = useAppSelector(selectAllPosts) || [];
   const status = useAppSelector(selectBlogStatus);
 
@@ -162,19 +162,37 @@ export default function AdminBlogManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900/10 p-4 sm:p-6 lg:p-8 space-y-8">
+    <div
+      className={`min-h-screen p-4 sm:p-6 lg:p-8 space-y-8 transition-colors ${
+        isDarkMode ? "bg-black text-white" : "bg-slate-900/5 text-gray-900"
+      }`}
+    >
       {/* 1. Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
+      <div
+        className={`flex flex-col md:flex-row md:items-center md:justify-between gap-4 rounded-3xl p-6 border transition-all ${
+          isDarkMode
+            ? "bg-zinc-900/60 border-zinc-800/80 shadow-black"
+            : "bg-white border-slate-200/80 shadow-sm"
+        }`}
+      >
         <div>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 via-amber-600 to-yellow-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/25">
               <BookOpen className="w-6 h-6 fill-white/20" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+              <h1
+                className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
                 Acoustic Journal & Blogs
               </h1>
-              <p className="text-sm text-gray-500 mt-0.5">
+              <p
+                className={`text-sm mt-0.5 ${
+                  isDarkMode ? "text-zinc-400" : "text-gray-500"
+                }`}
+              >
                 Manage all articles, audio technology guides, lifestyle stories, and editorial features. Everything is 100% dynamic.
               </p>
             </div>
@@ -185,7 +203,11 @@ export default function AdminBlogManagement() {
           <button
             onClick={() => dispatch(fetchBlogPosts())}
             title="Refresh Data"
-            className="p-3 rounded-2xl border border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all cursor-pointer"
+            className={`p-3 rounded-2xl border transition-all cursor-pointer ${
+              isDarkMode
+                ? "border-zinc-800 bg-zinc-950/60 text-zinc-400 hover:text-white hover:bg-zinc-800"
+                : "border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
           >
             <RefreshCw
               className={`w-5 h-5 ${status === "loading" ? "animate-spin" : ""}`}
@@ -195,15 +217,19 @@ export default function AdminBlogManagement() {
           <Link
             href="/blogs"
             target="_blank"
-            className="flex items-center gap-2 px-4 py-3 rounded-2xl border border-amber-300 bg-amber-50/50 text-amber-900 hover:bg-amber-100 font-semibold text-sm transition-all"
+            className={`flex items-center gap-2 px-4 py-3 rounded-2xl border font-semibold text-sm transition-all ${
+              isDarkMode
+                ? "border-amber-500/30 bg-amber-950/30 text-amber-400 hover:bg-amber-950/50"
+                : "border-amber-300 bg-amber-50/50 text-amber-900 hover:bg-amber-100"
+            }`}
           >
-            <ExternalLink className="w-4 h-4 text-amber-600" />
+            <ExternalLink className="w-4 h-4 text-amber-500" />
             <span>View Live Journal</span>
           </Link>
 
           <Link
             href="/admin/dashboard/blogs/create"
-            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold text-sm hover:from-amber-700 hover:to-amber-800 shadow-md shadow-amber-600/20 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-zinc-950 font-bold text-sm shadow-md shadow-amber-500/20 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>+ Write New Article</span>
@@ -214,96 +240,292 @@ export default function AdminBlogManagement() {
       {/* 2. KPI Metrics Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {/* Total Articles */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-gray-500 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Total Articles</span>
-            <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
+        <div
+          className={`rounded-3xl p-5 border flex flex-col justify-between transition-all ${
+            isDarkMode
+              ? "bg-zinc-900/60 border-zinc-800/80 shadow-black"
+              : "bg-white border-slate-200/80 shadow-xs"
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span
+              className={`text-xs font-semibold uppercase tracking-wider ${
+                isDarkMode ? "text-zinc-400" : "text-gray-500"
+              }`}
+            >
+              Total Articles
+            </span>
+            <div
+              className={`p-2 rounded-xl ${
+                isDarkMode
+                  ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                  : "bg-blue-50 text-blue-600"
+              }`}
+            >
               <FileText className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-gray-900">{stats.total}</div>
-          <span className="text-xs text-gray-400 mt-1">In database</span>
+          <div
+            className={`text-3xl font-extrabold ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
+            {stats.total}
+          </div>
+          <span
+            className={`text-xs mt-1 ${
+              isDarkMode ? "text-zinc-500" : "text-gray-400"
+            }`}
+          >
+            In database
+          </span>
         </div>
 
         {/* Published */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-gray-500 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Published</span>
-            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+        <div
+          className={`rounded-3xl p-5 border flex flex-col justify-between transition-all ${
+            isDarkMode
+              ? "bg-zinc-900/60 border-zinc-800/80 shadow-black"
+              : "bg-white border-slate-200/80 shadow-xs"
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span
+              className={`text-xs font-semibold uppercase tracking-wider ${
+                isDarkMode ? "text-zinc-400" : "text-gray-500"
+              }`}
+            >
+              Published
+            </span>
+            <div
+              className={`p-2 rounded-xl ${
+                isDarkMode
+                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                  : "bg-emerald-50 text-emerald-600"
+              }`}
+            >
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-emerald-600">{stats.published}</div>
-          <span className="text-xs text-emerald-600/70 mt-1">Live on storefront</span>
+          <div className="text-3xl font-extrabold text-emerald-500">
+            {stats.published}
+          </div>
+          <span
+            className={`text-xs mt-1 ${
+              isDarkMode ? "text-emerald-500/70" : "text-emerald-600/70"
+            }`}
+          >
+            Live on storefront
+          </span>
         </div>
 
         {/* Drafts */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-gray-500 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Drafts</span>
-            <div className="p-2 rounded-xl bg-slate-100 text-slate-600">
+        <div
+          className={`rounded-3xl p-5 border flex flex-col justify-between transition-all ${
+            isDarkMode
+              ? "bg-zinc-900/60 border-zinc-800/80 shadow-black"
+              : "bg-white border-slate-200/80 shadow-xs"
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span
+              className={`text-xs font-semibold uppercase tracking-wider ${
+                isDarkMode ? "text-zinc-400" : "text-gray-500"
+              }`}
+            >
+              Drafts
+            </span>
+            <div
+              className={`p-2 rounded-xl ${
+                isDarkMode
+                  ? "bg-zinc-800 text-zinc-400 border border-zinc-700/50"
+                  : "bg-slate-100 text-slate-600"
+              }`}
+            >
               <Clock className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-slate-700">{stats.drafts}</div>
-          <span className="text-xs text-gray-400 mt-1">Unpublished</span>
+          <div
+            className={`text-3xl font-extrabold ${
+              isDarkMode ? "text-zinc-200" : "text-slate-700"
+            }`}
+          >
+            {stats.drafts}
+          </div>
+          <span
+            className={`text-xs mt-1 ${
+              isDarkMode ? "text-zinc-500" : "text-gray-400"
+            }`}
+          >
+            Unpublished
+          </span>
         </div>
 
         {/* Featured Story */}
-        <div className="bg-white rounded-3xl p-5 border border-amber-200/80 bg-gradient-to-br from-amber-50/40 to-white shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-amber-700 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Featured</span>
-            <div className="p-2 rounded-xl bg-amber-100 text-amber-600">
-              <Star className="w-4 h-4 fill-amber-500" />
+        <div
+          className={`rounded-3xl p-5 border flex flex-col justify-between transition-all ${
+            isDarkMode
+              ? "bg-gradient-to-br from-amber-950/40 via-zinc-900/70 to-zinc-900/90 border-amber-500/30 shadow-black"
+              : "bg-white border-amber-200/80 bg-gradient-to-br from-amber-50/40 to-white shadow-xs"
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span
+              className={`text-xs font-semibold uppercase tracking-wider ${
+                isDarkMode ? "text-amber-400/90" : "text-amber-700"
+              }`}
+            >
+              Featured
+            </span>
+            <div
+              className={`p-2 rounded-xl ${
+                isDarkMode
+                  ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                  : "bg-amber-100 text-amber-600"
+              }`}
+            >
+              <Star
+                className={`w-4 h-4 ${
+                  isDarkMode ? "fill-amber-400 text-amber-400" : "fill-amber-500"
+                }`}
+              />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-amber-700">{stats.featured}</div>
-          <span className="text-xs text-amber-700/70 mt-1">Hero spot highlight</span>
+          <div
+            className={`text-3xl font-extrabold ${
+              isDarkMode ? "text-amber-400" : "text-amber-700"
+            }`}
+          >
+            {stats.featured}
+          </div>
+          <span
+            className={`text-xs mt-1 ${
+              isDarkMode ? "text-amber-400/60" : "text-amber-700/70"
+            }`}
+          >
+            Hero spot highlight
+          </span>
         </div>
 
         {/* Trending Top */}
-        <div className="bg-white rounded-3xl p-5 border border-orange-200/80 bg-gradient-to-br from-orange-50/40 to-white shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-orange-700 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Trending</span>
-            <div className="p-2 rounded-xl bg-orange-100 text-orange-600">
-              <Flame className="w-4 h-4 fill-orange-500" />
+        <div
+          className={`rounded-3xl p-5 border flex flex-col justify-between transition-all ${
+            isDarkMode
+              ? "bg-gradient-to-br from-orange-950/40 via-zinc-900/70 to-zinc-900/90 border-orange-500/30 shadow-black"
+              : "bg-white border-orange-200/80 bg-gradient-to-br from-orange-50/40 to-white shadow-xs"
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span
+              className={`text-xs font-semibold uppercase tracking-wider ${
+                isDarkMode ? "text-orange-400/90" : "text-orange-700"
+              }`}
+            >
+              Trending
+            </span>
+            <div
+              className={`p-2 rounded-xl ${
+                isDarkMode
+                  ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+                  : "bg-orange-100 text-orange-600"
+              }`}
+            >
+              <Flame
+                className={`w-4 h-4 ${
+                  isDarkMode ? "fill-orange-400 text-orange-400" : "fill-orange-500"
+                }`}
+              />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-orange-700">{stats.trending}</div>
-          <span className="text-xs text-orange-700/70 mt-1">Ranked charts</span>
+          <div
+            className={`text-3xl font-extrabold ${
+              isDarkMode ? "text-orange-400" : "text-orange-700"
+            }`}
+          >
+            {stats.trending}
+          </div>
+          <span
+            className={`text-xs mt-1 ${
+              isDarkMode ? "text-orange-400/60" : "text-orange-700/70"
+            }`}
+          >
+            Ranked charts
+          </span>
         </div>
 
         {/* Total Views */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-gray-500 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">Total Views</span>
-            <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
+        <div
+          className={`rounded-3xl p-5 border flex flex-col justify-between transition-all ${
+            isDarkMode
+              ? "bg-zinc-900/60 border-zinc-800/80 shadow-black"
+              : "bg-white border-slate-200/80 shadow-xs"
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span
+              className={`text-xs font-semibold uppercase tracking-wider ${
+                isDarkMode ? "text-zinc-400" : "text-gray-500"
+              }`}
+            >
+              Total Views
+            </span>
+            <div
+              className={`p-2 rounded-xl ${
+                isDarkMode
+                  ? "bg-purple-500/10 text-purple-400 border border-purple-500/20"
+                  : "bg-purple-50 text-purple-600"
+              }`}
+            >
               <Eye className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-purple-700">
-            {stats.totalViews > 1000 ? `${(stats.totalViews / 1000).toFixed(1)}k` : stats.totalViews}
+          <div
+            className={`text-3xl font-extrabold ${
+              isDarkMode ? "text-purple-400" : "text-purple-700"
+            }`}
+          >
+            {stats.totalViews > 1000
+              ? `${(stats.totalViews / 1000).toFixed(1)}k`
+              : stats.totalViews}
           </div>
-          <span className="text-xs text-gray-400 mt-1">Reader impressions</span>
+          <span
+            className={`text-xs mt-1 ${
+              isDarkMode ? "text-zinc-500" : "text-gray-400"
+            }`}
+          >
+            Reader impressions
+          </span>
         </div>
       </div>
 
       {/* 3. Filters & Controls Strip */}
-      <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+      <div
+        className={`rounded-3xl p-5 border flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between transition-all ${
+          isDarkMode
+            ? "bg-zinc-900/60 border-zinc-800/80 shadow-black"
+            : "bg-white border-slate-200/80 shadow-sm"
+        }`}
+      >
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search by title, excerpt, category, or author..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 text-sm text-gray-800 placeholder-gray-400 bg-slate-50/50"
+            className={`w-full pl-11 pr-4 py-2.5 rounded-2xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/20 ${
+              isDarkMode
+                ? "bg-zinc-950/80 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-500/60"
+                : "bg-slate-50/50 border-gray-200 text-gray-800 placeholder-gray-400 focus:border-amber-500"
+            }`}
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 px-1"
+              className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs px-1 ${
+                isDarkMode ? "text-zinc-500 hover:text-white" : "text-gray-400 hover:text-gray-600"
+              }`}
             >
               Clear
             </button>
@@ -314,15 +536,25 @@ export default function AdminBlogManagement() {
         <div className="flex items-center gap-3 flex-wrap">
           {/* Category Dropdown */}
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-gray-400 hidden sm:block" />
+            <Filter className="w-4 h-4 text-zinc-400 hidden sm:block" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3.5 py-2.5 rounded-2xl border border-gray-200 text-sm font-medium text-gray-700 bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+              className={`px-3.5 py-2.5 rounded-2xl border text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/20 ${
+                isDarkMode
+                  ? "bg-zinc-950/80 border-zinc-800 text-zinc-300 focus:border-amber-500/60"
+                  : "bg-slate-50/50 border-gray-200 text-gray-700 focus:border-amber-500"
+              }`}
             >
-              <option value="all">All Categories ({posts.length})</option>
+              <option value="all" className={isDarkMode ? "bg-zinc-900 text-white" : ""}>
+                All Categories ({posts.length})
+              </option>
               {availableCategories.map((cat) => (
-                <option key={cat} value={cat}>
+                <option
+                  key={cat}
+                  value={cat}
+                  className={isDarkMode ? "bg-zinc-900 text-white" : ""}
+                >
                   {cat} ({posts.filter((p) => p.category === cat).length})
                 </option>
               ))}
@@ -330,12 +562,22 @@ export default function AdminBlogManagement() {
           </div>
 
           {/* Status Tabs */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-2xl text-xs font-semibold">
+          <div
+            className={`flex items-center p-1 rounded-2xl text-xs font-semibold border ${
+              isDarkMode
+                ? "bg-zinc-950/90 border-zinc-800"
+                : "bg-slate-100 border-slate-200/60"
+            }`}
+          >
             <button
               onClick={() => setStatusFilter("all")}
-              className={`px-3 py-1.5 rounded-xl transition ${
+              className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
                 statusFilter === "all"
-                  ? "bg-white text-gray-900 shadow-xs"
+                  ? isDarkMode
+                    ? "bg-zinc-800 text-amber-400 font-bold shadow-sm border border-zinc-700/60"
+                    : "bg-white text-gray-900 shadow-xs"
+                  : isDarkMode
+                  ? "text-zinc-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -343,9 +585,13 @@ export default function AdminBlogManagement() {
             </button>
             <button
               onClick={() => setStatusFilter("published")}
-              className={`px-3 py-1.5 rounded-xl transition ${
+              className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
                 statusFilter === "published"
-                  ? "bg-white text-emerald-700 shadow-xs"
+                  ? isDarkMode
+                    ? "bg-zinc-800 text-emerald-400 font-bold shadow-sm border border-zinc-700/60"
+                    : "bg-white text-emerald-700 shadow-xs"
+                  : isDarkMode
+                  ? "text-zinc-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -353,9 +599,13 @@ export default function AdminBlogManagement() {
             </button>
             <button
               onClick={() => setStatusFilter("draft")}
-              className={`px-3 py-1.5 rounded-xl transition ${
+              className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
                 statusFilter === "draft"
-                  ? "bg-white text-slate-800 shadow-xs"
+                  ? isDarkMode
+                    ? "bg-zinc-800 text-zinc-200 font-bold shadow-sm border border-zinc-700/60"
+                    : "bg-white text-slate-800 shadow-xs"
+                  : isDarkMode
+                  ? "text-zinc-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -363,9 +613,13 @@ export default function AdminBlogManagement() {
             </button>
             <button
               onClick={() => setStatusFilter("featured")}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl transition ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl transition cursor-pointer ${
                 statusFilter === "featured"
-                  ? "bg-white text-amber-700 shadow-xs"
+                  ? isDarkMode
+                    ? "bg-zinc-800 text-amber-400 font-bold shadow-sm border border-zinc-700/60"
+                    : "bg-white text-amber-700 shadow-xs"
+                  : isDarkMode
+                  ? "text-zinc-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -374,9 +628,13 @@ export default function AdminBlogManagement() {
             </button>
             <button
               onClick={() => setStatusFilter("trending")}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl transition ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl transition cursor-pointer ${
                 statusFilter === "trending"
-                  ? "bg-white text-orange-700 shadow-xs"
+                  ? isDarkMode
+                    ? "bg-zinc-800 text-orange-400 font-bold shadow-sm border border-zinc-700/60"
+                    : "bg-white text-orange-700 shadow-xs"
+                  : isDarkMode
+                  ? "text-zinc-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -386,13 +644,23 @@ export default function AdminBlogManagement() {
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-2xl">
+          <div
+            className={`flex items-center p-1 rounded-2xl border ${
+              isDarkMode
+                ? "bg-zinc-950/90 border-zinc-800"
+                : "bg-slate-100 border-slate-200/60"
+            }`}
+          >
             <button
               onClick={() => setViewMode("grid")}
               title="Grid View"
-              className={`p-1.5 rounded-xl transition ${
+              className={`p-1.5 rounded-xl transition cursor-pointer ${
                 viewMode === "grid"
-                  ? "bg-white text-gray-900 shadow-xs"
+                  ? isDarkMode
+                    ? "bg-zinc-800 text-amber-400 shadow-sm border border-zinc-700/60"
+                    : "bg-white text-gray-900 shadow-xs"
+                  : isDarkMode
+                  ? "text-zinc-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -401,9 +669,13 @@ export default function AdminBlogManagement() {
             <button
               onClick={() => setViewMode("table")}
               title="Table View"
-              className={`p-1.5 rounded-xl transition ${
+              className={`p-1.5 rounded-xl transition cursor-pointer ${
                 viewMode === "table"
-                  ? "bg-white text-gray-900 shadow-xs"
+                  ? isDarkMode
+                    ? "bg-zinc-800 text-amber-400 shadow-sm border border-zinc-700/60"
+                    : "bg-white text-gray-900 shadow-xs"
+                  : isDarkMode
+                  ? "text-zinc-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -415,10 +687,30 @@ export default function AdminBlogManagement() {
 
       {/* 4. Articles Grid / Table Display */}
       {filteredPosts.length === 0 ? (
-        <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-xs">
-          <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-gray-800">No blog articles found</h3>
-          <p className="text-sm text-gray-500 mt-1 max-w-sm mx-auto">
+        <div
+          className={`rounded-3xl p-12 text-center border transition-all ${
+            isDarkMode
+              ? "bg-zinc-900/40 border-zinc-800/80 shadow-black"
+              : "bg-white border-slate-200/80 shadow-xs"
+          }`}
+        >
+          <BookOpen
+            className={`w-12 h-12 mx-auto mb-3 ${
+              isDarkMode ? "text-zinc-600" : "text-gray-300"
+            }`}
+          />
+          <h3
+            className={`text-lg font-bold ${
+              isDarkMode ? "text-white" : "text-gray-800"
+            }`}
+          >
+            No blog articles found
+          </h3>
+          <p
+            className={`text-sm mt-1 max-w-sm mx-auto ${
+              isDarkMode ? "text-zinc-400" : "text-gray-500"
+            }`}
+          >
             No articles match your current search or filter criteria. Try clearing filters or create a new article.
           </p>
           <div className="mt-5 flex items-center justify-center gap-3">
@@ -429,14 +721,18 @@ export default function AdminBlogManagement() {
                   setSelectedCategory("all");
                   setStatusFilter("all");
                 }}
-                className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50"
+                className={`px-4 py-2 rounded-xl border text-sm font-semibold transition cursor-pointer ${
+                  isDarkMode
+                    ? "border-zinc-800 bg-zinc-900/60 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                }`}
               >
                 Reset All Filters
               </button>
             )}
             <Link
               href="/admin/dashboard/blogs/create"
-              className="px-4 py-2 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-zinc-950 text-sm font-bold shadow-md shadow-amber-500/20 transition cursor-pointer"
             >
               + Create Article
             </Link>
@@ -450,7 +746,11 @@ export default function AdminBlogManagement() {
             return (
               <div
                 key={post.id}
-                className="bg-white rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col group"
+                className={`rounded-3xl border shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col group ${
+                  isDarkMode
+                    ? "bg-zinc-900/60 border-zinc-800/80 hover:border-zinc-700/80 shadow-black"
+                    : "bg-white border-slate-200/80 hover:border-slate-300"
+                }`}
               >
                 {/* Cover Image & Overlaid Badges */}
                 <div className="relative h-48 w-full bg-slate-950 overflow-hidden">
@@ -471,7 +771,13 @@ export default function AdminBlogManagement() {
 
                   {/* Category Chip */}
                   <div className="absolute top-3 left-3">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/90 backdrop-blur-md text-gray-900 shadow-sm">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-sm ${
+                        isDarkMode
+                          ? "bg-black/80 text-amber-400 border border-zinc-800"
+                          : "bg-white/90 text-gray-900"
+                      }`}
+                    >
                       {post.category || "Editorial"}
                     </span>
                   </div>
@@ -528,9 +834,17 @@ export default function AdminBlogManagement() {
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
                     {/* Status Pill & Author */}
-                    <div className="flex items-center justify-between gap-2 mb-2.5 text-xs text-gray-500">
-                      <span className="flex items-center gap-1 font-medium text-gray-600">
-                        <User className="w-3 h-3 text-gray-400" />
+                    <div
+                      className={`flex items-center justify-between gap-2 mb-2.5 text-xs ${
+                        isDarkMode ? "text-zinc-400" : "text-gray-500"
+                      }`}
+                    >
+                      <span
+                        className={`flex items-center gap-1 font-medium ${
+                          isDarkMode ? "text-zinc-300" : "text-gray-600"
+                        }`}
+                      >
+                        <User className="w-3 h-3 text-zinc-400" />
                         {post.authorName || "Team Flazo"}
                       </span>
 
@@ -538,10 +852,14 @@ export default function AdminBlogManagement() {
                       <button
                         onClick={() => handleToggleStatus(post.id)}
                         disabled={actionLoadingId === post.id}
-                        className={`px-2.5 py-0.5 rounded-full font-bold cursor-pointer transition ${
+                        className={`px-2.5 py-0.5 rounded-full font-bold cursor-pointer transition border ${
                           isPublished
-                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                            : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+                            ? isDarkMode
+                              ? "bg-emerald-950/60 text-emerald-400 border-emerald-800/60 hover:bg-emerald-900/60"
+                              : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                            : isDarkMode
+                            ? "bg-zinc-800/80 text-zinc-400 border-zinc-700/50 hover:bg-zinc-700/80"
+                            : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
                         }`}
                       >
                         {isPublished ? "● Live / Published" : "○ Draft"}
@@ -551,28 +869,44 @@ export default function AdminBlogManagement() {
                     {/* Title */}
                     <Link
                       href={`/admin/dashboard/blogs/edit/${post.id}/${post.slug || "article"}`}
-                      className="block font-bold text-gray-900 hover:text-amber-600 transition text-base line-clamp-2 mb-2"
+                      className={`block font-bold transition text-base line-clamp-2 mb-2 ${
+                        isDarkMode
+                          ? "text-white hover:text-amber-400"
+                          : "text-gray-900 hover:text-amber-600"
+                      }`}
                     >
                       {post.title}
                     </Link>
 
                     {/* Excerpt */}
                     {post.excerpt && (
-                      <p className="text-gray-500 text-xs line-clamp-2 mb-4 leading-relaxed">
+                      <p
+                        className={`text-xs line-clamp-2 mb-4 leading-relaxed ${
+                          isDarkMode ? "text-zinc-400" : "text-gray-500"
+                        }`}
+                      >
                         {post.excerpt}
                       </p>
                     )}
                   </div>
 
                   {/* Card Footer Actions */}
-                  <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between">
+                  <div
+                    className={`pt-4 mt-2 border-t flex items-center justify-between ${
+                      isDarkMode ? "border-zinc-800/80" : "border-slate-100"
+                    }`}
+                  >
                     <div className="flex items-center gap-2">
                       {/* Live Storefront View */}
                       <Link
                         href={`/blogs/${post.id}/${post.slug || "article"}`}
                         target="_blank"
                         title="View on Storefront"
-                        className="p-2 rounded-xl text-gray-500 hover:text-amber-600 hover:bg-amber-50 transition"
+                        className={`p-2 rounded-xl transition ${
+                          isDarkMode
+                            ? "text-zinc-400 hover:text-amber-400 hover:bg-zinc-800/60"
+                            : "text-gray-500 hover:text-amber-600 hover:bg-amber-50"
+                        }`}
                       >
                         <ExternalLink className="w-4 h-4" />
                       </Link>
@@ -581,7 +915,11 @@ export default function AdminBlogManagement() {
                       <Link
                         href={`/admin/dashboard/blogs/${post.id}/${post.slug || "article"}`}
                         title="Admin View"
-                        className="p-2 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition"
+                        className={`p-2 rounded-xl transition ${
+                          isDarkMode
+                            ? "text-zinc-400 hover:text-blue-400 hover:bg-zinc-800/60"
+                            : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+                        }`}
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
@@ -590,7 +928,11 @@ export default function AdminBlogManagement() {
                       <Link
                         href={`/admin/dashboard/blogs/edit/${post.id}/${post.slug || "article"}`}
                         title="Edit Article"
-                        className="p-2 rounded-xl text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 transition"
+                        className={`p-2 rounded-xl transition ${
+                          isDarkMode
+                            ? "text-zinc-400 hover:text-emerald-400 hover:bg-zinc-800/60"
+                            : "text-gray-500 hover:text-emerald-600 hover:bg-emerald-50"
+                        }`}
                       >
                         <Edit className="w-4 h-4" />
                       </Link>
@@ -600,7 +942,11 @@ export default function AdminBlogManagement() {
                     <button
                       onClick={() => handleDelete(post.id, post.title)}
                       title="Delete Article"
-                      className="p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer"
+                      className={`p-2 rounded-xl transition cursor-pointer ${
+                        isDarkMode
+                          ? "text-zinc-400 hover:text-rose-400 hover:bg-rose-950/40"
+                          : "text-gray-400 hover:text-red-600 hover:bg-red-50"
+                      }`}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -612,10 +958,26 @@ export default function AdminBlogManagement() {
         </div>
       ) : (
         /* TABLE VIEW */
-        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div
+          className={`rounded-3xl border overflow-hidden transition-all ${
+            isDarkMode
+              ? "bg-zinc-900/60 border-zinc-800/80 shadow-black"
+              : "bg-white border-slate-200/80 shadow-xs"
+          }`}
+        >
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600">
-              <thead className="bg-slate-50/80 text-xs uppercase tracking-wider text-gray-500 font-semibold border-b border-slate-200">
+            <table
+              className={`w-full text-left text-sm ${
+                isDarkMode ? "text-zinc-300" : "text-gray-600"
+              }`}
+            >
+              <thead
+                className={`text-xs uppercase tracking-wider font-semibold border-b ${
+                  isDarkMode
+                    ? "bg-zinc-950/90 text-zinc-400 border-zinc-800"
+                    : "bg-slate-50/80 text-gray-500 border-slate-200"
+                }`}
+              >
                 <tr>
                   <th className="px-6 py-4">Article</th>
                   <th className="px-4 py-4">Category</th>
@@ -627,15 +989,30 @@ export default function AdminBlogManagement() {
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody
+                className={`divide-y ${
+                  isDarkMode ? "divide-zinc-800/80" : "divide-slate-100"
+                }`}
+              >
                 {filteredPosts.map((post) => {
                   const isPublished = post.status === "published" || !post.status;
                   return (
-                    <tr key={post.id} className="hover:bg-slate-50/60 transition">
+                    <tr
+                      key={post.id}
+                      className={`transition ${
+                        isDarkMode ? "hover:bg-zinc-800/40" : "hover:bg-slate-50/60"
+                      }`}
+                    >
                       {/* Article & Image */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-14 h-14 rounded-2xl bg-slate-900 overflow-hidden shrink-0 border border-slate-200">
+                          <div
+                            className={`w-14 h-14 rounded-2xl overflow-hidden shrink-0 border ${
+                              isDarkMode
+                                ? "bg-zinc-950 border-zinc-800"
+                                : "bg-slate-900 border-slate-200"
+                            }`}
+                          >
                             {post.featuredImage ? (
                               <img
                                 src={getImageUrl(post.featuredImage)}
@@ -643,7 +1020,7 @@ export default function AdminBlogManagement() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-slate-500 text-xs">
+                              <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs">
                                 No img
                               </div>
                             )}
@@ -651,11 +1028,19 @@ export default function AdminBlogManagement() {
                           <div>
                             <Link
                               href={`/admin/dashboard/blogs/edit/${post.id}/${post.slug || "article"}`}
-                              className="font-bold text-gray-900 hover:text-amber-600 transition line-clamp-1"
+                              className={`font-bold transition line-clamp-1 ${
+                                isDarkMode
+                                  ? "text-white hover:text-amber-400"
+                                  : "text-gray-900 hover:text-amber-600"
+                              }`}
                             >
                               {post.title}
                             </Link>
-                            <span className="text-xs text-gray-400 font-mono">
+                            <span
+                              className={`text-xs font-mono ${
+                                isDarkMode ? "text-zinc-500" : "text-gray-400"
+                              }`}
+                            >
                               /{post.slug}
                             </span>
                           </div>
@@ -664,13 +1049,23 @@ export default function AdminBlogManagement() {
 
                       {/* Category */}
                       <td className="px-4 py-4">
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                            isDarkMode
+                              ? "bg-zinc-800 text-zinc-300 border-zinc-700/50"
+                              : "bg-slate-100 text-slate-800 border-slate-200"
+                          }`}
+                        >
                           {post.category || "General"}
                         </span>
                       </td>
 
                       {/* Author */}
-                      <td className="px-4 py-4 text-xs font-medium text-gray-700">
+                      <td
+                        className={`px-4 py-4 text-xs font-medium ${
+                          isDarkMode ? "text-zinc-300" : "text-gray-700"
+                        }`}
+                      >
                         {post.authorName || "Team Flazo"}
                       </td>
 
@@ -679,10 +1074,14 @@ export default function AdminBlogManagement() {
                         <button
                           onClick={() => handleToggleStatus(post.id)}
                           disabled={actionLoadingId === post.id}
-                          className={`px-3 py-1 rounded-full text-xs font-bold cursor-pointer transition ${
+                          className={`px-3 py-1 rounded-full text-xs font-bold cursor-pointer transition border ${
                             isPublished
-                              ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                              : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+                              ? isDarkMode
+                                ? "bg-emerald-950/60 text-emerald-400 border-emerald-800/60 hover:bg-emerald-900/60"
+                                : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                              : isDarkMode
+                              ? "bg-zinc-800/80 text-zinc-400 border-zinc-700/50 hover:bg-zinc-700/80"
+                              : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
                           }`}
                         >
                           {isPublished ? "Published" : "Draft"}
@@ -696,12 +1095,20 @@ export default function AdminBlogManagement() {
                           disabled={actionLoadingId === post.id}
                           className={`p-2 rounded-xl transition cursor-pointer ${
                             post.isFeatured
-                              ? "bg-amber-100 text-amber-700"
+                              ? isDarkMode
+                                ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                                : "bg-amber-100 text-amber-700"
+                              : isDarkMode
+                              ? "text-zinc-600 hover:text-amber-400 hover:bg-zinc-800"
                               : "text-gray-300 hover:text-amber-500 hover:bg-amber-50"
                           }`}
                         >
                           <Star
-                            className={`w-4 h-4 ${post.isFeatured ? "fill-amber-500 text-amber-500" : ""}`}
+                            className={`w-4 h-4 ${
+                              post.isFeatured
+                                ? "fill-amber-500 text-amber-500"
+                                : ""
+                            }`}
                           />
                         </button>
                       </td>
@@ -713,18 +1120,30 @@ export default function AdminBlogManagement() {
                           disabled={actionLoadingId === post.id}
                           className={`p-2 rounded-xl transition cursor-pointer ${
                             post.isTrending
-                              ? "bg-orange-100 text-orange-700"
+                              ? isDarkMode
+                                ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+                                : "bg-orange-100 text-orange-700"
+                              : isDarkMode
+                              ? "text-zinc-600 hover:text-orange-400 hover:bg-zinc-800"
                               : "text-gray-300 hover:text-orange-500 hover:bg-orange-50"
                           }`}
                         >
                           <Flame
-                            className={`w-4 h-4 ${post.isTrending ? "fill-orange-500 text-orange-500" : ""}`}
+                            className={`w-4 h-4 ${
+                              post.isTrending
+                                ? "fill-orange-500 text-orange-500"
+                                : ""
+                            }`}
                           />
                         </button>
                       </td>
 
                       {/* Views */}
-                      <td className="px-4 py-4 text-xs font-semibold text-gray-700">
+                      <td
+                        className={`px-4 py-4 text-xs font-semibold ${
+                          isDarkMode ? "text-zinc-300" : "text-gray-700"
+                        }`}
+                      >
                         {post.views || 0}
                       </td>
 
@@ -735,21 +1154,33 @@ export default function AdminBlogManagement() {
                             href={`/blogs/${post.id}/${post.slug || "article"}`}
                             target="_blank"
                             title="Live Storefront"
-                            className="p-2 rounded-xl text-gray-500 hover:text-amber-600 hover:bg-amber-50"
+                            className={`p-2 rounded-xl transition ${
+                              isDarkMode
+                                ? "text-zinc-400 hover:text-amber-400 hover:bg-zinc-800"
+                                : "text-gray-500 hover:text-amber-600 hover:bg-amber-50"
+                            }`}
                           >
                             <ExternalLink className="w-4 h-4" />
                           </Link>
                           <Link
                             href={`/admin/dashboard/blogs/edit/${post.id}/${post.slug || "article"}`}
                             title="Edit"
-                            className="p-2 rounded-xl text-gray-500 hover:text-emerald-600 hover:bg-emerald-50"
+                            className={`p-2 rounded-xl transition ${
+                              isDarkMode
+                                ? "text-zinc-400 hover:text-emerald-400 hover:bg-zinc-800"
+                                : "text-gray-500 hover:text-emerald-600 hover:bg-emerald-50"
+                            }`}
                           >
                             <Edit className="w-4 h-4" />
                           </Link>
                           <button
                             onClick={() => handleDelete(post.id, post.title)}
                             title="Delete"
-                            className="p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
+                            className={`p-2 rounded-xl transition cursor-pointer ${
+                              isDarkMode
+                                ? "text-zinc-400 hover:text-rose-400 hover:bg-rose-950/40"
+                                : "text-gray-400 hover:text-red-600 hover:bg-red-50"
+                            }`}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

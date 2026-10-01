@@ -3,9 +3,10 @@ import { useAppDispatch } from "@/app/lib/store/store";
 import { categoryService } from "@/app/sercices/category.service";
 import { Category } from "@/app/types/product.types";
 import { getImageUrl } from "@/app/utils/getImageUrl";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useSafeAdminTheme } from "@/app/admin/context/AdminThemeContext";
 
 const EditBannerForm = ({
   banner,
@@ -15,6 +16,9 @@ const EditBannerForm = ({
   onSuccess: () => void;
 }) => {
   const dispatch = useAppDispatch();
+  const themeContext = useSafeAdminTheme();
+  const isDarkMode = Boolean(themeContext?.isDark || themeContext?.resolvedTheme === "dark");
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [form, setForm] = useState<Partial<Banner>>({});
   const [file, setFile] = useState<File | null>(null);
@@ -74,31 +78,45 @@ const EditBannerForm = ({
     }
   };
 
+  const inputClass = `w-full px-4 py-3 border rounded-xl transition-all text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 ${
+    isDarkMode
+      ? "bg-zinc-900/90 border-zinc-800 text-white placeholder-zinc-500 focus:border-amber-500/60"
+      : "bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-amber-500"
+  }`;
+
+  const labelClass = `block text-xs font-semibold uppercase tracking-wider mb-1.5 ${
+    isDarkMode ? "text-zinc-400" : "text-gray-700"
+  }`;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Current Image Preview */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">
-          Current Image
-        </label>
-        <div className="relative">
+      <div>
+        <label className={labelClass}>Current Image</label>
+        <div className="relative group overflow-hidden rounded-2xl border border-zinc-800/80">
           <img
             src={`${getImageUrl(banner.imageUrl)}`}
             alt={banner.title}
-            className="w-full h-32 object-cover rounded-xl border"
+            className="w-full h-36 object-cover"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-40 rounded-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-            <span className="text-white text-sm">Current Banner Image</span>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="text-white text-xs font-semibold px-3 py-1.5 bg-black/70 rounded-full border border-zinc-700/60">
+              Current Banner Image
+            </span>
           </div>
         </div>
       </div>
 
       {/* New Image Upload */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">
-          Upload New Image (Optional)
-        </label>
-        <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition-colors">
+      <div>
+        <label className={labelClass}>Upload New Image (Optional)</label>
+        <div
+          className={`border-2 border-dashed rounded-2xl p-6 text-center transition-all ${
+            isDarkMode
+              ? "border-zinc-800 bg-zinc-900/40 hover:border-amber-500/50 hover:bg-zinc-900/70"
+              : "border-gray-300 bg-gray-50/50 hover:border-amber-500/50 hover:bg-gray-50"
+          }`}
+        >
           <input
             type="file"
             onChange={handleFileChange}
@@ -108,81 +126,96 @@ const EditBannerForm = ({
           />
           <label
             htmlFor="edit-image-upload"
-            className="cursor-pointer flex flex-col items-center gap-2"
+            className="cursor-pointer flex flex-col items-center gap-2.5"
           >
-            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-              <Plus className="w-6 h-6 text-gray-400" />
+            <div
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${
+                isDarkMode ? "bg-zinc-800/80 text-amber-400" : "bg-amber-50 text-amber-600"
+              }`}
+            >
+              <Plus className="w-6 h-6" />
             </div>
-            <span className="text-sm text-gray-600">
-              {file ? file.name : "Click to upload new image"}
+            <span
+              className={`text-sm font-medium ${
+                isDarkMode ? "text-zinc-300" : "text-gray-600"
+              }`}
+            >
+              {file ? file.name : "Click to upload replacement image"}
+            </span>
+            <span className={`text-xs ${isDarkMode ? "text-zinc-500" : "text-gray-400"}`}>
+              Recommended size: 1920x600 px (PNG, JPG, WebP)
             </span>
           </label>
         </div>
       </div>
 
       {/* Title */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Title *</label>
+      <div>
+        <label className={labelClass}>Title *</label>
         <input
           name="title"
           value={form.title || ""}
           onChange={handleChange}
           placeholder="Enter banner title"
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          className={inputClass}
         />
       </div>
 
       {/* Subtitle */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Subtitle</label>
+      <div>
+        <label className={labelClass}>Subtitle</label>
         <textarea
           name="subtitle"
           value={form.subtitle || ""}
           onChange={handleChange}
           placeholder="Enter banner subtitle"
           rows={3}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+          className={`${inputClass} resize-none`}
         />
       </div>
 
       {/* Link */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Link URL</label>
+      <div>
+        <label className={labelClass}>Link URL</label>
         <input
           name="link"
           value={form.link || ""}
           onChange={handleChange}
           placeholder="https://example.com"
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          className={inputClass}
         />
       </div>
 
       {/* CTA Text */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">
-          CTA Button Text
-        </label>
+      <div>
+        <label className={labelClass}>CTA Button Text</label>
         <input
           name="ctaText"
           value={form.ctaText || ""}
           onChange={handleChange}
           placeholder="Learn More"
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          className={inputClass}
         />
       </div>
 
       {/* Category */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Category</label>
+      <div>
+        <label className={labelClass}>Category</label>
         <select
           name="categoryId"
           value={form.categoryId?.toString() || ""}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          className={inputClass}
         >
-          <option value="">Select Category</option>
+          <option value="" className={isDarkMode ? "bg-zinc-900 text-white" : ""}>
+            Select Category
+          </option>
           {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
+            <option
+              key={cat.id}
+              value={cat.id}
+              className={isDarkMode ? "bg-zinc-900 text-white" : ""}
+            >
               {cat.name}
             </option>
           ))}
@@ -193,8 +226,9 @@ const EditBannerForm = ({
       <button
         onClick={handleSave}
         disabled={loading || !form.title}
-        className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-600/25"
+        className="w-full py-3 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-zinc-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer flex items-center justify-center gap-2"
       >
+        {loading && <Loader2 className="w-5 h-5 animate-spin" />}
         {loading ? "Updating..." : "Update Banner"}
       </button>
     </div>

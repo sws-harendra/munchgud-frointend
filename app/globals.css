@@ -43,9 +43,10 @@ h1, h2, h3, h4, h5, h6 {
 /* Custom Sleek Gold Scrollbar */
 ::-webkit-scrollbar {
   width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: #E5C158;
@@ -53,6 +54,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #D4AF37;
+}
+
+.dark ::-webkit-scrollbar-track,
+.admin-theme-root.dark ::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.dark ::-webkit-scrollbar-thumb,
+.admin-theme-root.dark ::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.4);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover,
+.admin-theme-root.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.7);
 }
 
 /* Add basic typography styles for Tiptap editor */
@@ -425,16 +441,27 @@ h1, h2, h3, h4, h5, h6 {
   color: #f1f5f9;
 }
 
-.admin-theme-root.dark .bg-gray-50,
-.admin-theme-root.dark .bg-neutral-50,
-.admin-theme-root.dark .bg-slate-50,
-.admin-theme-root.dark .bg-neutral-50\/50,
-.admin-theme-root.dark .bg-gray-50\/50 {
+.admin-theme-root.dark [class*="bg-gray-50"],
+.admin-theme-root.dark [class*="bg-neutral-50"],
+.admin-theme-root.dark [class*="bg-slate-50"] {
   background-color: #090d16 !important;
+}
+
+.admin-theme-root.dark .hover\:bg-white:hover {
+  background-color: #1e293b !important;
+}
+
+.admin-theme-root.dark [class*="from-slate-50"],
+.admin-theme-root.dark [class*="from-slate-100"],
+.admin-theme-root.dark [class*="via-blue-50"] {
+  background-image: none !important;
+  background-color: transparent !important;
 }
 
 .admin-theme-root.dark .bg-gray-100,
 .admin-theme-root.dark .bg-neutral-100,
+.admin-theme-root.dark .bg-blue-50,
+.admin-theme-root.dark .bg-sky-50,
 .admin-theme-root.dark .bg-amber-50 {
   background-color: #1e293b !important;
   color: #f1f5f9;
@@ -445,6 +472,8 @@ h1, h2, h3, h4, h5, h6 {
 .admin-theme-root.dark .border-slate-200,
 .admin-theme-root.dark .border-gray-100,
 .admin-theme-root.dark .border-neutral-100,
+.admin-theme-root.dark .border-blue-100,
+.admin-theme-root.dark .border-blue-200,
 .admin-theme-root.dark [class*="border-amber-900"],
 .admin-theme-root.dark .border-amber-200 {
   border-color: #1e293b !important;
@@ -495,6 +524,13 @@ h1, h2, h3, h4, h5, h6 {
 .admin-theme-root.dark .text-rose-800,
 .admin-theme-root.dark .text-rose-900 {
   color: #f87171 !important;
+}
+
+.admin-theme-root.dark .text-blue-600,
+.admin-theme-root.dark .text-blue-700,
+.admin-theme-root.dark .text-blue-800,
+.admin-theme-root.dark .text-blue-900 {
+  color: #93c5fd !important;
 }
 
 

@@ -12,9 +12,19 @@ import {
   Package,
   Sparkles,
 } from "lucide-react";
+import { useAdminTheme } from "../context/AdminThemeContext";
 
-export default function EditSectionForm({ section }: { section: any }) {
+export default function EditSectionForm({
+  section,
+  onSuccess,
+}: {
+  section: any;
+  onSuccess?: () => void;
+}) {
   const dispatch = useAppDispatch();
+  const { isDark, resolvedTheme } = useAdminTheme();
+  const isDarkMode = Boolean(isDark || resolvedTheme === "dark");
+
   const { products, status } = useAppSelector((state) => state.product);
 
   const [title, setTitle] = useState(section?.title || "");
@@ -27,7 +37,7 @@ export default function EditSectionForm({ section }: { section: any }) {
     section?.Products?.map((p: any) => p.id) || [],
   );
 
-  const loading = status == "loading";
+  const loading = status === "loading";
 
   // fetch products on search
   useEffect(() => {
@@ -63,6 +73,7 @@ export default function EditSectionForm({ section }: { section: any }) {
       ).unwrap();
 
       toast.success("Section updated successfully!");
+      onSuccess?.();
     } catch (error: any) {
       console.error("Failed to update section:", error);
       toast.error(error?.message || error?.data?.message || "Failed to update section");
@@ -70,47 +81,69 @@ export default function EditSectionForm({ section }: { section: any }) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-2xl p-6 text-white">
+    <div className="max-w-3xl mx-auto space-y-6">
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 rounded-2xl p-6 text-white shadow-lg shadow-indigo-600/20">
         <div className="flex items-center gap-3">
-          <div className="bg-white/20 p-2 rounded-lg">
+          <div className="bg-white/20 p-2.5 rounded-xl backdrop-blur-xs">
             <Sparkles className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold">Edit Section</h2>
-            <p className="text-indigo-100 mt-1">
-              Update section details and add products
+            <h2 className="text-xl font-bold tracking-tight">Edit Section</h2>
+            <p className="text-indigo-100 text-xs sm:text-sm mt-0.5">
+              Update section details and attached products
             </p>
           </div>
         </div>
       </div>
 
-      {/* Form */}
-      <div className="bg-white rounded-b-2xl shadow-xl p-8">
+      {/* Form Card */}
+      <div
+        className={`rounded-2xl border p-6 sm:p-7 transition-colors ${
+          isDarkMode
+            ? "bg-zinc-950 border-zinc-800/90 text-white shadow-xl shadow-black/40"
+            : "bg-white border-slate-200/80 text-gray-900 shadow-md"
+        }`}
+      >
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700">
-                Section Title
+          <div className="grid md:grid-cols-2 gap-5">
+            <div className="space-y-1.5">
+              <label
+                className={`block text-xs font-semibold uppercase tracking-wider ${
+                  isDarkMode ? "text-zinc-300" : "text-gray-700"
+                }`}
+              >
+                Section Title <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+                className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${
+                  isDarkMode
+                    ? "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-indigo-500"
+                    : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"
+                }`}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700">
+            <div className="space-y-1.5">
+              <label
+                className={`block text-xs font-semibold uppercase tracking-wider ${
+                  isDarkMode ? "text-zinc-300" : "text-gray-700"
+                }`}
+              >
                 Display Order
               </label>
               <input
                 type="number"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+                className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${
+                  isDarkMode
+                    ? "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-indigo-500"
+                    : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"
+                }`}
                 value={order}
                 onChange={(e) => setOrder(Number(e.target.value))}
               />
@@ -118,80 +151,206 @@ export default function EditSectionForm({ section }: { section: any }) {
           </div>
 
           {/* Description */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
+          <div className="space-y-1.5">
+            <label
+              className={`block text-xs font-semibold uppercase tracking-wider ${
+                isDarkMode ? "text-zinc-300" : "text-gray-700"
+              }`}
+            >
               Description
             </label>
             <textarea
               rows={3}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+              className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-none ${
+                isDarkMode
+                  ? "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-indigo-500"
+                  : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"
+              }`}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
           {/* Status toggle */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div
+            className={`flex items-center justify-between p-4 rounded-xl border transition-colors ${
+              isDarkMode
+                ? "bg-zinc-900/60 border-zinc-800"
+                : "bg-gray-50 border-gray-200"
+            }`}
+          >
             <div className="flex items-center gap-3">
-              <CheckCircle2
-                className={`h-5 w-5 ${
-                  isActive ? "text-green-600" : "text-gray-400"
+              <div
+                className={`p-2 rounded-lg ${
+                  isActive
+                    ? isDarkMode
+                      ? "bg-emerald-950/60 text-emerald-400"
+                      : "bg-emerald-100 text-emerald-700"
+                    : isDarkMode
+                    ? "bg-zinc-800 text-zinc-500"
+                    : "bg-gray-100 text-gray-400"
+                }`}
+              >
+                <CheckCircle2 className="h-5 w-5" />
+              </div>
+              <div>
+                <p
+                  className={`font-semibold text-sm ${
+                    isDarkMode ? "text-white" : "text-gray-800"
+                  }`}
+                >
+                  Section Status
+                </p>
+                <p
+                  className={`text-xs ${
+                    isDarkMode ? "text-zinc-400" : "text-gray-500"
+                  }`}
+                >
+                  {isActive
+                    ? "Active and visible on storefront"
+                    : "Hidden from customers"}
+                </p>
+              </div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={isActive}
+                onChange={(e) => setIsActive(e.target.checked)}
+              />
+              <div
+                className={`w-11 h-6 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all ${
+                  isDarkMode
+                    ? "bg-zinc-700 peer-checked:bg-indigo-600"
+                    : "bg-gray-200 peer-checked:bg-indigo-600"
                 }`}
               />
-              <span className="font-semibold text-gray-700">
-                {isActive ? "Active" : "Hidden"}
-              </span>
-            </div>
-            <input
-              type="checkbox"
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-            />
+            </label>
           </div>
 
           {/* Search + Product List */}
-          <div className="space-y-4">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Package className="h-4 w-4 text-indigo-400" />
+              <h3
+                className={`text-sm font-semibold uppercase tracking-wider ${
+                  isDarkMode ? "text-zinc-200" : "text-gray-800"
+                }`}
+              >
+                Attach Products
+              </h3>
+            </div>
+
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 h-4 w-4" />
               <input
                 type="text"
-                className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl"
-                placeholder="Search products..."
+                className={`w-full pl-11 pr-4 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${
+                  isDarkMode
+                    ? "bg-zinc-900 border-zinc-800 text-white placeholder-zinc-500 focus:border-indigo-500"
+                    : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"
+                }`}
+                placeholder="Search products by title or brand..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
+          </div>
 
-            <div className="bg-gray-50 rounded-xl p-4 max-h-80 overflow-y-auto space-y-2">
-              {loading && <p className="text-center">Loading...</p>}
+          {/* Product List */}
+          <div
+            className={`rounded-2xl border p-3 ${
+              isDarkMode
+                ? "bg-zinc-900/40 border-zinc-800"
+                : "bg-gray-50 border-gray-200"
+            }`}
+          >
+            <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
+              {loading && (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                </div>
+              )}
+
               {!loading &&
                 Array.isArray(products?.products) &&
-                products.products?.map((product: any) => (
-                  <div
-                    key={product.id}
-                    className={`flex items-center justify-between p-3 rounded-lg cursor-pointer ${
-                      selectedProducts.includes(product.id)
-                        ? "bg-indigo-50 border-2 border-indigo-200"
-                        : "bg-white border border-gray-200"
-                    }`}
-                    onClick={() => toggleProduct(product.id)}
-                  >
-                    <span>{product.name}</span>
-                    {selectedProducts.includes(product.id) ? (
-                      <Trash2 className="text-green-700 h-5 w-5" />
-                    ) : (
-                      <Plus className="text-gray-600 h-5 w-5" />
-                    )}
+                products.products.length === 0 && (
+                  <div className="text-center py-8">
+                    <Package className="h-10 w-10 text-zinc-500 mx-auto mb-2 opacity-50" />
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-zinc-400" : "text-gray-500"
+                      }`}
+                    >
+                      No products found
+                    </p>
                   </div>
-                ))}
+                )}
+
+              {!loading &&
+                Array.isArray(products?.products) &&
+                products.products?.map((product: any) => {
+                  const isSelected = selectedProducts.includes(product.id);
+                  return (
+                    <div
+                      key={product.id}
+                      className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-200 border ${
+                        isSelected
+                          ? isDarkMode
+                            ? "bg-indigo-950/60 border-indigo-700/80 text-white"
+                            : "bg-indigo-50 border-indigo-300 text-indigo-950"
+                          : isDarkMode
+                          ? "bg-zinc-900/70 border-zinc-800/80 hover:border-zinc-700 text-zinc-200 hover:bg-zinc-900"
+                          : "bg-white border-gray-200 hover:border-gray-300 text-gray-800 hover:shadow-xs"
+                      }`}
+                      onClick={() => toggleProduct(product.id)}
+                    >
+                      <div className="flex-1 pr-2">
+                        <p
+                          className={`font-semibold text-sm ${
+                            isDarkMode ? "text-white" : "text-gray-800"
+                          }`}
+                        >
+                          {product.name}
+                        </p>
+                        <p className="text-xs text-indigo-400 font-semibold mt-0.5">
+                          ₹{product.discountPrice}
+                        </p>
+                      </div>
+                      <div
+                        className={`p-2 rounded-lg transition-colors ${
+                          isSelected
+                            ? "bg-rose-500/20 text-rose-400"
+                            : isDarkMode
+                            ? "bg-zinc-800 text-zinc-400"
+                            : "bg-gray-100 text-gray-600 hover:bg-indigo-100"
+                        }`}
+                      >
+                        {isSelected ? (
+                          <Trash2 className="h-4 w-4" />
+                        ) : (
+                          <Plus className="h-4 w-4" />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           </div>
 
           {/* Selected Products */}
           {selectedProducts.length > 0 && (
-            <div className="bg-green-50 border border-green-200 p-4 rounded-xl">
-              <h4 className="font-semibold text-green-800 mb-2">
-                Selected Products
+            <div
+              className={`rounded-2xl p-4 border transition-colors ${
+                isDarkMode
+                  ? "bg-emerald-950/30 border-emerald-800/40 text-emerald-300"
+                  : "bg-emerald-50/70 border-emerald-200 text-emerald-800"
+              }`}
+            >
+              <h4 className="text-xs font-semibold uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                Selected Products ({selectedProducts.length})
               </h4>
               <div className="flex flex-wrap gap-2">
                 {selectedProducts.map((id) => {
@@ -201,9 +360,13 @@ export default function EditSectionForm({ section }: { section: any }) {
                   return (
                     <span
                       key={id}
-                      className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-800"
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${
+                        isDarkMode
+                          ? "bg-emerald-900/40 border-emerald-700/50 text-emerald-200"
+                          : "bg-emerald-100 border-emerald-200 text-emerald-800"
+                      }`}
                     >
-                      {product?.name || `Product #${id}`}
+                      {product?.title || product?.name || `Product #${id}`}
                     </span>
                   );
                 })}
@@ -212,12 +375,14 @@ export default function EditSectionForm({ section }: { section: any }) {
           )}
 
           {/* Save Button */}
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-semibold"
-          >
-            Save Changes
-          </button>
+          <div className="pt-2">
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:to-purple-500 text-white py-3.5 rounded-xl font-semibold transition-all duration-200 shadow-lg shadow-indigo-600/25 cursor-pointer"
+            >
+              Save Changes
+            </button>
+          </div>
         </form>
       </div>
     </div>
