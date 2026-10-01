@@ -30,56 +30,6 @@ export default function Footer() {
 
   return (
     <footer className="bg-white border-t border-amber-200/80 text-neutral-800">
-      
-      {/* Top Value Assurance Ribbon (boAt & Boult Style) */}
-      <div className="bg-amber-50/70 border-b border-amber-100 py-8">
-        <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-8 lg:px-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
-            
-            <div className="flex flex-col md:flex-row items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-black text-neutral-900">1-Year Warranty</h4>
-                <p className="text-[11px] text-neutral-500">Doorstep instant swap</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
-                <Truck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-black text-neutral-900">Free Express Delivery</h4>
-                <p className="text-[11px] text-neutral-500">Fast 48h India dispatch</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
-                <RotateCcw className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-black text-neutral-900">7 Days Return</h4>
-                <p className="text-[11px] text-neutral-500">No hassle guarantee</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-black text-neutral-900">24K Gold Accents</h4>
-                <p className="text-[11px] text-neutral-500">Luxury audio design</p>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
       {/* Main Footer Links */}
       <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-8 lg:px-12 py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
