@@ -38,10 +38,10 @@ import {
 } from "@/app/lib/store/features/orderSlice";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { useAdminTheme } from "../../context/AdminThemeContext";
+import Loader from "@/app/commonComponents/loader";
 import OrderDetailsModal from "../../components/orderDetailModal";
 import SidebarForm from "../../components/SidebarForm";
 import EditOrder from "../../components/editOrder";
-import Loader from "@/app/commonComponents/loader";
 import { toast } from "sonner";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 
@@ -796,11 +796,8 @@ const OrderManagement = () => {
           }`}
         >
           {loading ? (
-            <div className="p-16 text-center space-y-3">
-              <div className="animate-spin rounded-full h-10 w-10 border-2 border-amber-500 border-t-transparent mx-auto" />
-              <p className={`text-xs font-semibold ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
-                Fetching live order dispatch stream...
-              </p>
+            <div className="py-12 flex justify-center items-center">
+              <Loader inline size={110} text="Fetching live order stream..." />
             </div>
           ) : error ? (
             <div className="p-12 text-center">

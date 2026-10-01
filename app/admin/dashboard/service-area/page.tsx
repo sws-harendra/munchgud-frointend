@@ -17,6 +17,7 @@ import {
   Map,
 } from "lucide-react";
 import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
+import Loader from "@/app/commonComponents/loader";
 
 interface Pincode {
   id: number;
@@ -515,20 +516,13 @@ export default function ServiceAreaPage() {
             {/* Main Delivery Areas List */}
             {loading ? (
               <div
-                className={`rounded-3xl border p-12 flex flex-col items-center justify-center space-y-4 ${
+                className={`rounded-3xl border p-12 flex flex-col items-center justify-center ${
                   isDarkMode
                     ? "bg-zinc-950 border-zinc-800/90 text-white shadow-xl shadow-black/40"
                     : "bg-white border-slate-200/80 shadow-sm"
                 }`}
               >
-                <RefreshCw className="w-8 h-8 text-amber-500 animate-spin" />
-                <span
-                  className={`text-sm font-medium ${
-                    isDarkMode ? "text-zinc-400" : "text-gray-500"
-                  }`}
-                >
-                  Fetching active delivery areas...
-                </span>
+                <Loader inline size={110} text="Fetching active delivery areas..." />
               </div>
             ) : filteredPincodes.length === 0 ? (
               <div

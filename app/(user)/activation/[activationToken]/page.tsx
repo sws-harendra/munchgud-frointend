@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { authService } from "@/app/sercices/user/auth.service";
 import { useAppDispatch } from "@/app/lib/store/store";
 import { getUserDetails } from "@/app/lib/store/features/authSlice";
+import Loader from "@/app/commonComponents/loader";
 
 export default function ActivateAccount() {
   const { activationToken } = useParams();
@@ -46,10 +47,7 @@ export default function ActivateAccount() {
   return (
     <div className="flex items-center justify-center h-screen">
       {status === "loading" && (
-        <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <p>Verifying your account...</p>
-        </div>
+        <Loader size={130} text="Verifying your account..." />
       )}
 
       {status === "success" && (

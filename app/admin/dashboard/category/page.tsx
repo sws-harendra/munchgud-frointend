@@ -17,6 +17,7 @@ import {
   Layers,
 } from "lucide-react";
 import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
+import Loader from "@/app/commonComponents/loader";
 
 const Category = () => {
   const dispatch = useAppDispatch();
@@ -387,18 +388,7 @@ const Category = () => {
               </div>
 
               {loading ? (
-                <div className="flex items-center justify-center py-16">
-                  <div className="text-center">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-500 mx-auto mb-3"></div>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-zinc-400" : "text-gray-500"
-                      }`}
-                    >
-                      Loading categories...
-                    </p>
-                  </div>
-                </div>
+                <Loader size={110} text="Loading categories..." />
               ) : tableCategories.length === 0 ? (
                 <div className="text-center py-16 px-4">
                   <div

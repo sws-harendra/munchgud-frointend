@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import SidebarForm from "../../components/SidebarForm";
 import AddUsers from "../../components/addUser";
 import EditUser from "../../components/editUser";
+import Loader from "@/app/commonComponents/loader";
 import {
   Users,
   UserCheck,
@@ -418,12 +419,7 @@ export default function AdminUsersPage() {
             isDark ? "bg-zinc-950 border-zinc-800" : "bg-white border border-slate-200"
           }`}
         >
-          <div className="inline-flex flex-col items-center gap-3">
-            <div className="w-10 h-10 border-3 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
-            <p className={`text-sm font-medium ${isDark ? "text-zinc-400" : "text-slate-600"}`}>
-              Loading users directory...
-            </p>
-          </div>
+          <Loader size={110} text="Loading users directory..." />
         </div>
       )}
 

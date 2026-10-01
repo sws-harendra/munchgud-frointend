@@ -7,6 +7,7 @@ import { getImageUrl } from "@/app/utils/getImageUrl";
 import { ArrowRight, Clock, BookOpen, Star, Flame } from "lucide-react";
 import Link from "next/link";
 import { slugify } from "@/app/utils/slugify";
+import Loader from "@/app/commonComponents/loader";
 
 const AllBlogsHomePage = () => {
   const dispatch = useAppDispatch();
@@ -18,8 +19,8 @@ const AllBlogsHomePage = () => {
 
   if (status === "loading")
     return (
-      <div className="text-center py-12 text-gray-400 text-sm animate-pulse">
-        Loading acoustic journal...
+      <div className="py-12 flex justify-center items-center">
+        <Loader inline size={110} text="Loading journal..." />
       </div>
     );
 

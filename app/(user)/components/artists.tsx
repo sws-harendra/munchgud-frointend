@@ -7,6 +7,7 @@ import { getImageUrl } from "@/app/utils/getImageUrl";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { slugify } from "@/app/utils/slugify";
+import Loader from "@/app/commonComponents/loader";
 
 const AllArtistsHomePage = () => {
   const dispatch = useAppDispatch();
@@ -17,7 +18,11 @@ const AllArtistsHomePage = () => {
   }, [dispatch, status]);
 
   if (status === "loading")
-    return <div className="text-center py-10">Loading artists...</div>;
+    return (
+      <div className="py-12 flex justify-center items-center">
+        <Loader inline size={110} text="Loading artists..." />
+      </div>
+    );
   if (status === "failed")
     return (
       <div className="text-center py-10 text-green-600">

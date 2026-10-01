@@ -6,6 +6,7 @@ import BlogEditorForm from "@/app/admin/components/BlogEditorForm";
 import { blogService, BlogPostItem } from "@/app/sercices/user/blog.service";
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
+import Loader from "@/app/commonComponents/loader";
 
 export default function EditBlogPage() {
   const params = useParams();
@@ -35,12 +36,7 @@ export default function EditBlogPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900/10 p-4 sm:p-6 lg:p-8 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-semibold text-gray-500">
-            Loading publication data...
-          </p>
-        </div>
+        <Loader size={120} text="Loading publication data..." />
       </div>
     );
   }

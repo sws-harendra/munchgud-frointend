@@ -19,6 +19,7 @@ import AddSectionForm from "../../components/addSection";
 import SidebarForm from "../../components/SidebarForm";
 import EditSectionForm from "../../components/editSection";
 import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
+import Loader from "@/app/commonComponents/loader";
 
 export default function SectionManager() {
   const dispatch = useAppDispatch();
@@ -113,18 +114,7 @@ export default function SectionManager() {
         {/* Content */}
         <div className="space-y-6">
           {loading && (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-                <p
-                  className={`text-sm font-medium ${
-                    isDarkMode ? "text-zinc-400" : "text-gray-600"
-                  }`}
-                >
-                  Loading sections...
-                </p>
-              </div>
-            </div>
+            <Loader size={110} text="Loading sections..." />
           )}
 
           {!loading && sections.length === 0 && (

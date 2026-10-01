@@ -13,6 +13,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useAdminTheme } from "../context/AdminThemeContext";
+import Loader from "@/app/commonComponents/loader";
 
 export default function EditSectionForm({
   section,
@@ -268,8 +269,8 @@ export default function EditSectionForm({
           >
             <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
               {loading && (
-                <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                <div className="flex items-center justify-center py-6">
+                  <Loader inline size={90} text="Loading products..." />
                 </div>
               )}
 

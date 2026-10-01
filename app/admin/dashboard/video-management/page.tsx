@@ -27,6 +27,7 @@ import {
 } from "@/app/lib/store/features/video.slice";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
+import Loader from "@/app/commonComponents/loader";
 
 export default function VideoManager() {
   const dispatch = useAppDispatch();
@@ -601,15 +602,8 @@ export default function VideoManager() {
             {/* Body */}
             <div className="p-6">
               {status === "loading" && videos.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16">
-                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-violet-500/20 border-t-violet-500 mb-3"></div>
-                  <p
-                    className={`text-sm ${
-                      isDarkMode ? "text-zinc-400" : "text-gray-500"
-                    }`}
-                  >
-                    Loading videos...
-                  </p>
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader inline size={110} text="Loading videos..." />
                 </div>
               ) : videos.length === 0 ? (
                 <div

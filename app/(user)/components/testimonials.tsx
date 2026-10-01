@@ -10,6 +10,7 @@ import { fetchTestimonials } from "@/app/lib/store/features/testimonialSlice";
 import { useEffect } from "react";
 import { Quote, Star } from "lucide-react";
 import { getImageUrl } from "@/app/utils/getImageUrl";
+import Loader from "@/app/commonComponents/loader";
 
 export default function TestimonialCarousel() {
   const dispatch = useAppDispatch();
@@ -20,7 +21,11 @@ export default function TestimonialCarousel() {
   }, [dispatch]);
 
   if (status === "loading") {
-    return <p className="text-center">Loading testimonials...</p>;
+    return (
+      <div className="py-12 flex justify-center items-center bg-gray-50">
+        <Loader inline size={110} text="Loading testimonials..." />
+      </div>
+    );
   }
 
   if (testimonials.length === 0) {

@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { emailLogin } from "@/app/lib/store/features/authSlice";
 import { toast } from "sonner";
 import { brandName } from "@/app/contants";
+import Loader from "@/app/commonComponents/loader";
 
 function LoginFormContent() {
   const router = useRouter();
@@ -321,7 +322,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-          <div className="w-10 h-10 border-4 border-amber-200 border-t-amber-600 rounded-full animate-spin" />
+          <Loader size={120} text="Loading sign in..." />
         </div>
       }
     >

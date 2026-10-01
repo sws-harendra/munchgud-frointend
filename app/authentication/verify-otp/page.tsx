@@ -19,6 +19,7 @@ import { verifyPhoneOtp } from "@/app/lib/store/features/authSlice";
 import { authService } from "@/app/sercices/user/auth.service";
 import { toast } from "sonner";
 import { brandName } from "@/app/contants";
+import Loader from "@/app/commonComponents/loader";
 
 function VerifyOtpContent() {
   const router = useRouter();
@@ -470,7 +471,7 @@ export default function VerifyOtpPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-          <div className="w-10 h-10 border-4 border-amber-200 border-t-amber-600 rounded-full animate-spin" />
+          <Loader size={120} text="Loading verification..." />
         </div>
       }
     >

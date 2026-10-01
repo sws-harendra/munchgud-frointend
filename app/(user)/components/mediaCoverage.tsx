@@ -9,6 +9,7 @@ import {
 import { toast } from "sonner";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { ExternalLink } from "lucide-react";
+import Loader from "@/app/commonComponents/loader";
 
 const MediaCoveragePage = () => {
   const dispatch = useAppDispatch();
@@ -59,7 +60,7 @@ const MediaCoveragePage = () => {
 
       {isLoading ? (
         <div className="flex justify-center py-10">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <Loader inline size={110} text="Loading media coverage..." />
         </div>
       ) : (
         <div className="mt-8 flex flex-col">

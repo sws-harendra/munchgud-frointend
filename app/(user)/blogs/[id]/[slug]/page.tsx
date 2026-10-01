@@ -19,6 +19,7 @@ import {
   ArrowRight,
   BookOpen,
 } from "lucide-react";
+import Loader from "@/app/commonComponents/loader";
 
 export default function ViewBlog() {
   const params = useParams();
@@ -79,12 +80,7 @@ export default function ViewBlog() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-amber-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs font-semibold text-neutral-500 tracking-wider uppercase">
-            Loading Acoustic Publication...
-          </p>
-        </div>
+        <Loader size={130} text="Loading publication..." />
       </div>
     );
   }

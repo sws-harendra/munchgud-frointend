@@ -7,6 +7,7 @@ import { getImageUrl } from "@/app/utils/getImageUrl";
 import Heading from "@/app/commonComponents/heading";
 import Link from "next/link";
 import { slugify } from "@/app/utils/slugify";
+import Loader from "@/app/commonComponents/loader";
 
 const AllArtists = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +17,7 @@ const AllArtists = () => {
     if (status === "idle") dispatch(fetchArtists());
   }, [dispatch, status]);
 
-  if (status === "loading") return <div>Loading artists...</div>;
+  if (status === "loading") return <Loader text="Loading artists..." />;
   if (status === "failed") return <div>Failed to load artists.</div>;
 
   return (

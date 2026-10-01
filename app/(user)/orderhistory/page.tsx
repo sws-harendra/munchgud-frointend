@@ -17,8 +17,8 @@ import {
   CheckCircle,
   Clock,
   Truck,
-  Loader,
 } from "lucide-react";
+import AppLoader from "@/app/commonComponents/loader";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { useAppDispatch } from "@/app/lib/store/store";
 
@@ -149,14 +149,7 @@ const OrderHistoryPage = () => {
 
   // Loading state
   if (status === "loading") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-red-50 to-red-100 flex items-center justify-center">
-        <div className="text-center">
-          <Loader className="w-12 h-12 text-green-700 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading your orders...</p>
-        </div>
-      </div>
-    );
+    return <AppLoader text="Loading your orders..." fullscreen />;
   }
 
   // Error state
@@ -184,14 +177,7 @@ const OrderHistoryPage = () => {
 
   // Wait for orders to be properly loaded
   if (!orders) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-red-50 to-red-100 flex items-center justify-center">
-        <div className="text-center">
-          <Loader className="w-12 h-12 text-green-700 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Initializing...</p>
-        </div>
-      </div>
-    );
+    return <AppLoader text="Initializing..." fullscreen />;
   }
 
   return (
@@ -383,10 +369,7 @@ const OrderHistoryPage = () => {
             <div className="fixed inset-0 z-50 flex items-center justify-center">
               <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
               <div className="bg-white rounded-2xl shadow-2xl p-8 relative z-10">
-                <div className="flex items-center justify-center">
-                  <Loader className="w-8 h-8 text-green-700 animate-spin mr-3" />
-                  <span>Loading order details...</span>
-                </div>
+                <AppLoader size={80} text="Loading order details..." />
               </div>
             </div>
           ) : (

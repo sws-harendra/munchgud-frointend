@@ -20,6 +20,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { slugify } from "@/app/utils/slugify";
 import { categoryService } from "@/app/sercices/category.service";
+import Loader from "@/app/commonComponents/loader";
 
 // Product Card Component
 interface ProductCardProps {
@@ -650,12 +651,7 @@ function AllProducts() {
 
             {/* Products Grid/List */}
             {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="text-center">
-                  <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-gray-600">Loading amazing products...</p>
-                </div>
-              </div>
+              <Loader text="Loading amazing products..." />
             ) : (
               <div
                 className={`${

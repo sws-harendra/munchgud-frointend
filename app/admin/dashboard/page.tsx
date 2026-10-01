@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { fetchdashboard } from "@/app/lib/store/features/dashboardSlice";
 import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
 import Link from "next/link";
+import Loader from "@/app/commonComponents/loader";
 
 // Define types for the data
 interface OrderStats {
@@ -117,12 +118,7 @@ const AdminDashboard = () => {
           isDark ? "bg-black text-zinc-100" : "bg-gray-50 text-slate-800"
         }`}
       >
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto"></div>
-          <p className={`mt-4 text-sm font-medium ${isDark ? "text-zinc-400" : "text-gray-600"}`}>
-            Loading dashboard data...
-          </p>
-        </div>
+        <Loader size={120} text="Loading dashboard data..." />
       </div>
     );
   }

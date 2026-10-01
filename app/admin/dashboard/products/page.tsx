@@ -28,6 +28,7 @@ import { getImageUrl } from "@/app/utils/getImageUrl";
 import SidebarForm from "../../components/SidebarForm";
 import AddProducts from "../../components/addproduct";
 import EditProduct from "../../components/editProduct";
+import Loader from "@/app/commonComponents/loader";
 import ProductPreviewModal from "../../components/viewproducts";
 import Link from "next/link";
 import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
@@ -538,13 +539,8 @@ export default function AdminProductsPage() {
             <tbody className={`divide-y ${isDark ? "divide-zinc-850" : "divide-slate-100"}`}>
               {isLoading ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center">
-                      <div className="w-8 h-8 border-3 border-amber-500/30 border-t-amber-500 rounded-full animate-spin mb-3"></div>
-                      <p className={`text-xs font-semibold ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
-                        Loading products catalog...
-                      </p>
-                    </div>
+                  <td colSpan={9} className="px-6 py-8 text-center">
+                    <Loader size={110} text="Loading products catalog..." />
                   </td>
                 </tr>
               ) : Array.isArray(products?.products) &&

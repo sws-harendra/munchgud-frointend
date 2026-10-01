@@ -27,6 +27,7 @@ import { getImageUrl } from "@/app/utils/getImageUrl";
 import Link from "next/link";
 import { RootState, useAppSelector } from "@/app/lib/store/store";
 import { toast } from "sonner";
+import Loader from "@/app/commonComponents/loader";
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -109,18 +110,8 @@ const CartPage = () => {
   // Loading state
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50/40 via-white to-neutral-50 flex items-center justify-center relative overflow-hidden">
-        <div className="text-center relative z-10">
-          <div className="relative mb-8">
-            <div className="w-20 h-20 border-4 border-amber-200 border-t-amber-600 rounded-full animate-spin mx-auto"></div>
-          </div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-700 to-amber-900 bg-clip-text text-transparent mb-2">
-            Loading your cart
-          </h2>
-          <p className="text-gray-500 text-sm">
-            Preparing your luxury shopping experience...
-          </p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-amber-50/40 via-white to-neutral-50 flex items-center justify-center p-6">
+        <Loader size={140} text="Loading your cart..." />
       </div>
     );
   }

@@ -23,6 +23,7 @@ import { getImageUrl } from "@/app/utils/getImageUrl";
 import { categoryService } from "@/app/sercices/category.service";
 import SidebarForm from "../../components/SidebarForm";
 import BannerForm from "../../components/bannerForm";
+import Loader from "@/app/commonComponents/loader";
 import EditBannerForm from "../../components/editbanerform";
 
 import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
@@ -157,9 +158,7 @@ export default function AdminBannersPage() {
 
       {/* Loading State */}
       {status === "loading" && (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-        </div>
+        <Loader size={110} text="Loading banners..." />
       )}
 
       {/* Banner Grid */}

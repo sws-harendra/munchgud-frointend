@@ -16,6 +16,7 @@ import { getImageUrl } from "@/app/utils/getImageUrl";
 import MediaCoverageForm from "./components/MediaCoverageForm";
 import SidebarForm from "../../components/SidebarForm";
 import { useAdminTheme } from "@/app/admin/context/AdminThemeContext";
+import Loader from "@/app/commonComponents/loader";
 
 const MediaCoveragePage = () => {
   const dispatch = useAppDispatch();
@@ -142,8 +143,8 @@ const MediaCoveragePage = () => {
       {/* Content */}
       <div className="mt-4">
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-2 border-amber-500 border-t-transparent" />
+          <div className="flex justify-center items-center py-16">
+            <Loader inline size={110} text="Loading media coverage..." />
           </div>
         ) : coverages.length === 0 ? (
           <div

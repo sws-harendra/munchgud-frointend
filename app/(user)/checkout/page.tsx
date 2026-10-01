@@ -1156,6 +1156,7 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
+      {isProcessing && <Loader fullscreen text="Securing and placing your order..." />}
     </div>
   );
 };
