@@ -584,7 +584,7 @@ export default function SupportWarrantyPage() {
             </div>
             <div className="space-y-1">
               <span className="text-xs font-semibold text-neutral-500">Call Us</span>
-              <p className="text-base font-bold text-[#1A1A1A]">+91 9798909616</p>
+              <p className="text-base font-bold text-[#1A1A1A]">+91 9199859862</p>
               <p className="text-[11px] text-neutral-500 leading-snug">
                 Mon – Sat | 9:00 AM – 7:00 PM (IST)
               </p>
@@ -598,7 +598,7 @@ export default function SupportWarrantyPage() {
             </div>
             <div className="space-y-1">
               <span className="text-xs font-semibold text-neutral-500">Email Us</span>
-              <p className="text-base font-bold text-[#1A1A1A]">support@flazo.in</p>
+              <p className="text-base font-bold text-[#1A1A1A]">care@flazo.in</p>
               <p className="text-[11px] text-neutral-500 leading-snug">
                 We usually respond within 24 hours.
               </p>

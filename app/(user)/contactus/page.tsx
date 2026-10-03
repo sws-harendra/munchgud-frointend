@@ -146,7 +146,7 @@ export default function Page() {
                 </div>
                 <div>
                   <p className="font-semibold">Email</p>
-                  <p className="text-gray-600">support@flazo.com</p>
+                  <p className="text-gray-600">care@flazo.in</p>
                 </div>
               </div>
 
@@ -156,7 +156,7 @@ export default function Page() {
                 </div>
                 <div>
                   <p className="font-semibold">Phone</p>
-                  <p className="text-gray-600">+91 84462 74791</p>
+                  <p className="text-gray-600">+91 9199859862</p>
                 </div>
               </div>
 
@@ -167,7 +167,11 @@ export default function Page() {
                 <div>
                   <p className="font-semibold">Address</p>
                   <p className="text-gray-600">
-                    Kate wasti, Punawale, Pimpri-Chinchwad, Pune-411033
+                    A-116, URBTECH TRADE CENTER, SECTOR-132,
+
+NOIDA, GAUTAM BUDDHA NAGAR,
+
+UTTAR PRADESH, 201304
                   </p>
                 </div>
               </div>

@@ -124,9 +124,9 @@ export default function Footer() {
 
             <div className="text-[11px] text-neutral-500 flex items-center gap-1.5 flex-wrap">
               <span>Customer Care:</span>
-              <strong className="text-neutral-900">Support@flazo.in</strong>
+              <strong className="text-neutral-900">care@flazo.in</strong>
               <span>•</span>
-              <strong className="text-neutral-900">+91 9798909616</strong>
+              <strong className="text-neutral-900">+91 9199859862</strong>
             </div>
           </div>
 

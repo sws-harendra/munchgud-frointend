@@ -15,7 +15,7 @@ const faqs: FAQItem[] = [
     category: "Warranty & Swap",
     question: "How does the 1-Year Doorstep Replacement Warranty work?",
     answer:
-      "Unlike ordinary audio brands that force you into crowded third-party service centers, Flazo offers Doorstep Express Swap. If you experience any manufacturing defect or audio failure within 365 days, simply raise a ticket via WhatsApp or Support@flazo.in. Our express courier partner arrives directly at your doorstep with a brand-new sealed box in exchange for the defective unit within 48 to 72 hours.",
+      "Unlike ordinary audio brands that force you into crowded third-party service centers, Flazo offers Doorstep Express Swap. If you experience any manufacturing defect or audio failure within 365 days, simply raise a ticket via WhatsApp or care@flazo.in. Our express courier partner arrives directly at your doorstep with a brand-new sealed box in exchange for the defective unit within 48 to 72 hours.",
   },
   {
     id: 2,
@@ -154,7 +154,7 @@ export default function FlazoFAQ() {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-neutral-300 hover:border-amber-500 text-neutral-900 font-bold text-xs shadow-2xs hover:bg-amber-50 transition-all"
             >
               <PhoneCall className="w-3.5 h-3.5 text-amber-700" />
-              <span>+91 9798909616</span>
+              <span>+91 9199859862</span>
             </a>
           </div>
         </div>
