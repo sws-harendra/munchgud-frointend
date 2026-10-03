@@ -27,6 +27,8 @@ import {
   Flame,
   Star,
   MapPin,
+  Banknote,
+  ShieldCheck,
 } from "lucide-react";
 import { addToCart } from "@/app/lib/store/features/cartSlice";
 import { RootState, useAppDispatch, useAppSelector } from "@/app/lib/store/store";
@@ -891,6 +893,34 @@ export default function ProductDetailClient({
                 </div>
               )}
             </div>
+
+            {/* Payment Mode Indicator */}
+            {(() => {
+              const pm = (product.paymentMethods || "both").toLowerCase().trim();
+              if (pm === "cod") {
+                return (
+                  <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs font-semibold text-amber-900">
+                    <Banknote size={16} className="text-amber-600 shrink-0" />
+                    <span><strong>Cash on Delivery (COD) Only:</strong> Pay with cash upon delivery.</span>
+                  </div>
+                );
+              } else if (pm === "online" || pm === "prepaid") {
+                return (
+                  <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-xs font-semibold text-blue-900">
+                    <ShieldCheck size={16} className="text-blue-600 shrink-0" />
+                    <span><strong>Online Prepaid Only:</strong> 100% secure payment via UPI, Cards, or NetBanking (No COD).</span>
+                  </div>
+                );
+              } else {
+                return (
+                  <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-xs font-semibold text-emerald-900">
+                    <ShieldCheck size={16} className="text-emerald-600 shrink-0" />
+                    <span><strong>Payment Modes:</strong> Cash on Delivery (COD) & Online Payment (UPI / Cards) both available.</span>
+                  </div>
+                );
+              }
+            })()}
+
 
           </div>
 

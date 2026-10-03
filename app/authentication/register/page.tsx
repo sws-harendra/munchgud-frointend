@@ -187,20 +187,13 @@ export default function RegisterForm() {
         if (typeof window !== "undefined") {
           sessionStorage.setItem("flazo_verify_phone", cleanPhone);
           sessionStorage.setItem("flazo_verify_name", trimmedName);
-          if (response?.devOtp) {
-            sessionStorage.setItem("flazo_dev_otp", response.devOtp);
-          }
         }
 
         toast.success(
           response?.message || "Verification code sent to your mobile number!"
         );
 
-        router.push(
-          `/authentication/verify-otp?phone=${cleanPhone}${
-            response?.devOtp ? `&devOtp=${response.devOtp}` : ""
-          }`
-        );
+        router.push(`/authentication/verify-otp?phone=${cleanPhone}`);
       } else {
         const msg = response?.message || "Failed to send verification code";
         setServerError(msg);

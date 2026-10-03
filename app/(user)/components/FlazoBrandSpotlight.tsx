@@ -130,7 +130,7 @@ export default function FlazoBrandSpotlight() {
         price: finalPrice,
         imageUrl: finalImage,
         quantity: 1,
-        paymentMethods: product.paymentMethods || "Prepaid, COD Available",
+        paymentMethods: product.paymentMethods || "both",
       })
     );
     toast.success(`${product.name} added to your cart!`);

@@ -144,7 +144,7 @@ export default function FlazoFlagshipShowcase() {
         price: model.price,
         imageUrl: model.image,
         quantity: 1,
-        paymentMethods: "Prepaid, COD",
+        paymentMethods: "both",
       })
     );
   };

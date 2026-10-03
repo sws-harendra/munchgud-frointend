@@ -18,6 +18,11 @@ import {
   Check,
   Home,
   Building2,
+  Banknote,
+  Smartphone,
+  Zap,
+  Info,
+  ShieldCheck,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -148,6 +153,47 @@ const CheckoutPage = () => {
   }, [user]);
 
   const [errors, setErrors] = useState<FormErrors>({});
+
+  // Payment method resolution helpers
+  const isCodItem = (pm?: string) => {
+    if (!pm) return true;
+    const s = String(pm).toLowerCase().trim();
+    return s === "both" || s === "cod" || s.includes("cod");
+  };
+
+  const isOnlineItem = (pm?: string) => {
+    if (!pm) return true;
+    const s = String(pm).toLowerCase().trim();
+    return s === "both" || s === "online" || s.includes("online") || s.includes("prepaid");
+  };
+
+  const itemsBlockingCod = items.filter((item) => !isCodItem(item.paymentMethods));
+  const itemsBlockingOnline = items.filter((item) => !isOnlineItem(item.paymentMethods));
+  const isCodAvailable = itemsBlockingCod.length === 0 && items.length > 0;
+  const isOnlineAvailable = itemsBlockingOnline.length === 0 && items.length > 0;
+
+  // Auto-select valid payment method when reaching payment step or cart changes
+  useEffect(() => {
+    if (activeStep === 3) {
+      if (formData.paymentMethods === "cod" && !isCodAvailable) {
+        setFormData((prev) => ({
+          ...prev,
+          paymentMethods: isOnlineAvailable ? "online" : "",
+        }));
+      } else if (formData.paymentMethods === "online" && !isOnlineAvailable) {
+        setFormData((prev) => ({
+          ...prev,
+          paymentMethods: isCodAvailable ? "cod" : "",
+        }));
+      } else if (!formData.paymentMethods) {
+        if (isOnlineAvailable) {
+          setFormData((prev) => ({ ...prev, paymentMethods: "online" }));
+        } else if (isCodAvailable) {
+          setFormData((prev) => ({ ...prev, paymentMethods: "cod" }));
+        }
+      }
+    }
+  }, [activeStep, isCodAvailable, isOnlineAvailable, formData.paymentMethods]);
 
   // Calculate order totals
   const subtotal = items.reduce(
@@ -302,8 +348,8 @@ const CheckoutPage = () => {
         key: response.razorPayKey,
         amount: response.amount,
         currency: response.currency,
-        name: "Testing",
-        description: "Order Payment",
+        name: "Flazo Audio",
+        description: "Flazo Audio Order Payment",
         order_id: response.orderId, // ✅ make sure you use response.orderId
         handler: async function (res: any) {
           console.log("Payment success:", res);
@@ -363,7 +409,7 @@ const CheckoutPage = () => {
     setIsProcessing(true);
 
     try {
-      await dispatch(
+      const orderRes: any = await dispatch(
         placeOrder({
           userId: user.id,
           addressId: formData.selectedAddressId,
@@ -377,6 +423,13 @@ const CheckoutPage = () => {
         }),
       ).unwrap();
 
+      setOrderId(
+        orderRes?.orderId ||
+        orderRes?.id ||
+        orderRes?.data?.orderId ||
+        orderRes?.data?.id ||
+        `ORD-${Date.now()}`
+      );
       setOrderSuccess(true);
       dispatch(clearCart());
       toast.success("Order placed successfully!");
@@ -975,61 +1028,139 @@ const CheckoutPage = () => {
                   </h2>
                 </div>
 
-                {/* Determine allowed payment methods */}
-                {(() => {
-                  const allCod = items.every(
-                    (item) =>
-                      item.paymentMethods === "cod" ||
-                      item.paymentMethods === "both",
-                  );
-                  const allOnline = items.every(
-                    (item) =>
-                      item.paymentMethods === "online" ||
-                      item.paymentMethods === "both",
-                  );
-                  return (
-                    <div className="flex flex-col gap-4 mb-8">
-                      {allCod && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setFormData({ ...formData, paymentMethods: "cod" })
-                          }
-                          className={`w-full text-left p-4 border rounded-2xl transition-all ${
-                            formData.paymentMethods === "cod"
-                              ? "border-amber-500 bg-amber-50/40 ring-1 ring-amber-500"
-                              : "border-gray-200 hover:border-amber-400"
-                          }`}
-                        >
-                          <span className="text-gray-800 font-semibold">
-                            Cash on Delivery
-                          </span>
-                        </button>
-                      )}
-
-                      {allOnline && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setFormData({
-                              ...formData,
-                              paymentMethods: "online",
-                            })
-                          }
-                          className={`w-full text-left p-4 border rounded-2xl transition-all ${
-                            formData.paymentMethods === "online"
-                              ? "border-amber-500 bg-amber-50/40 ring-1 ring-amber-500"
-                              : "border-gray-200 hover:border-amber-400"
-                          }`}
-                        >
-                          <span className="text-gray-800 font-semibold">
-                            Online Payment (UPI, Cards, NetBanking)
-                          </span>
-                        </button>
-                      )}
+                {/* If neither payment method is available */}
+                {!isCodAvailable && !isOnlineAvailable && (
+                  <div className="p-4 mb-6 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-600" />
+                    <div>
+                      <p className="font-semibold">Conflicting Payment Methods in Cart</p>
+                      <p className="text-xs mt-1 text-red-600">
+                        Some items in your cart only accept Cash on Delivery, while others only accept Online Payment. Please order these items separately.
+                      </p>
                     </div>
-                  );
-                })()}
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-4 mb-8">
+                  {/* Online Payment Option */}
+                  <div
+                    onClick={() => {
+                      if (isOnlineAvailable) {
+                        setFormData({ ...formData, paymentMethods: "online" });
+                      }
+                    }}
+                    className={`relative p-5 border-2 rounded-2xl transition-all cursor-pointer ${
+                      !isOnlineAvailable
+                        ? "opacity-50 cursor-not-allowed bg-gray-50 border-gray-200"
+                        : formData.paymentMethods === "online"
+                        ? "border-amber-500 bg-amber-50/40 ring-2 ring-amber-500/20 shadow-md"
+                        : "border-gray-200 hover:border-amber-400 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 mt-0.5 flex items-center justify-center transition-colors ${
+                            formData.paymentMethods === "online"
+                              ? "border-amber-600 bg-amber-600"
+                              : "border-gray-300"
+                          }`}
+                        >
+                          {formData.paymentMethods === "online" && (
+                            <div className="w-2 h-2 rounded-full bg-white" />
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-gray-900 font-bold text-base">
+                              Online Payment
+                            </span>
+                            <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                              Recommended • Instant
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Pay securely via UPI (Google Pay, PhonePe, Paytm), Credit/Debit Cards, NetBanking or Wallets.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-gray-400">
+                        <Smartphone className="w-5 h-5 text-amber-600" />
+                        <CreditCard className="w-5 h-5 text-amber-600" />
+                      </div>
+                    </div>
+
+                    {!isOnlineAvailable && (
+                      <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-red-600 flex items-center gap-1.5">
+                        <Info className="w-4 h-4 flex-shrink-0" />
+                        <span>
+                          Unavailable because some items in cart only accept Cash on Delivery (
+                          {itemsBlockingOnline.map((i) => i.name).join(", ")}).
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Cash on Delivery Option */}
+                  <div
+                    onClick={() => {
+                      if (isCodAvailable) {
+                        setFormData({ ...formData, paymentMethods: "cod" });
+                      }
+                    }}
+                    className={`relative p-5 border-2 rounded-2xl transition-all cursor-pointer ${
+                      !isCodAvailable
+                        ? "opacity-50 cursor-not-allowed bg-gray-50 border-gray-200"
+                        : formData.paymentMethods === "cod"
+                        ? "border-amber-500 bg-amber-50/40 ring-2 ring-amber-500/20 shadow-md"
+                        : "border-gray-200 hover:border-amber-400 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 mt-0.5 flex items-center justify-center transition-colors ${
+                            formData.paymentMethods === "cod"
+                              ? "border-amber-600 bg-amber-600"
+                              : "border-gray-300"
+                          }`}
+                        >
+                          {formData.paymentMethods === "cod" && (
+                            <div className="w-2 h-2 rounded-full bg-white" />
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-gray-900 font-bold text-base">
+                              Cash on Delivery (COD)
+                            </span>
+                            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                              Doorstep Pay
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Pay with cash or scan QR when your shipment arrives at your address.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-gray-400">
+                        <Banknote className="w-5 h-5 text-emerald-600" />
+                        <Truck className="w-5 h-5 text-emerald-600" />
+                      </div>
+                    </div>
+
+                    {!isCodAvailable && (
+                      <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-amber-700 bg-amber-50/60 p-2.5 rounded-xl flex items-center gap-2">
+                        <Info className="w-4 h-4 flex-shrink-0 text-amber-600" />
+                        <span>
+                          Cash on Delivery is disabled because{" "}
+                          <strong>{itemsBlockingCod.map((i) => i.name).join(", ")}</strong>{" "}
+                          requires online prepaid payment.
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 <div className="flex items-center justify-between">
                   <button
@@ -1093,6 +1224,29 @@ const CheckoutPage = () => {
                       <p className="text-gray-500 text-sm">
                         Quantity: {item.quantity}
                       </p>
+                      {/* Payment method badge */}
+                      {(() => {
+                        const pm = (item.paymentMethods || "both").toLowerCase().trim();
+                        if (pm === "cod") {
+                          return (
+                            <span className="inline-flex items-center text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full mt-1">
+                              COD Only
+                            </span>
+                          );
+                        } else if (pm === "online" || pm === "prepaid") {
+                          return (
+                            <span className="inline-flex items-center text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200/60 px-2 py-0.5 rounded-full mt-1">
+                              Prepaid Only
+                            </span>
+                          );
+                        } else {
+                          return (
+                            <span className="inline-flex items-center text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full mt-1">
+                              COD & Online Available
+                            </span>
+                          );
+                        }
+                      })()}
                     </div>
                     <div className="text-gray-900 font-bold text-lg">
                       ₹{(item.price * item.quantity).toFixed(2)}

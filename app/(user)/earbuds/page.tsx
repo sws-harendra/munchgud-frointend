@@ -173,7 +173,7 @@ export default function EarbudsPage() {
         price: Number(product.price),
         imageUrl: product.image,
         quantity: 1,
-        paymentMethods: "Prepaid, COD Available",
+        paymentMethods: (product as any).paymentMethods || "both",
       })
     );
     toast.success(`${product.name} added to cart! 🛒`);

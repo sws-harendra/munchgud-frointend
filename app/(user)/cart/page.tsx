@@ -245,9 +245,24 @@ const CartPage = () => {
                           <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-snug line-clamp-2 hover:text-amber-700 transition-colors">
                             {item.name}
                           </h3>
-                          <p className="text-gray-500 text-xs font-semibold mt-1">
-                            Unit price: ₹{item.price.toFixed(2)}
-                          </p>
+                          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                            <span className="text-gray-500 text-xs font-semibold">
+                              Unit price: ₹{item.price.toFixed(2)}
+                            </span>
+                            {item.paymentMethods === "cod" ? (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100/90 text-amber-900 border border-amber-300">
+                                Cash on Delivery Only
+                              </span>
+                            ) : item.paymentMethods === "online" ? (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-100 text-sky-900 border border-sky-300">
+                                Prepaid / Online Only
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-neutral-100 text-neutral-700">
+                                COD &amp; Online Available
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <button
                           onClick={() => handleRemoveItem(item.id)}

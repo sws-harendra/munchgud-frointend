@@ -120,6 +120,7 @@ const OrderHistoryRiderPage = () => {
     switch (method.toLowerCase()) {
       case "cod":
         return "💵";
+      case "online":
       case "card":
         return "💳";
       case "upi":
@@ -127,6 +128,16 @@ const OrderHistoryRiderPage = () => {
       default:
         return "💰";
     }
+  };
+
+  const formatPaymentMethod = (method?: string | null) => {
+    if (!method) return "N/A";
+    const m = method.toLowerCase();
+    if (m === "cod") return "Cash on Delivery";
+    if (m === "online") return "Online Payment";
+    if (m === "card") return "Card Payment";
+    if (m === "upi") return "UPI";
+    return method;
   };
 
   const handleViewDetails = async (orderId: number | string) => {
@@ -263,8 +274,8 @@ const OrderHistoryRiderPage = () => {
                               <span className="text-lg">
                                 {getPaymentMethodIcon(order.paymentMethod)}
                               </span>
-                              <span className="text-sm font-medium capitalize">
-                                {order.paymentMethod || "N/A"}
+                              <span className="text-sm font-medium">
+                                {formatPaymentMethod(order.paymentMethod)}
                               </span>
                             </div>
                           </div>
@@ -451,8 +462,8 @@ const OrderHistoryRiderPage = () => {
                               )}
                             </span>
                             <div>
-                              <p className="font-medium capitalize">
-                                {selectedOrder.paymentMethod || "N/A"}
+                              <p className="font-medium">
+                                {formatPaymentMethod(selectedOrder.paymentMethod)}
                               </p>
                               <p className="text-sm text-green-600 font-medium">
                                 {selectedOrder.paymentStatus || "N/A"}

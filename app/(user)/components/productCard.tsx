@@ -135,7 +135,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   price: parseFloat(price),
                   quantity: 1,
                   imageUrl: image || "",
-                  paymentMethods: paymentMethods,
+                  paymentMethods: paymentMethods || "both",
                 })
               );
               toast.success(`${name} added to cart! 🛒`);

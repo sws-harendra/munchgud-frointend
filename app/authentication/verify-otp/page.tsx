@@ -10,7 +10,6 @@ import {
   Phone,
   Sparkles,
   ArrowLeft,
-  KeyRound,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -28,7 +27,6 @@ function VerifyOtpContent() {
   const dispatch = useAppDispatch();
 
   const phoneParam = searchParams.get("phone") || "";
-  const devOtpParam = searchParams.get("devOtp") || "";
   const redirectParam = searchParams.get("redirect") || "/";
 
   const [phoneNumber, setPhoneNumber] = useState(phoneParam);
@@ -39,24 +37,18 @@ function VerifyOtpContent() {
   const [errorMessage, setErrorMessage] = useState("");
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
-  const [currentDevOtp, setCurrentDevOtp] = useState(devOtpParam);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Load phone number and devOtp from sessionStorage if missing from query params
+  // Load phone number from sessionStorage if missing from query params
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedPhone = sessionStorage.getItem("flazo_verify_phone");
-      const storedDevOtp = sessionStorage.getItem("flazo_dev_otp");
-
       if (!phoneNumber && storedPhone) {
         setPhoneNumber(storedPhone);
       }
-      if (!currentDevOtp && storedDevOtp) {
-        setCurrentDevOtp(storedDevOtp);
-      }
     }
-  }, [phoneNumber, currentDevOtp]);
+  }, [phoneNumber]);
 
   // Resend countdown timer
   useEffect(() => {
@@ -148,18 +140,6 @@ function VerifyOtpContent() {
     inputRefs.current[targetIdx]?.focus();
   };
 
-  const handleAutoFillDevOtp = () => {
-    const code = currentDevOtp || "123456";
-    const chars = code.slice(0, 6).split("");
-    const updated = [...otpDigits];
-    for (let i = 0; i < 6; i++) {
-      updated[i] = chars[i] || "";
-    }
-    setOtpDigits(updated);
-    setErrorMessage("");
-    inputRefs.current[5]?.focus();
-    toast.info(`Filled code: ${code}`);
-  };
 
   const handleVerify = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -236,13 +216,6 @@ function VerifyOtpContent() {
         setTimer(30);
         setOtpDigits(["", "", "", "", "", ""]);
         inputRefs.current[0]?.focus();
-
-        if (response.devOtp) {
-          setCurrentDevOtp(response.devOtp);
-          if (typeof window !== "undefined") {
-            sessionStorage.setItem("flazo_dev_otp", response.devOtp);
-          }
-        }
       } else {
         toast.error(response?.message || "Failed to resend code.");
       }
@@ -304,32 +277,7 @@ function VerifyOtpContent() {
             </div>
           </div>
 
-          {/* Test Mode Helper Banner (when in dev mode or devOtp available) */}
-          {(currentDevOtp || process.env.NODE_ENV !== "production") && (
-            <div className="mb-5 p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-900 flex items-center justify-between gap-2 shadow-xs">
-              <div className="flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                <div className="text-left">
-                  <p className="text-[11px] font-bold text-amber-900">
-                    Testing Mode OTP:{" "}
-                    <span className="font-mono text-xs font-extrabold text-amber-700 bg-white/80 px-1.5 py-0.5 rounded border border-amber-200">
-                      {currentDevOtp || "123456"}
-                    </span>
-                  </p>
-                  <p className="text-[10px] text-amber-700/80">
-                    Live SMS key can be added in .env anytime
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleAutoFillDevOtp}
-                className="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-[11px] font-bold rounded-lg shadow-xs transition-all flex-shrink-0"
-              >
-                Auto-fill
-              </button>
-            </div>
-          )}
+
 
           {/* Error Alert */}
           {errorMessage && (
