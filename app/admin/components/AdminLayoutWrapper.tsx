@@ -1,13 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "./sidebar";
 import AdminTopBar from "./AdminTopBar";
 import AdminSettingsDrawer from "./AdminSettingsDrawer";
 import { AdminThemeProvider, useAdminTheme } from "../context/AdminThemeContext";
+import { useAppSelector } from "@/app/lib/store/store";
 
 function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   const { resolvedTheme, settings } = useAdminTheme();
+  const router = useRouter();
+  const { isAuthenticated, status } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token =
+        localStorage.getItem("accessToken") || localStorage.getItem("token");
+      if (!token && !isAuthenticated && status !== "loading") {
+        router.replace("/authentication/login");
+      }
+    }
+  }, [isAuthenticated, status, router]);
 
   return (
     <div

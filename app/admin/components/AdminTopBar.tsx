@@ -18,8 +18,11 @@ import {
   ChevronRight,
   ShieldCheck,
   SlidersHorizontal,
+  LogOut,
 } from "lucide-react";
 import { useAdminTheme } from "../context/AdminThemeContext";
+import { useAppDispatch } from "@/app/lib/store/store";
+import { logout, resetAuthState } from "@/app/lib/store/features/authSlice";
 
 // Friendly path names mapper for breadcrumb
 const PATH_MAP: Record<string, string> = {
@@ -77,6 +80,27 @@ export default function AdminTopBar() {
     const interval = setInterval(updateClock, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const dispatch = useAppDispatch();
+
+  const handleLogout = async () => {
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("token");
+        sessionStorage.clear();
+      }
+      await dispatch(logout());
+      dispatch(resetAuthState());
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      if (typeof window !== "undefined") {
+        window.location.href = "/authentication/login";
+      }
+    }
+  };
 
   // Fullscreen toggle handler
   const toggleFullscreen = () => {
@@ -278,6 +302,16 @@ export default function AdminTopBar() {
             </p>
           </div>
         </div>
+
+        {/* Quick Logout Button */}
+        <button
+          onClick={handleLogout}
+          className={`p-2 rounded-xl transition cursor-pointer text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-transparent hover:border-rose-200 dark:hover:border-rose-900/50`}
+          title="Logout from Admin Console"
+          aria-label="Logout"
+        >
+          <LogOut size={18} />
+        </button>
       </div>
     </header>
   );

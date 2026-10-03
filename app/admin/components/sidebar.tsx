@@ -34,7 +34,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { brandName } from "@/app/contants";
 import { useAppDispatch } from "@/app/lib/store/store";
-import { logout } from "@/app/lib/store/features/authSlice";
+import { logout, resetAuthState } from "@/app/lib/store/features/authSlice";
 import { useAdminTheme } from "../context/AdminThemeContext";
 import FlazoLogo from "@/app/commonComponents/FlazoLogo";
 
@@ -181,13 +181,20 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("token");
+        sessionStorage.clear();
+      }
       await dispatch(logout());
+      dispatch(resetAuthState());
     } catch (error) {
       console.error("Logout failed", error);
     } finally {
-      router.push("/authentication/login");
-      router.refresh();
-      window.location.reload();
+      if (typeof window !== "undefined") {
+        window.location.href = "/authentication/login";
+      }
     }
   };
 

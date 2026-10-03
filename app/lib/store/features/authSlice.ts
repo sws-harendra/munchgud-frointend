@@ -170,15 +170,8 @@ export const logout = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await authService.logout();
-      if (typeof window !== "undefined") {
-        window.location.href = "/authentication/login";
-      }
-
       return response;
     } catch (err: unknown) {
-      if (typeof window !== "undefined") {
-        window.location.href = "/authentication/login";
-      }
       if (err instanceof Error) {
         return rejectWithValue(err.message);
       }
@@ -243,9 +236,12 @@ const authSlice = createSlice({
     },
     resetAuthState: (state) => {
       state.status = "idle";
+      state.user = null;
+      state.isAuthenticated = false;
       state.error = null;
       state.otpSent = false;
       state.role = "user";
+      state.phoneNumber = "";
     },
   },
   extraReducers: (builder) => {

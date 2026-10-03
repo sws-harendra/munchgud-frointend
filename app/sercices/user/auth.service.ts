@@ -160,6 +160,12 @@ export const authService = {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("token");
+        sessionStorage.clear();
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
       }
       return response.data;
     } catch (error) {
@@ -167,6 +173,7 @@ export const authService = {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("token");
+        sessionStorage.clear();
       }
       return { success: true };
     }
