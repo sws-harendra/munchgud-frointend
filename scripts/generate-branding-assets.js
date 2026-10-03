@@ -2,130 +2,111 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-// 1. Sleek, Luxury Flazo Favicon SVG
+// 1. Sleek, Luxury Flazo Favicon SVG (Gold 3D Monogram on obsidian squircle)
 const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Radiant 24K Acoustic Gold Gradient -->
-    <linearGradient id="flazoGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f59e0b"/>
-      <stop offset="30%" stop-color="#fbbf24"/>
-      <stop offset="65%" stop-color="#fde047"/>
-      <stop offset="100%" stop-color="#d97706"/>
+    <!-- Radiant 24K Metallic Gold Gradient -->
+    <linearGradient id="goldFace" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff9d2"/>
+      <stop offset="15%" stop-color="#fde68a"/>
+      <stop offset="38%" stop-color="#d9a844"/>
+      <stop offset="55%" stop-color="#fdf0ae"/>
+      <stop offset="75%" stop-color="#c69231"/>
+      <stop offset="90%" stop-color="#9e6b18"/>
+      <stop offset="100%" stop-color="#6e4405"/>
     </linearGradient>
 
     <!-- Luxury Metallic Bevel Border -->
-    <linearGradient id="goldBorder" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.65"/>
-      <stop offset="45%" stop-color="#fde047" stop-opacity="0.2"/>
-      <stop offset="100%" stop-color="#78350f" stop-opacity="0.55"/>
+    <linearGradient id="goldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
+      <stop offset="40%" stop-color="#fde68a" stop-opacity="0.4"/>
+      <stop offset="70%" stop-color="#b47d1c" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#452702" stop-opacity="0.9"/>
     </linearGradient>
 
-    <!-- Inner Earcup Glow -->
-    <linearGradient id="earcupAccent" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#fef08a"/>
-      <stop offset="100%" stop-color="#f59e0b"/>
+    <linearGradient id="darkBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b"/>
+      <stop offset="100%" stop-color="#09090b"/>
     </linearGradient>
+
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.6"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="1" flood-color="#3d2504" flood-opacity="0.8"/>
+    </filter>
   </defs>
 
-  <!-- Golden Squircle Background -->
-  <rect x="28" y="28" width="456" height="456" rx="116" fill="url(#flazoGold)"/>
+  <!-- Obsidian Squircle Background -->
+  <rect x="28" y="28" width="456" height="456" rx="116" fill="url(#darkBg)"/>
   <rect x="28" y="28" width="456" height="456" rx="116" fill="none" stroke="url(#goldBorder)" stroke-width="12"/>
 
-  <!-- Bold Obsidian Headphones Silhouette -->
-  <!-- Headband Arc -->
-  <path d="M 136 280 A 120 120 0 0 1 376 280" 
-        fill="none" 
-        stroke="#09090b" 
-        stroke-width="44" 
-        stroke-linecap="round"/>
-
-  <!-- Left Earcup -->
-  <rect x="98" y="240" width="76" height="136" rx="38" fill="#09090b"/>
-  <!-- Right Earcup -->
-  <rect x="338" y="240" width="76" height="136" rx="38" fill="#09090b"/>
-
-  <!-- Golden Earcup Accent Rings / Insets -->
-  <rect x="127" y="270" width="16" height="76" rx="8" fill="url(#earcupAccent)"/>
-  <rect x="369" y="270" width="16" height="76" rx="8" fill="url(#earcupAccent)"/>
-
-  <!-- Central Acoustic Soundwave / Equalizer Bars -->
-  <rect x="249" y="224" width="14" height="92" rx="7" fill="#09090b"/>
-  <rect x="221" y="246" width="12" height="48" rx="6" fill="#09090b"/>
-  <rect x="279" y="246" width="12" height="48" rx="6" fill="#09090b"/>
-  <rect x="195" y="260" width="10" height="24" rx="5" fill="#09090b"/>
-  <rect x="307" y="260" width="10" height="24" rx="5" fill="#09090b"/>
+  <!-- Golden 3D Monogram: "F" -->
+  <g filter="url(#goldGlow)">
+    <text x="256" y="348" 
+          text-anchor="middle" 
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="310" 
+          font-weight="900" 
+          fill="url(#goldFace)"
+          stroke="url(#goldBorder)"
+          stroke-width="3">F</text>
+  </g>
 </svg>`;
 
-// 2. High-Res Flazo Logo (SVG with Icon + Wordmark)
-const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 320" width="1024" height="320">
+// 2. High-Res Flazo Logo (Pure Metallic 3D Gold "FLAZO AUDIO" exactly as requested)
+const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 360" width="1000" height="360">
   <defs>
-    <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f59e0b"/>
-      <stop offset="30%" stop-color="#fbbf24"/>
-      <stop offset="70%" stop-color="#fde047"/>
-      <stop offset="100%" stop-color="#d97706"/>
+    <!-- Metallic 3D Gold Gradient for Face -->
+    <linearGradient id="flazoMetallicGold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff9d2"/>
+      <stop offset="14%" stop-color="#fde68a"/>
+      <stop offset="38%" stop-color="#d9a844"/>
+      <stop offset="52%" stop-color="#fdf0ae"/>
+      <stop offset="72%" stop-color="#c69231"/>
+      <stop offset="88%" stop-color="#9e6b18"/>
+      <stop offset="100%" stop-color="#6e4405"/>
     </linearGradient>
-    <linearGradient id="logoBorder" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
-      <stop offset="100%" stop-color="#78350f" stop-opacity="0.5"/>
+
+    <!-- Metallic Stroke Bevel -->
+    <linearGradient id="flazoMetallicStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="35%" stop-color="#fde68a" stop-opacity="0.5"/>
+      <stop offset="70%" stop-color="#b47d1c" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#452702" stop-opacity="0.95"/>
     </linearGradient>
-    <linearGradient id="earcupAccent" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#fef08a"/>
-      <stop offset="100%" stop-color="#f59e0b"/>
-    </linearGradient>
-    <linearGradient id="textGold" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#b45309"/>
-      <stop offset="30%" stop-color="#d97706"/>
-      <stop offset="70%" stop-color="#f59e0b"/>
-      <stop offset="100%" stop-color="#fbbf24"/>
-    </linearGradient>
+
+    <!-- 3D Bevel & Drop Shadow Filter -->
+    <filter id="flazo3DDepth" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2.5" stdDeviation="1" flood-color="#3d2504" flood-opacity="0.8"/>
+      <feDropShadow dx="0" dy="5.5" stdDeviation="3.5" flood-color="#231401" flood-opacity="0.5"/>
+      <feDropShadow dx="0" dy="12" stdDeviation="8" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
   </defs>
 
-  <!-- Left Icon: 220x220 Emblem at x=50, y=50 -->
-  <g transform="translate(50, 50)">
-    <rect x="0" y="0" width="220" height="220" rx="56" fill="url(#logoGold)"/>
-    <rect x="0" y="0" width="220" height="220" rx="56" fill="none" stroke="url(#logoBorder)" stroke-width="6"/>
+  <g filter="url(#flazo3DDepth)">
+    <!-- FLAZO Wordmark -->
+    <text x="500" y="210" 
+          text-anchor="middle" 
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Outfit', 'Montserrat', sans-serif" 
+          font-size="220" 
+          font-weight="900" 
+          letter-spacing="16" 
+          fill="url(#flazoMetallicGold)"
+          stroke="url(#flazoMetallicStroke)"
+          stroke-width="3.5"
+          paint-order="stroke fill">FLAZO</text>
 
-    <!-- Headband -->
-    <path d="M 52 120 A 58 58 0 0 1 168 120" 
-          fill="none" 
-          stroke="#09090b" 
-          stroke-width="20" 
-          stroke-linecap="round"/>
-
-    <!-- Left Earcup -->
-    <rect x="34" y="100" width="36" height="66" rx="18" fill="#09090b"/>
-    <!-- Right Earcup -->
-    <rect x="150" y="100" width="36" height="66" rx="18" fill="#09090b"/>
-
-    <!-- Gold Accent Lines -->
-    <rect x="48" y="115" width="8" height="36" rx="4" fill="url(#earcupAccent)"/>
-    <rect x="164" y="115" width="8" height="36" rx="4" fill="url(#earcupAccent)"/>
-
-    <!-- Soundwave -->
-    <rect x="106" y="93" width="7" height="44" rx="3.5" fill="#09090b"/>
-    <rect x="92" y="104" width="6" height="24" rx="3" fill="#09090b"/>
-    <rect x="121" y="104" width="6" height="24" rx="3" fill="#09090b"/>
-    <rect x="79" y="111" width="5" height="12" rx="2.5" fill="#09090b"/>
-    <rect x="135" y="111" width="5" height="12" rx="2.5" fill="#09090b"/>
+    <!-- AUDIO Subtitle -->
+    <text x="500" y="315" 
+          text-anchor="middle" 
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Outfit', 'Montserrat', sans-serif" 
+          font-size="68" 
+          font-weight="800" 
+          letter-spacing="34" 
+          fill="url(#flazoMetallicGold)"
+          stroke="url(#flazoMetallicStroke)"
+          stroke-width="1.2"
+          paint-order="stroke fill">AUDIO</text>
   </g>
-
-  <!-- Right Typography -->
-  <!-- "FLAZO" -->
-  <text x="310" y="180" 
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
-        font-size="115" 
-        font-weight="900" 
-        letter-spacing="8" 
-        fill="#09090b">FLAZO<tspan fill="#f59e0b">.</tspan></text>
-
-  <!-- Subtitle: "ACOUSTIC GOLD" -->
-  <text x="316" y="235" 
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
-        font-size="26" 
-        font-weight="700" 
-        letter-spacing="14" 
-        fill="#b45309">ACOUSTIC GOLD</text>
 </svg>`;
 
 // Helper: Build an ICO file from an array of PNG buffers
@@ -168,6 +149,9 @@ async function run() {
   console.log('Writing app/icon.svg...');
   fs.writeFileSync(path.join(appDir, 'icon.svg'), faviconSvg, 'utf8');
 
+  console.log('Writing public/logo.svg...');
+  fs.writeFileSync(path.join(publicDir, 'logo.svg'), logoSvg, 'utf8');
+
   console.log('Generating PNG variants...');
   const svgBuffer = Buffer.from(faviconSvg);
 
@@ -193,8 +177,8 @@ async function run() {
 
   console.log('Generating public/logo.png from logoSvg...');
   const logoBuffer = Buffer.from(logoSvg);
-  await sharp(logoBuffer).resize(1024, 320).png().toFile(path.join(publicDir, 'logo.png'));
-  console.log('Successfully updated public/logo.png with Flazo branding!');
+  await sharp(logoBuffer).resize(1000, 360).png().toFile(path.join(publicDir, 'logo.png'));
+  console.log('Successfully updated public/logo.png with new Flazo Audio branding!');
 
   console.log('Done! All assets generated successfully.');
 }

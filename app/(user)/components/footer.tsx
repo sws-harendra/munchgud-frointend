@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { FaInstagram, FaFacebookF, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { toast } from "sonner";
+import FlazoLogo from "@/app/commonComponents/FlazoLogo";
 
 export default function Footer() {
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -36,13 +37,8 @@ export default function Footer() {
           
           {/* Column 1: Brand Info */}
           <div className="lg:col-span-4 space-y-4">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 flex items-center justify-center text-neutral-950 font-black text-sm shadow-xs">
-                <Headphones className="w-4 h-4" />
-              </div>
-              <span className="text-2xl font-black tracking-widest text-neutral-950">
-                FLAZO<span className="text-amber-500">.</span>
-              </span>
+            <Link href="/" className="inline-flex items-center group py-1" aria-label="Flazo Home">
+              <FlazoLogo size="md" />
             </Link>
             
             <p className="text-xs text-neutral-600 leading-relaxed max-w-sm">

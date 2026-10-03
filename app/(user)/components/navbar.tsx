@@ -19,6 +19,7 @@ import Link from "next/link";
 import { logout } from "@/app/lib/store/features/authSlice";
 import { useRouter } from "next/navigation";
 import { selectCartItemsCount } from "@/app/lib/store/features/cartSlice";
+import FlazoLogo from "@/app/commonComponents/FlazoLogo";
 
 export default function EcommerceNavbar() {
   const dispatch = useAppDispatch();
@@ -76,18 +77,8 @@ export default function EcommerceNavbar() {
 
           
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 flex items-center justify-center text-white font-black text-lg shadow-md shadow-amber-500/20 group-hover:scale-105 transition-all">
-              <Headphones className="w-5 h-5 text-neutral-950" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-black tracking-widest text-neutral-950 group-hover:text-amber-700 transition-colors">
-                FLAZO<span className="text-amber-500">.</span>
-              </span>
-              <span className="text-[9px] tracking-[0.25em] text-amber-700 font-semibold -mt-1 uppercase">
-                Acoustic Gold
-              </span>
-            </div>
+          <Link href="/" className="flex items-center group py-1" aria-label="Flazo Home">
+            <FlazoLogo size="md" />
           </Link>
 
           {/* Simple Desktop Nav Links */}

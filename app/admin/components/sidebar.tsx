@@ -36,6 +36,7 @@ import { brandName } from "@/app/contants";
 import { useAppDispatch } from "@/app/lib/store/store";
 import { logout } from "@/app/lib/store/features/authSlice";
 import { useAdminTheme } from "../context/AdminThemeContext";
+import FlazoLogo from "@/app/commonComponents/FlazoLogo";
 
 interface SubMenuItem {
   name: string;
@@ -261,14 +262,19 @@ export default function Sidebar() {
           </button>
 
           {/* Brand Logo */}
-          <h1
-            className={`text-xl font-black mb-8 text-center duration-300 tracking-wider transition-transform ${
-              !open && "scale-0 h-0 mb-4"
+          <div
+            className={`mb-6 flex justify-center items-center duration-300 transition-all ${
+              !open ? "scale-90 mb-4 px-1" : "px-2"
             }`}
-            style={{ color: settings.accentColor }}
           >
-            {brandName}
-          </h1>
+            {open ? (
+              <FlazoLogo size="sm" align="center" />
+            ) : (
+              <span className="font-black text-amber-500 text-lg tracking-widest">
+                F
+              </span>
+            )}
+          </div>
 
           {/* Menu Items List */}
           <ul className="space-y-1.5 pb-6">

@@ -17,6 +17,7 @@ import { emailLogin } from "@/app/lib/store/features/authSlice";
 import { toast } from "sonner";
 import { brandName } from "@/app/contants";
 import Loader from "@/app/commonComponents/loader";
+import FlazoLogo from "@/app/commonComponents/FlazoLogo";
 
 function LoginFormContent() {
   const router = useRouter();
@@ -133,13 +134,9 @@ function LoginFormContent() {
           <Link
             href="/"
             className="inline-block mb-3 group transition-transform hover:scale-105"
+            aria-label="Flazo Home"
           >
-            <span className="text-3xl font-black tracking-widest text-neutral-950 group-hover:text-amber-600 transition-colors">
-              FLAZO<span className="text-amber-500">.</span>
-            </span>
-            <p className="text-[10px] font-semibold text-amber-600 tracking-[0.25em] uppercase">
-              Acoustic Gold
-            </p>
+            <FlazoLogo size="lg" align="center" />
           </Link>
 
           <h1 className="text-3xl font-extrabold text-neutral-950 tracking-tight">

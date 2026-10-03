@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import Link from "next/link";
 import { serverurl, brandName } from "@/app/contants";
+import FlazoLogo from "@/app/commonComponents/FlazoLogo";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -59,10 +60,8 @@ export default function ForgotPassword() {
       <div className="bg-white border border-amber-100 shadow-2xl shadow-amber-950/5 rounded-3xl p-8 w-full max-w-md relative z-10">
         {/* Brand */}
         <div className="text-center mb-6">
-          <Link href="/" className="inline-block group">
-            <span className="text-2xl font-black tracking-widest text-neutral-950 group-hover:text-amber-600 transition-colors">
-              FLAZO<span className="text-amber-500">.</span>
-            </span>
+          <Link href="/" className="inline-block group" aria-label="Flazo Home">
+            <FlazoLogo size="lg" align="center" />
           </Link>
           <h2 className="text-2xl font-bold tracking-tight text-neutral-900 mt-2">
             Reset Password
