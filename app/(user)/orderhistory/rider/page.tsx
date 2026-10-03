@@ -158,16 +158,16 @@ const OrderHistoryRiderPage = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-green-50 to-lime-100 flex items-center justify-center">
         <div className="text-center bg-white rounded-2xl shadow-lg p-8 max-w-md">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <X className="w-8 h-8 text-green-600" />
+          <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-8 h-8 text-rose-600" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Error Loading Orders
           </h3>
-          <p className="text-green-700 mb-4">{error || "Something went wrong"}</p>
+          <p className="text-rose-600 mb-4">{error || "Something went wrong"}</p>
           <button
             onClick={() => dispatch(fetchUserOrders())}
-            className="bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-700 hover:scale-105 transition-all duration-300"
+            className="bg-amber-500 text-neutral-950 font-bold px-6 py-2 rounded-lg hover:bg-amber-400 hover:scale-105 transition-all duration-300"
           >
             Retry
           </button>
@@ -182,19 +182,19 @@ const OrderHistoryRiderPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-green-50 to-lime-100">
+    <div className="min-h-screen bg-neutral-50/70">
       {/* Header */}
-      <div className="bg-white shadow-lg border-b border-gray-200">
+      <div className="bg-white shadow-xs border-b border-neutral-200">
         <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-gradient-to-r from-green-600 to-lime-600 rounded-xl shadow-lg">
-              <Package className="w-8 h-8 text-white" />
+            <div className="p-3 bg-gradient-to-r from-amber-500 to-yellow-400 rounded-xl shadow-md shadow-amber-500/20">
+              <Package className="w-8 h-8 text-neutral-950" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold bg-green-700 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-black text-neutral-900">
                 Order History For Rider
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-neutral-600 mt-1">
                 Track and manage rider orders.
               </p>
             </div>

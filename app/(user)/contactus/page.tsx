@@ -86,40 +86,55 @@ export default function Page() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-green-700 text-white py-16">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-4xl font-bold">Contact {brandName}</h1>
-          <p className="mt-4 text-lg">
-            We are here to help you with orders, delivery, and product queries.
+      {/* Luxury Obsidian & Gold Hero */}
+      <section className="relative bg-neutral-950 text-white py-16 sm:py-20 overflow-hidden border-b border-amber-500/20">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.2),rgba(255,255,255,0))] pointer-events-none" />
+        
+        <div className="relative max-w-5xl mx-auto px-6 text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-widest">
+            <span>Customer Experience &amp; Care</span>
+          </div>
+          
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white">
+            Contact <span className="gold-gradient-text">{brandName}</span>
+          </h1>
+          
+          <p className="text-neutral-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+            We are here to help you with orders, delivery tracking, acoustic recommendations, and warranty queries.
           </p>
         </div>
       </section>
 
-      {/* Ecommerce Support Highlights */}
-      <section className="py-12 bg-gray-50">
+      {/* Support Highlights */}
+      <section className="py-12 bg-neutral-50/70 border-b border-neutral-200/60">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-            <Truck className="text-green-700 mb-3" size={32} />
-            <h3 className="font-semibold text-lg">Delivery Support</h3>
-            <p className="text-gray-600 text-sm mt-2">
+          <div className="bg-white p-6 rounded-2xl border border-amber-100 shadow-xs hover:shadow-md hover:border-amber-300 transition-all">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4 shadow-2xs">
+              <Truck size={26} />
+            </div>
+            <h3 className="font-bold text-neutral-900 text-lg">Delivery Support</h3>
+            <p className="text-neutral-600 text-sm mt-2 leading-relaxed">
               Questions about shipping, delivery tracking, or service areas.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-            <RefreshCcw className="text-green-700 mb-3" size={32} />
-            <h3 className="font-semibold text-lg">Returns & Refunds</h3>
-            <p className="text-gray-600 text-sm mt-2">
-              Need help with product returns or refund requests.
+          <div className="bg-white p-6 rounded-2xl border border-amber-100 shadow-xs hover:shadow-md hover:border-amber-300 transition-all">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4 shadow-2xs">
+              <RefreshCcw size={26} />
+            </div>
+            <h3 className="font-bold text-neutral-900 text-lg">Returns &amp; Refunds</h3>
+            <p className="text-neutral-600 text-sm mt-2 leading-relaxed">
+              Need help with product returns, replacements, or refund requests.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-            <ShieldCheck className="text-green-700 mb-3" size={32} />
-            <h3 className="font-semibold text-lg">Secure Orders</h3>
-            <p className="text-gray-600 text-sm mt-2">
-              We ensure safe payment and secure shopping experience.
+          <div className="bg-white p-6 rounded-2xl border border-amber-100 shadow-xs hover:shadow-md hover:border-amber-300 transition-all">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4 shadow-2xs">
+              <ShieldCheck size={26} />
+            </div>
+            <h3 className="font-bold text-neutral-900 text-lg">Secure Orders</h3>
+            <p className="text-neutral-600 text-sm mt-2 leading-relaxed">
+              We ensure safe payment and 100% verified shopping experience.
             </p>
           </div>
         </div>
@@ -200,7 +215,7 @@ UTTAR PRADESH, 201304
                   placeholder="Full Name *"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none bg-white text-sm"
+                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
                   required
                 />
               </div>
@@ -211,7 +226,7 @@ UTTAR PRADESH, 201304
                   placeholder="Email Address *"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none bg-white text-sm"
+                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
                   required
                 />
               </div>
@@ -222,7 +237,7 @@ UTTAR PRADESH, 201304
                   placeholder="Phone Number (Optional)"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none bg-white text-sm"
+                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
                 />
 
                 <input
@@ -230,7 +245,7 @@ UTTAR PRADESH, 201304
                   placeholder="Order ID (Optional)"
                   value={formData.orderId}
                   onChange={(e) => setFormData({ ...formData, orderId: e.target.value })}
-                  className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none bg-white text-sm"
+                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
                 />
               </div>
 
@@ -240,7 +255,7 @@ UTTAR PRADESH, 201304
                   placeholder="Write your message... *"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-600 outline-none bg-white text-sm"
+                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
                   required
                 />
               </div>
@@ -248,7 +263,7 @@ UTTAR PRADESH, 201304
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-amber-600 text-white py-3 rounded-lg hover:bg-amber-700 transition flex items-center justify-center gap-2 cursor-pointer font-semibold disabled:opacity-50 shadow-md shadow-amber-500/20"
+                className="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-neutral-950 font-black py-3.5 rounded-xl hover:brightness-105 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md shadow-amber-500/20"
               >
                 <Send className="w-4 h-4" />
                 <span>{isSubmitting ? "Submitting..." : "Submit Request"}</span>
