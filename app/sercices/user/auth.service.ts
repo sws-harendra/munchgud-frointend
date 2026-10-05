@@ -113,6 +113,65 @@ export const authService = {
     }
   },
 
+  // 📱 Send Forgot Password Phone OTP
+  sendForgotOtp: async (phoneNumber: string) => {
+    try {
+      const response = await axiosInstance.post("/user/auth/send-otp", {
+        phoneNumber,
+        purpose: "forgot_password",
+      });
+      return response.data;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "Failed to send password reset OTP";
+      throw { message };
+    }
+  },
+
+  // 📱 Verify Forgot Password OTP
+  verifyResetOtp: async (phoneNumber: string, otp: string) => {
+    try {
+      const response = await axiosInstance.post("/user/auth/verify-reset-otp", {
+        phoneNumber,
+        otp,
+      });
+      return response.data;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "Invalid OTP code. Please check and try again.";
+      throw { message };
+    }
+  },
+
+  // 📱 Reset Password with verified phone
+  resetPasswordWithPhone: async (data: {
+    phoneNumber: string;
+    resetToken?: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    try {
+      const response = await axiosInstance.post(
+        "/user/auth/reset-password-phone",
+        data
+      );
+      return response.data;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        "Failed to reset password";
+      throw { message };
+    }
+  },
+
   // Get user details
   getUserDetails: async () => {
     const response = await axiosInstance.get("/user/getuser");
