@@ -59,15 +59,15 @@ export default function FlazoLifestyleStory() {
                 <ShieldCheck className="w-5 h-5 text-amber-600 group-hover:scale-110 group-hover:rotate-6 transition-transform" />
                 <h4 className="text-xs font-black text-neutral-900 group-hover:text-amber-800 transition-colors">1-Year Warranty & Service</h4>
                 <p className="text-[11px] text-neutral-500 leading-relaxed">
-                  No service center loops. Complete 1-Year warranty coverage and dedicated service support.
+                  If you experience any technical issues or manufacturing defects within 365 days, we will repair or service your earbuds to ensure they work perfectly.
                 </p>
               </div>
 
               <div className="card-lift p-4 rounded-2xl bg-white border border-amber-200/70 shadow-2xs space-y-1.5 group cursor-default">
                 <Truck className="w-5 h-5 text-amber-600 group-hover:scale-110 group-hover:rotate-6 transition-transform" />
-                <h4 className="text-xs font-black text-neutral-900 group-hover:text-amber-800 transition-colors">Express 48H Shipping</h4>
+                <h4 className="text-xs font-black text-neutral-900 group-hover:text-amber-800 transition-colors">Express Shipping</h4>
                 <p className="text-[11px] text-neutral-500 leading-relaxed">
-                  Dispatched in armored luxury packaging across 19,000+ pin codes in India with free COD.
+                  Delivered within 2 to 5 business days. Dispatched in armored luxury packaging across 19,000+ pin codes in India with free COD.
                 </p>
               </div>
             </div>
