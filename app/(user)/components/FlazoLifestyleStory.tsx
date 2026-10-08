@@ -57,9 +57,9 @@ export default function FlazoLifestyleStory() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="card-lift p-4 rounded-2xl bg-white border border-amber-200/70 shadow-2xs space-y-1.5 group cursor-default">
                 <ShieldCheck className="w-5 h-5 text-amber-600 group-hover:scale-110 group-hover:rotate-6 transition-transform" />
-                <h4 className="text-xs font-black text-neutral-900 group-hover:text-amber-800 transition-colors">1-Year Hassle-Free Swap</h4>
+                <h4 className="text-xs font-black text-neutral-900 group-hover:text-amber-800 transition-colors">1-Year Warranty & Service</h4>
                 <p className="text-[11px] text-neutral-500 leading-relaxed">
-                  No service center loops. If anything goes wrong, we send a brand new pair to your doorstep.
+                  No service center loops. Complete 1-Year warranty coverage and dedicated service support.
                 </p>
               </div>
 

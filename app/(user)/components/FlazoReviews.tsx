@@ -75,9 +75,9 @@ const reviewsData: Review[] = [
     rating: 5,
     product: "Flazo Nirvana Gold Pro",
     date: "Verified Purchase • 1 week ago",
-    title: "Doorstep replacement policy gave me total confidence",
+    title: "1-Year warranty and service gave me total confidence",
     comment:
-      "Quad-mic ENC is remarkably clear for office Zoom calls in cafes. The best part is knowing they offer a 1-year doorstep replacement without service center loops. Pure peace of mind.",
+      "Quad-mic ENC is remarkably clear for office Zoom calls in cafes. The best part is knowing they offer 1-Year warranty and service without service center loops. Pure peace of mind.",
     tag: "anc",
     likes: 198,
     verified: true,

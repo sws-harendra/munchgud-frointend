@@ -68,7 +68,7 @@ export default function Page() {
               </div>
               <div className="flex items-center gap-3 text-neutral-800 font-medium">
                 <CheckCircle2 className="w-5 h-5 text-amber-500 shrink-0" />
-                <span>Doorstep 1-Year Comprehensive Replacement Warranty</span>
+                <span>1-Year Warranty and Service</span>
               </div>
             </div>
           </div>
@@ -140,7 +140,7 @@ export default function Page() {
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <h3 className="text-lg font-bold text-neutral-900">
-                1-Year Doorstep Warranty
+                1-Year Warranty and Service
               </h3>
               <p className="text-neutral-600 text-sm mt-3 leading-relaxed">
                 Hassle-free direct doorstep pickup and instant replacement support across 19,000+ pin codes in India.

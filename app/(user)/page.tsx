@@ -50,7 +50,7 @@ export default function HomePage() {
       {/* 5. Why Flazo vs Ordinary Buds Comparison */}
       <FlazoComparison />
 
-      {/* 6. Editorial Lifestyle Story & Doorstep Replacement Guarantee */}
+      {/* 6. Editorial Lifestyle Story & 1-Year Warranty and Service */}
       <FlazoLifestyleStory />
 
       {/* 7. Acoustic FAQs & Buyer Assurance Accordion */}

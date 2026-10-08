@@ -659,7 +659,7 @@ export default function FlazoTechAcoustics() {
         {/* Bottom subtle guidance hint */}
         <div className="text-center pt-2">
           <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider">
-            Designed in Bangalore • Acoustic Testing by Flazo Sound Lab • 1-Year Doorstep Replacement
+            Designed in Bangalore • Acoustic Testing by Flazo Sound Lab • 1-Year Warranty and Service
           </span>
         </div>
 

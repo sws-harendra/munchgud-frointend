@@ -146,7 +146,7 @@ export default function SupportWarrantyPage() {
     }
     setWarrantyResult({
       model: "Flazo Nirvana Gold Pro X (Champagne Gold)",
-      status: "Active • 1-Year Doorstep Warranty",
+      status: "Active • 1-Year Warranty and Service",
       expiresOn: "September 21, 2027",
       coverage: "100% Hardware Defects, Driver Issues, Charging Case",
     });
@@ -159,7 +159,7 @@ export default function SupportWarrantyPage() {
       return;
     }
     setIsRegistered(true);
-    toast.success("1-Year Doorstep Swap Warranty registered successfully!");
+    toast.success("1-Year Warranty and Service registered successfully!");
   };
 
   const handleSendChat = (e: React.FormEvent) => {
@@ -858,7 +858,7 @@ export default function SupportWarrantyPage() {
                   Register Your Flazo Product
                 </h3>
                 <p className="text-xs text-neutral-500">
-                  Activates 1-Year Doorstep Swap Warranty instantly
+                  Activates 1-Year Warranty and Service instantly
                 </p>
               </div>
             </div>
@@ -868,7 +868,7 @@ export default function SupportWarrantyPage() {
                 <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
                 <h4 className="text-base font-bold text-emerald-900">Warranty Activated!</h4>
                 <p className="text-xs text-emerald-700 leading-relaxed">
-                  Your {regForm.model} is now protected with Flazo 1-Year Doorstep Swap. Confirmation has been sent to {regForm.phone}.
+                  Your {regForm.model} is now protected with Flazo 1-Year Warranty and Service. Confirmation has been sent to {regForm.phone}.
                 </p>
                 <button
                   onClick={() => setActiveModal(null)}
@@ -942,7 +942,7 @@ export default function SupportWarrantyPage() {
                   type="submit"
                   className="w-full py-2.5 bg-[#9E6B20] hover:bg-[#8A5B17] text-white text-xs font-bold rounded-xl transition shadow-xs mt-2"
                 >
-                  Activate 1-Year Doorstep Warranty →
+                  Activate 1-Year Warranty and Service →
                 </button>
               </form>
             )}

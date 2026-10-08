@@ -39,7 +39,7 @@ const AboutUs = () => {
           </p>
 
           <p className="text-neutral-600 text-base leading-relaxed">
-            Engineered with custom 13mm BoomBass™ titanium drivers and intelligent quad-mic ENC for crystal-clear calls, every Flazo device is backed by our signature 1-Year Comprehensive Doorstep Replacement Warranty.
+            Engineered with custom 13mm BoomBass™ titanium drivers and intelligent quad-mic ENC for crystal-clear calls, every Flazo device is backed by our signature 1 Year warranty and service.
           </p>
 
           <Link
@@ -70,7 +70,7 @@ const AboutUs = () => {
             </div>
             <div className="flex items-center gap-3 text-neutral-300">
               <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0" />
-              <span>1-Year Doorstep Swap & Warranty Support</span>
+              <span>1 Year warranty and service</span>
             </div>
           </div>
         </div>

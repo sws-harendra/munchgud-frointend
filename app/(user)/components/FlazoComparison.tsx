@@ -125,7 +125,7 @@ export default function FlazoComparison() {
         <ul className="space-y-1.5 text-xs sm:text-sm text-slate-800">
           <li className="flex items-start gap-2">
             <span className="text-[#0369a1] font-bold text-base leading-none select-none mt-0.5">•</span>
-            <div>1-Year Doorstep Repair Warranty</div>
+            <div>1-Year Warranty and Service</div>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-[#0369a1] font-bold text-base leading-none select-none mt-0.5">•</span>

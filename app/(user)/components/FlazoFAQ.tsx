@@ -12,45 +12,45 @@ interface FAQItem {
 const faqs: FAQItem[] = [
   {
     id: 1,
-    category: "Warranty & Swap",
-    question: "How does the 1-Year Doorstep Replacement Warranty work?",
+    category: "Warranty & Service",
+    question: "How does the 1-Year Warranty and Service work?",
     answer:
-      "Unlike ordinary audio brands that force you into crowded third-party service centers, Flazo offers Doorstep Express Swap. If you experience any manufacturing defect or audio failure within 365 days, simply raise a ticket via WhatsApp or care@flazo.in. Our express courier partner arrives directly at your doorstep with a brand-new sealed box in exchange for the defective unit within 48 to 72 hours.",
+      "​Flazo offers Doorstep Express Swap. If you experience any genuine manufacturing defect or technical failure within 365 days, simply raise a ticket via WhatsApp or care@flazo.in. Our express courier partner arrives directly at your doorstep with a brand-new sealed box in exchange for the defective unit within 72 to 96 hours.​Note: This warranty strictly covers internal manufacturing and technical defects only. Physical damage, drops, water immersion, misuse, or accidental damage caused by the user will not be covered.",
   },
   {
     id: 2,
     category: "Acoustics & Drivers",
-    question: "How is the 13mm BoomBass™ driver different from standard 10mm earbuds?",
+    question: "​How is the 13mm BoomBass™ driver different from standard 10mm earbuds?",
     answer:
-      "Standard wireless earbuds use cheap 9mm or 10mm plastic diaphragms that compress and distort when heavy sub-bass drops hit. Flazo engineers use customized 13mm & 13.4mm aerospace-grade titanium diaphragms. Titanium provides exceptional stiffness-to-mass ratio, moving 40% more acoustic air volume. The result is visceral, chest-thumping sub-bass (20Hz - 100Hz) with zero mud and pristine vocal clarity.",
+"Standard wireless earbuds use cheap 9mm or 10mm plastic diaphragms that compress and distort when heavy sub-bass drops hit. Flazo engineers use customized 13mm aerospace-grade titanium diaphragms. Titanium provides exceptional stiffness-to-mass ratio, moving 40% more acoustic air volume. The result is visceral, chest-thumping sub-bass (20Hz - 100Hz) with zero mud and pristine vocal clarity.",
   },
   {
     id: 3,
     category: "Compatibility",
     question: "Are Flazo earbuds compatible with Apple iPhone, Android, and Laptops?",
     answer:
-      "Yes, 100%. Equipped with Bluetooth 5.3 architecture and high-definition AAC, SBC, and LDAC audio codecs, Flazo earbuds instantly pair with iPhones, iPads, Android smartphones (Samsung, OnePlus, Xiaomi, Vivo), MacBooks, and Windows PCs. Dual-Device Instant Pairing allows you to seamlessly switch between your work laptop and phone calls without reconnecting.",
+      "Are Flazo earbuds compatible with Apple iPhone, Android, and Laptops? Yes, 100%. Equipped with Bluetooth 5.4 architecture and high-definition AAC, SBC, and LDAC audio codecs, Flazo earbuds instantly pair with iPhones, iPads, Android smartphones (Samsung, OnePlus, Xiaomi, Vivo), MacBooks, and Windows PCs. Dual-Device Instant Pairing allows you to seamlessly switch between your work laptop and phone calls without reconnecting.",
   },
   {
     id: 4,
     category: "Durability & Sports",
     question: "Can I wear Flazo earbuds during intense gym sessions or heavy rain?",
     answer:
-      "Absolutely. Flazo earbuds feature IPX7 and IPX5 certified nano-coating seals that safeguard internal circuit boards against corrosive sweat salts, water immersion, heavy monsoon downpours, and gym chalk dust. The ergonomic 45° angled acoustic nozzle ensures the earbuds stay securely locked in your ears even during sprinting or HIIT workouts.",
+"Absolutely. Flazo earbuds feature IPX5 certified nano-coating seals that safeguard internal circuit boards against corrosive sweat salts, water splashes, light rain, and gym chalk dust. The ergonomic 45° angled acoustic nozzle ensures the earbuds stay securely locked in your ears even during sprinting or HIIT workouts."
   },
   {
     id: 5,
     category: "Payments & Delivery",
     question: "Can I pay Cash on Delivery (COD)? What is the delivery timeframe?",
     answer:
-      "Yes, Free Cash on Delivery (COD) is available across 19,000+ pin codes in India. All orders placed before 2:00 PM IST are dispatched on the same day via premium air couriers (BlueDart, Delhivery, Xpressbees). Metro deliveries typically arrive within 24 to 48 hours, packed inside tamper-evident armored luxury boxes with genuine GST invoices.",
+    "Yes, Free Cash on Delivery (COD) is available across 19,000+ pin codes in India. All orders placed before 2:00 PM IST are dispatched on the same day via premium air couriers (BlueDart, Delhivery, Xpressbees). Deliveries typically arrive within 2 to 5 business days, packed inside tamper-evident armored luxury boxes with genuine GST invoices.",
   },
   {
     id: 6,
     category: "Return Policy",
     question: "What is the 7-Day Hassle-Free Swap & Return Policy?",
     answer:
-      "We want you to fall in love with Flazo sound. If for any reason the acoustic fit, sound signature, or comfort does not meet your expectations, you can request an instant replacement or swap within 7 days of package delivery. No questions asked.",
+      "We want you to fall in love with Flazo sound. If for any reason the acoustic fit, sound signature, or comfort does not meet your expectations, or if you receive an incorrect item due to our error, you can request an instant replacement or swap within 7 days of package delivery. Please note that replacements will be provided for the exact item and color originally ordered; color changes are not permitted.",
   },
 ];
 
@@ -75,7 +75,7 @@ export default function FlazoFAQ() {
             FREQUENTLY ASKED <span className="gold-gradient-text">QUESTIONS</span>
           </h2>
           <p className="text-neutral-600 text-sm sm:text-base max-w-xl mx-auto">
-            Everything you need to know about Flazo 13mm acoustic engineering, doorstep warranty, and delivery assurance.
+            Everything you need to know about Flazo 13mm acoustic engineering, 1-Year warranty and service, and delivery assurance.
           </p>
         </div>
 

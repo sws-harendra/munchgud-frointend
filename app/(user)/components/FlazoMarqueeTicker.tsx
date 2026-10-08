@@ -10,9 +10,9 @@ export default function FlazoMarqueeTicker() {
     { icon: Gamepad2, text: "35MS BEAST™ GAMING LATENCY", highlight: false },
     { icon: Droplets, text: "IPX5 SWEAT & SPLASH RESISTANCE", highlight: true },
     { icon: Zap, text: "ASAP™ CHARGE: 10 MINS = 120 MINS", highlight: false },
-    { icon: Award, text: "1-YEAR DOORSTEP REPLACEMENT", highlight: true },
+    { icon: Award, text: "1-YEAR WARRANTY AND SERVICE", highlight: true },
     { icon: Truck, text: "FREE EXPRESS 48H DISPATCH", highlight: false },
-    { icon: Sparkles, text: "24K GOLD TRIM LUXURY AESTHETICS", highlight: true },
+    { icon: Zap, text: "WIRELESS 5.4 • INSTANT AUTO & FAST PAIRING", highlight: true },
   ];
 
   return (
