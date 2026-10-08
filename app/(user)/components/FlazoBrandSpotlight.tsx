@@ -28,6 +28,7 @@ import { fetchCategories } from "@/app/lib/store/features/categorySlice";
 import { addToCart } from "@/app/lib/store/features/cartSlice";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { toast } from "sonner";
+import FlazoDogEmptyState from "./FlazoDogEmptyState";
 
 const slugify = (text: string) =>
   (text || "product")
@@ -256,111 +257,128 @@ export default function FlazoBrandSpotlight() {
               <div className="flex items-center justify-between gap-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-950 text-amber-300 text-[11px] font-black uppercase tracking-wider shadow-2xs">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  {currentProduct?.Category?.name || currentProduct?.tags?.[0] || "Curator's Spotlight"}
+                  {currentProduct
+                    ? currentProduct?.Category?.name || currentProduct?.tags?.[0] || "Curator's Spotlight"
+                    : "Curator's Spotlight"}
                 </span>
 
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 border border-amber-200/80 text-xs font-bold text-neutral-800 shadow-2xs">
-                  <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                  <span>{currentProduct?.ratings || "4.9"}</span>
-                  <span className="text-neutral-300">|</span>
-                  <span className="text-neutral-500 font-medium">Verified Authentic</span>
-                </div>
+                {currentProduct ? (
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 border border-amber-200/80 text-xs font-bold text-neutral-800 shadow-2xs">
+                    <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                    <span>{currentProduct?.ratings || "4.9"}</span>
+                    <span className="text-neutral-300">|</span>
+                    <span className="text-neutral-500 font-medium">Verified Authentic</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-bold text-amber-800 shadow-2xs">
+                    <span>Awaiting Drops</span>
+                  </div>
+                )}
               </div>
 
-              {/* Product Visual + Info 2-Column Split */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                
-                {/* Product Image Area */}
-                <div className="md:col-span-6 relative flex items-center justify-center">
-                  <Link href={productLink} className="w-full">
-                    <div className="relative w-full aspect-square max-h-[340px] rounded-2xl bg-gradient-to-b from-[#F5EFE6]/70 via-white to-[#F0E6D6]/70 border border-amber-100 flex items-center justify-center p-6 shadow-inner group/img overflow-hidden">
-                      <img
-                        src={getProductImage(currentProduct)}
-                        alt={currentProduct?.name || "Curated Spotlight Product"}
-                        className="w-full h-full object-contain max-h-[280px] drop-shadow-lg group-hover/img:scale-105 transition-transform duration-500"
-                        loading="eager"
-                      />
-                      
-                      {/* Hover Pill */}
-                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-neutral-950/90 text-white text-[11px] font-bold shadow-md">
-                          <span>View Details</span>
-                          <ArrowUpRight className="w-3 h-3 text-amber-300" />
-                        </span>
+              {/* Product Visual OR Animated Dog Empty State */}
+              {currentProduct ? (
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                  {/* Product Image Area */}
+                  <div className="md:col-span-6 relative flex items-center justify-center">
+                    <Link href={productLink} className="w-full">
+                      <div className="relative w-full aspect-square max-h-[340px] rounded-2xl bg-gradient-to-b from-[#F5EFE6]/70 via-white to-[#F0E6D6]/70 border border-amber-100 flex items-center justify-center p-6 shadow-inner group/img overflow-hidden">
+                        <img
+                          src={getProductImage(currentProduct)}
+                          alt={currentProduct?.name || "Curated Spotlight Product"}
+                          className="w-full h-full object-contain max-h-[280px] drop-shadow-lg group-hover/img:scale-105 transition-transform duration-500"
+                          loading="eager"
+                        />
+                        
+                        {/* Hover Pill */}
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 pointer-events-none">
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-neutral-950/90 text-white text-[11px] font-bold shadow-md">
+                            <span>View Details</span>
+                            <ArrowUpRight className="w-3 h-3 text-amber-300" />
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                </div>
+                    </Link>
+                  </div>
 
-                {/* Product Copy & Specs */}
-                <div className="md:col-span-6 space-y-4 text-left">
-                  <div className="space-y-1.5">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8C6D37]">
-                      {currentProduct?.varientValue || "Signature Series"}
+                  {/* Product Copy & Specs */}
+                  <div className="md:col-span-6 space-y-4 text-left">
+                    <div className="space-y-1.5">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8C6D37]">
+                        {currentProduct?.varientValue || "Signature Series"}
+                      </p>
+                      <Link href={productLink}>
+                        <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-neutral-950 leading-tight hover:text-amber-700 transition-colors line-clamp-2">
+                          {currentProduct?.name || "Curated Modern Masterpiece"}
+                        </h3>
+                      </Link>
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-neutral-600 line-clamp-3 leading-relaxed">
+                      {currentProduct?.description ||
+                        "Engineered to the highest standards with premium finishes, rigorous quality inspection, and timeless aesthetics made to complement any setting."}
                     </p>
-                    <Link href={productLink}>
-                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-neutral-950 leading-tight hover:text-amber-700 transition-colors line-clamp-2">
-                        {currentProduct?.name || "Curated Modern Masterpiece"}
-                      </h3>
-                    </Link>
-                  </div>
 
-                  <p className="text-xs sm:text-sm text-neutral-600 line-clamp-3 leading-relaxed">
-                    {currentProduct?.description ||
-                      "Engineered to the highest standards with premium finishes, rigorous quality inspection, and timeless aesthetics made to complement any setting."}
-                  </p>
-
-                  {/* Price & Savings Pill */}
-                  <div className="pt-2 border-t border-amber-200/50 flex flex-wrap items-baseline gap-3">
-                    <span className="text-2xl sm:text-3xl font-black text-neutral-950">
-                      ₹{price.toLocaleString("en-IN")}
-                    </span>
-
-                    {originalPrice > price && (
-                      <span className="text-sm sm:text-base text-neutral-400 line-through font-medium">
-                        ₹{originalPrice.toLocaleString("en-IN")}
+                    {/* Price & Savings Pill */}
+                    <div className="pt-2 border-t border-amber-200/50 flex flex-wrap items-baseline gap-3">
+                      <span className="text-2xl sm:text-3xl font-black text-neutral-950">
+                        ₹{price.toLocaleString("en-IN")}
                       </span>
-                    )}
 
-                    {discountPercent > 0 && (
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-extrabold">
-                        {discountPercent}% OFF
-                      </span>
-                    )}
-                  </div>
+                      {originalPrice > price && (
+                        <span className="text-sm sm:text-base text-neutral-400 line-through font-medium">
+                          ₹{originalPrice.toLocaleString("en-IN")}
+                        </span>
+                      )}
 
-                  {/* Stock & Assurance Strip */}
-                  <div className="flex items-center gap-3 text-xs text-neutral-600 pt-1">
-                    <div className="flex items-center gap-1.5 font-bold text-emerald-700">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span>In Stock</span>
+                      {discountPercent > 0 && (
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-extrabold">
+                          {discountPercent}% OFF
+                        </span>
+                      )}
                     </div>
-                    <span className="text-neutral-300">•</span>
-                    <span>Ready for 24h Dispatch</span>
-                  </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap items-center gap-3 pt-3">
-                    <Link
-                      href={productLink}
-                      className="btn-shimmer inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#996515] via-[#B8860B] to-[#D4AF37] text-white font-bold text-xs sm:text-sm shadow-md shadow-amber-800/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
-                    >
-                      <span>Explore Piece</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    {/* Stock & Assurance Strip */}
+                    <div className="flex items-center gap-3 text-xs text-neutral-600 pt-1">
+                      <div className="flex items-center gap-1.5 font-bold text-emerald-700">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>In Stock</span>
+                      </div>
+                      <span className="text-neutral-300">•</span>
+                      <span>Ready for 24h Dispatch</span>
+                    </div>
 
-                    <button
-                      onClick={(e) => handleAddToCart(e, currentProduct)}
-                      disabled={isAdding}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-white hover:bg-neutral-950 text-neutral-900 hover:text-white border border-[#D8C7A5] hover:border-neutral-950 font-bold text-xs sm:text-sm shadow-2xs hover:shadow-sm transition-all cursor-pointer group/cart"
-                    >
-                      <ShoppingCart className="w-4 h-4 text-amber-600 group-hover/cart:text-amber-400" />
-                      <span>{isAdding ? "Adding..." : "Add to Cart"}</span>
-                    </button>
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-3 pt-3">
+                      <Link
+                        href={productLink}
+                        className="btn-shimmer inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#996515] via-[#B8860B] to-[#D4AF37] text-white font-bold text-xs sm:text-sm shadow-md shadow-amber-800/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                      >
+                        <span>Explore Piece</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+
+                      <button
+                        onClick={(e) => handleAddToCart(e, currentProduct)}
+                        disabled={isAdding}
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-white hover:bg-neutral-950 text-neutral-900 hover:text-white border border-[#D8C7A5] hover:border-neutral-950 font-bold text-xs sm:text-sm shadow-2xs hover:shadow-sm transition-all cursor-pointer group/cart"
+                      >
+                        <ShoppingCart className="w-4 h-4 text-amber-600 group-hover/cart:text-amber-400" />
+                        <span>{isAdding ? "Adding..." : "Add to Cart"}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-              </div>
+              ) : (
+                <FlazoDogEmptyState
+                  tab={activeTab}
+                  onRefresh={() => {
+                    dispatch(fetchProducts({ limit: 12 }));
+                    dispatch(getTrendingProduct());
+                    toast.info("Checking catalog for new products...");
+                  }}
+                />
+              )}
             </div>
 
             {/* Bottom Multi-Product Navigation Switcher Dots */}
