@@ -388,11 +388,11 @@ const CartPage = () => {
               <div className="space-y-2.5 text-center">
                 <div className="flex items-center justify-center text-gray-600 text-xs font-semibold py-2 px-3 bg-amber-50/50 rounded-xl border border-amber-100/70">
                   <Star className="w-4 h-4 mr-2 text-amber-500 fill-amber-500 flex-shrink-0" />
-                  30-day money back guarantee
+                  
                 </div>
                 <div className="flex items-center justify-center text-gray-500 text-[11px] font-medium">
                   <Lock className="w-3.5 h-3.5 mr-1 text-amber-600" />
-                  Bank-grade 256-bit SSL encrypted checkout
+                  
                 </div>
               </div>
             </div>

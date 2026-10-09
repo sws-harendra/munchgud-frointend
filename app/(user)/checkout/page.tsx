@@ -874,7 +874,7 @@ const CheckoutPage = () => {
 
                     <div className="mb-6">
                       <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Landmark
+                        Landmark *
                       </label>
                       <input
                         type="text"
@@ -897,12 +897,13 @@ const CheckoutPage = () => {
                     </div>
                     <div className="mb-6">
                       <label className="block text-sm font-semibold text-gray-700 mb-3">
-                        Apartment, Suite, etc. (optional)
+                        Apartment, Suite, etc. *
                       </label>
                       <input
                         type="text"
                         name="newAddress.address2"
                         value={formData.newAddress.address2}
+                        required
                         onChange={handleInputChange}
                         placeholder="Apartment, suite, floor, etc."
                         className="w-full px-4 py-4 border-2 border-gray-200 hover:border-gray-300 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200"
