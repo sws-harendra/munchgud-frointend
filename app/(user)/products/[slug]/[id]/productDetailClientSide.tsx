@@ -745,15 +745,15 @@ export default function ProductDetailClient({
             </div>
 
             {/* boAt / Flazo Reward Points Banner */}
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-gradient-to-r from-[#FFFBEB] via-[#FEF3C7]/60 to-[#FFFBEB] border border-[#FDE68A] text-xs font-semibold text-neutral-800 shadow-2xs">
+            {/* <div className="flex items-center justify-between p-3.5 rounded-xl bg-gradient-to-r from-[#FFFBEB] via-[#FEF3C7]/60 to-[#FFFBEB] border border-[#FDE68A] text-xs font-semibold text-neutral-800 shadow-2xs">
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 rounded-full bg-[#F59E0B] text-white flex items-center justify-center text-[10px] font-black shrink-0">
-                  🪙
+                  
                 </div>
                 <span>Earn upto {rewardPoints} boAt reward points on this product</span>
               </div>
               <span className="text-neutral-500 text-sm">›</span>
-            </div>
+            </div> */}
 
             {/* Choose Your Color (Only shown if colors exist in DB) */}
             {availableColors.length > 0 && (
