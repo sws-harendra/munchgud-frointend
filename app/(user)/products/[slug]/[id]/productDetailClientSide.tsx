@@ -60,8 +60,11 @@ interface ColorOption {
   name: string;
   hex: string;
   image?: string;
+  images?: string[];
   variantId?: number;
   price?: string;
+  originalPrice?: string;
+  stock?: number;
 }
 
 export default function ProductDetailClient({
@@ -143,10 +146,20 @@ export default function ProductDetailClient({
   };
 
   // Normalize Images
-  const rawImages =
-    selectedVariant && selectedVariant.image
-      ? [selectedVariant.image, ...(Array.isArray(product.images) ? product.images : [])]
-      : product.images;
+  const rawImages = useMemo(() => {
+    if (selectedVariant) {
+      if (Array.isArray(selectedVariant.images) && selectedVariant.images.length > 0) {
+        return selectedVariant.images;
+      }
+      if (selectedVariant.image) {
+        return [
+          selectedVariant.image,
+          ...(Array.isArray(product.images) ? product.images : []),
+        ];
+      }
+    }
+    return product.images;
+  }, [selectedVariant, product.images]);
 
   const displayImages: string[] = useMemo(() => {
     let list: string[] = [];
@@ -195,8 +208,11 @@ export default function ProductDetailClient({
             name,
             hex,
             image: v.image || undefined,
+            images: Array.isArray(v.images) ? v.images : undefined,
             variantId: v.id,
             price: v.price,
+            originalPrice: v.originalPrice || undefined,
+            stock: v.stock,
           };
         });
       }
@@ -274,17 +290,23 @@ export default function ProductDetailClient({
     });
   }, []);
 
-  // Compute pricing and savings
+  // Compute pricing, savings and stock
   const currentPrice = selectedVariant
     ? parseFloat(selectedVariant.price)
     : parseFloat(product.discountPrice) || 0;
 
-  const origPrice =
-    parseFloat(product.originalPrice) || currentPrice;
+  const origPrice = selectedVariant?.originalPrice
+    ? parseFloat(selectedVariant.originalPrice)
+    : parseFloat(product.originalPrice) || currentPrice;
   const savings = Math.max(0, origPrice - currentPrice);
   const discountPct = origPrice > 0 && origPrice > currentPrice
     ? Math.round((savings / origPrice) * 100)
     : 0;
+
+  const currentStock =
+    selectedVariant !== null && selectedVariant.stock !== undefined
+      ? selectedVariant.stock
+      : product.stock;
 
   // Reward points calculation (~5% of selling price)
   const rewardPoints = Math.max(10, Math.round(currentPrice * 0.05));
@@ -402,10 +424,7 @@ export default function ProductDetailClient({
       const matched = product.ProductVariants.find((v) => v.id === color.variantId);
       if (matched) {
         setSelectedVariant(matched);
-        if (matched.image) {
-          const imgIdx = displayImages.indexOf(matched.image);
-          if (imgIdx !== -1) setSelectedImage(imgIdx);
-        }
+        setSelectedImage(0); // Reset main preview image to first photo of this color
       }
     }
   };
@@ -435,6 +454,10 @@ export default function ProductDetailClient({
   };
 
   const handleAddToCart = () => {
+    if (currentStock <= 0) {
+      toast.error("This color variant is currently out of stock!");
+      return;
+    }
     dispatch(
       addToCart({
         id: Number(product.id),
@@ -447,10 +470,14 @@ export default function ProductDetailClient({
         variantName: `${activeColor?.name || ""} - ${selectedSize || ""}`.trim(),
       })
     );
-    toast.success(`${quantity} x ${product.name} added to cart!`);
+    toast.success(`${quantity} x ${product.name} ${activeColor ? `(${activeColor.name})` : ""} added to cart!`);
   };
 
   const handleBuyNow = () => {
+    if (currentStock <= 0) {
+      toast.error("This color variant is currently out of stock!");
+      return;
+    }
     handleAddToCart();
     router.push("/cart");
   };
@@ -837,19 +864,29 @@ export default function ProductDetailClient({
 
               {/* Add to Cart Button */}
               <button
+                disabled={currentStock <= 0}
                 onClick={handleAddToCart}
-                className="flex-1 bg-[#FBBF24] hover:bg-[#F59E0B] text-neutral-950 font-bold py-3.5 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 text-sm shadow-xs"
+                className={`flex-1 font-bold py-3.5 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 text-sm shadow-xs ${
+                  currentStock <= 0
+                    ? "bg-neutral-200 text-neutral-400 cursor-not-allowed border border-neutral-300"
+                    : "bg-[#FBBF24] hover:bg-[#F59E0B] text-neutral-950"
+                }`}
               >
                 <ShoppingCart size={17} />
-                <span>Add to Cart</span>
+                <span>{currentStock <= 0 ? "Out of Stock" : "Add to Cart"}</span>
               </button>
 
               {/* Buy Now Button */}
               <button
+                disabled={currentStock <= 0}
                 onClick={handleBuyNow}
-                className="flex-1 bg-[#FEF3C7] hover:bg-[#FDE68A] text-[#92400E] font-bold border border-[#FCD34D] py-3.5 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-1.5 text-sm shadow-xs"
+                className={`flex-1 font-bold border py-3.5 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-1.5 text-sm shadow-xs ${
+                  currentStock <= 0
+                    ? "bg-neutral-100 text-neutral-300 border-neutral-200 cursor-not-allowed"
+                    : "bg-[#FEF3C7] hover:bg-[#FDE68A] text-[#92400E] border-[#FCD34D]"
+                }`}
               >
-                <Zap size={16} className="fill-[#92400E]" />
+                <Zap size={16} className={currentStock <= 0 ? "fill-neutral-300 text-neutral-300" : "fill-[#92400E]"} />
                 <span>Buy Now</span>
               </button>
             </div>

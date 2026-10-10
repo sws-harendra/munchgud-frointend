@@ -22,14 +22,17 @@ export interface VariantOption {
 export interface ProductVariant {
   id: number;
   productId: number;
-  optionId: number;
-  sku: string;
+  optionId?: number;
+  sku?: string;
   price: number;
+  originalPrice?: number;
   stock: number;
-  images: string[];
-  option: VariantOption;
-  createdAt: string;
-  updatedAt: string;
+  image?: string;
+  images?: string[];
+  options?: any[];
+  option?: VariantOption;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface VariantState {

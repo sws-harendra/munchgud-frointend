@@ -36,19 +36,19 @@ export const productService = {
     return response.data;
   },
   // Get single product by ID
-  getProductById: async (id: string) => {
+  getProductById: async (id: string | number) => {
     const response = await axiosInstance.get(`/products/${id}`);
     return response.data;
   },
 
   // Update product
-  updateProduct: async (id: string, data: unknown) => {
+  updateProduct: async (id: string | number, data: unknown) => {
     const response = await axiosInstance.put(`/products/${id}`, data);
     return response.data;
   },
 
   // Delete product
-  deleteProduct: async (id: string) => {
+  deleteProduct: async (id: string | number) => {
     const response = await axiosInstance.delete(`/products/${id}`);
     return response.data;
   },

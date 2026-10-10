@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { updateProduct, fetchProductsforadmin } from "@/app/lib/store/features/productSlice";
 import { toast } from "sonner";
+import Link from "next/link";
 import {
   ImagePlus,
   Upload,
@@ -19,6 +20,7 @@ import {
   Trash2,
   ExternalLink,
   Plus,
+  ArrowRight,
 } from "lucide-react";
 import { categoryService } from "@/app/sercices/category.service";
 import { getImageUrl } from "@/app/utils/getImageUrl";
@@ -123,7 +125,7 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
 
   // Load product data
   useEffect(() => {
-    const product = products.products.find((p) => p.id === productId);
+    const product = products?.products?.find((p) => p.id === productId);
     if (product) {
       setFormData({
         name: product.name || "",
@@ -142,15 +144,16 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
 
       // Set existing media (both images and videos)
       let mediaArray: string[] = [];
-      if (Array.isArray(product.images)) {
-        mediaArray = product.images;
-      } else if (typeof product.images === "string") {
+      const rawImages: unknown = product.images;
+      if (Array.isArray(rawImages)) {
+        mediaArray = rawImages;
+      } else if (typeof rawImages === "string") {
         try {
-          const parsed = JSON.parse(product.images);
+          const parsed = JSON.parse(rawImages);
           mediaArray = Array.isArray(parsed) ? parsed : [];
         } catch {
-          if (product.images.trim()) {
-            mediaArray = product.images.split(",").map((item: string) => item.trim());
+          if (rawImages.trim()) {
+            mediaArray = rawImages.split(",").map((item: string) => item.trim());
           }
         }
       }
@@ -161,11 +164,12 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
 
       // Initialize platform links
       let initialLinks: PlatformLinkItem[] = [];
-      if (Array.isArray(product.platformLinks)) {
-        initialLinks = product.platformLinks;
-      } else if (typeof product.platformLinks === "string") {
+      const rawLinks: unknown = product.platformLinks;
+      if (Array.isArray(rawLinks)) {
+        initialLinks = rawLinks as PlatformLinkItem[];
+      } else if (typeof rawLinks === "string") {
         try {
-          initialLinks = JSON.parse(product.platformLinks);
+          initialLinks = JSON.parse(rawLinks);
         } catch {
           initialLinks = [];
         }
@@ -263,7 +267,7 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
         data.append("media", file);
       });
 
-      await dispatch(updateProduct({ id: productId, data })).unwrap();
+      await dispatch(updateProduct({ id: String(productId), data })).unwrap();
       await dispatch(fetchProductsforadmin({ page: 1, limit: 10 }));
       toast.success("✅ Product updated successfully!");
       if (onSuccess) onSuccess();
@@ -306,6 +310,34 @@ const EditProduct: React.FC<EditProductProps> = ({ productId, onSuccess }) => {
         }`}>
           <form onSubmit={handleSubmit}>
             <div className="p-4 sm:p-6 space-y-7">
+              {/* Quick Link to Manage Colors & Variants */}
+              <div className={`p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+                isDark
+                  ? "bg-amber-500/10 border-amber-500/25 text-white"
+                  : "bg-amber-50 border-amber-200 text-slate-900"
+              }`}>
+                <div className="flex items-center gap-3">
+                  <span className="p-2 rounded-lg bg-amber-500/20 text-amber-500">
+                    <Sparkles size={18} />
+                  </span>
+                  <div>
+                    <div className="text-xs sm:text-sm font-bold text-amber-500">
+                      Product Colors & Variants (Amazon / Flipkart Style)
+                    </div>
+                    <div className={`text-[11px] ${isDark ? "text-zinc-400" : "text-slate-500"}`}>
+                      Add more colors with separate gallery images, prices & stock.
+                    </div>
+                  </div>
+                </div>
+                <Link
+                  href={`/admin/dashboard/varient?productId=${productId}`}
+                  className="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold transition-all shrink-0 inline-flex items-center gap-1.5"
+                >
+                  <span>Manage Variants</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
+
               {/* Basic Information Section */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3">

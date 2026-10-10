@@ -41,20 +41,26 @@ export const variantService = {
       optionId: number;
       sku: string;
       price: number;
+      originalPrice?: number;
       stock: number;
       image?: File;
+      images?: File[];
     }
   ) {
     const formData = new FormData();
     formData.append("optionIds", data.optionId.toString());
-    formData.append("sku", data.sku);
+    if (data.sku) formData.append("sku", data.sku);
     formData.append("price", data.price.toString());
+    if (data.originalPrice !== undefined)
+      formData.append("originalPrice", data.originalPrice.toString());
     formData.append("stock", data.stock.toString());
 
-    if (data.image) {
-      // data.image.forEach((file) => {
+    if (data.images && data.images.length > 0) {
+      data.images.forEach((file) => {
+        formData.append("images", file);
+      });
+    } else if (data.image) {
       formData.append("images", data.image);
-      // });
     }
 
     const response = await axiosInstance.post(
@@ -80,20 +86,31 @@ export const variantService = {
     data: {
       sku?: string;
       price?: number;
+      originalPrice?: number;
       stock?: number;
       isActive?: boolean;
       image?: File;
+      images?: File[];
     }
   ) {
     const formData = new FormData();
-    if (data.sku) formData.append("sku", data.sku);
+    if (data.sku !== undefined) formData.append("sku", data.sku);
     if (data.price !== undefined)
       formData.append("price", data.price.toString());
+    if (data.originalPrice !== undefined)
+      formData.append("originalPrice", data.originalPrice.toString());
     if (data.stock !== undefined)
       formData.append("stock", data.stock.toString());
     if (data.isActive !== undefined)
       formData.append("isActive", data.isActive.toString());
-    if (data.image) formData.append("image", data.image);
+
+    if (data.images && data.images.length > 0) {
+      data.images.forEach((file) => {
+        formData.append("images", file);
+      });
+    } else if (data.image) {
+      formData.append("image", data.image);
+    }
 
     const response = await axiosInstance.put(
       `/variants/variants/${variantId}`,

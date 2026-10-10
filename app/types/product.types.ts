@@ -14,8 +14,10 @@ export interface ProductVariant {
   id: number;
   sku?: string | null;
   price: string;
+  originalPrice?: string | null;
   stock: number;
   image?: string | null;
+  images?: string[] | null;
   isActive: boolean;
   options: ProductVariantOption[];
 }
@@ -48,11 +50,13 @@ export interface Product {
   name: string;
   description: string;
   categoryId: number;
-  tags: string[];
+  tags: string[] | string;
   originalPrice: string;
   discountPrice: string;
   stock: number;
-  images: string[];
+  images: string[] | string;
+  trending_product?: boolean;
+  trending?: boolean;
   reviews?: Review[];
   averageRating?: number;
   totalReviews?: number;
@@ -63,8 +67,8 @@ export interface Product {
   Category: Category;
   paymentMethods: string;
   varientValue: string;
-  ProductVariants?: ProductVariant[]; // 👈 add this
-  platformLinks?: PlatformLink[];
+  ProductVariants?: ProductVariant[];
+  platformLinks?: PlatformLink[] | string;
 }
 
 export interface Category {
@@ -78,6 +82,9 @@ export interface ProductApiResponse {
   totalPages: number;
   totalItems: number;
   products: Product[];
+  total?: number;
+  activeProducts?: number;
+  inactiveProducts?: number;
 }
 
 export interface ProductState {

@@ -59,14 +59,14 @@ export const fetchProductsforadmin = createAsyncThunk(
 );
 export const fetchProductById = createAsyncThunk(
   "products/fetchById",
-  async (id: string, { rejectWithValue }) => {
+  async (id: string | number, { rejectWithValue }) => {
     try {
       return await productService.getProductById(id);
     } catch (err: unknown) {
       if (err instanceof Error) {
         return rejectWithValue(err.message);
       }
-      return rejectWithValue("Email register failed");
+      return rejectWithValue("Failed to fetch product");
     }
   }
 );
@@ -80,28 +80,28 @@ export const createProduct = createAsyncThunk(
       if (err instanceof Error) {
         return rejectWithValue(err.message);
       }
-      return rejectWithValue("Email register failed");
+      return rejectWithValue("Failed to create product");
     }
   }
 );
 
 export const updateProduct = createAsyncThunk(
   "products/update",
-  async ({ id, data }: { id: string; data: unknown }, { rejectWithValue }) => {
+  async ({ id, data }: { id: string | number; data: unknown }, { rejectWithValue }) => {
     try {
       return await productService.updateProduct(id, data);
     } catch (err: unknown) {
       if (err instanceof Error) {
         return rejectWithValue(err.message);
       }
-      return rejectWithValue("Email register failed");
+      return rejectWithValue("Failed to update product");
     }
   }
 );
 
 export const deleteProduct = createAsyncThunk(
   "products/delete",
-  async (id: string, { rejectWithValue }) => {
+  async (id: string | number, { rejectWithValue }) => {
     try {
       return await productService.deleteProduct(id);
     } catch (err: unknown) {
@@ -194,7 +194,16 @@ const normalizePayload = (payload: any): any => {
 
 // Initial State
 const initialState: ProductState = {
-  products: [],
+  products: {
+    success: false,
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    products: [],
+    total: 0,
+    activeProducts: 0,
+    inactiveProducts: 0,
+  },
   product: null,
   trendingProducts: [],
   status: "idle", // idle | loading | succeeded | failed
@@ -271,17 +280,28 @@ const productSlice = createSlice({
       })
       .addCase(createProduct.fulfilled, (state, action) => {
         state.status = "succeeded";
-        const newProduct = normalizeProduct(action.payload.product);
+        const newProduct = normalizeProduct(action.payload?.product || action.payload);
 
-        if (Array.isArray(state.products)) {
-          // case: state.products is just an array
-          state.products.push(newProduct);
-        } else if (state.products && Array.isArray(state.products.products)) {
-          // case: state.products is object { products: [], total: X }
+        if (state.products && Array.isArray(state.products.products)) {
           state.products.products = [newProduct, ...state.products.products];
+          state.products.totalItems = (state.products.totalItems || 0) + 1;
+          if (state.products.total !== undefined) {
+            state.products.total += 1;
+          }
+          if (state.products.activeProducts !== undefined) {
+            state.products.activeProducts += 1;
+          }
         } else {
-          // first product ever
-          state.products = { products: [newProduct], total: 1 };
+          state.products = {
+            success: true,
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: 1,
+            products: [newProduct],
+            total: 1,
+            activeProducts: 1,
+            inactiveProducts: 0,
+          };
         }
       })
       .addCase(createProduct.rejected, (state, action) => {
@@ -290,25 +310,21 @@ const productSlice = createSlice({
       })
 
       // Update
-      // ✅ Update
       .addCase(updateProduct.fulfilled, (state, action) => {
         state.status = "succeeded";
-        const updatedProduct = normalizeProduct(action.payload);
+        const updatedProduct = normalizeProduct(action.payload?.product || action.payload);
 
-        if (Array.isArray(state.products)) {
-          // case: products is just an array
-          state.products = state.products.map((p) =>
-            p.id === updatedProduct.id ? updatedProduct : p
-          );
-        } else if (state.products && Array.isArray(state.products.products)) {
-          // case: products is object { products: [], total: X }
+        if (state.products && Array.isArray(state.products.products)) {
           state.products.products = state.products.products.map((p) =>
             p.id === updatedProduct.id ? updatedProduct : p
           );
         }
+        if (state.product && state.product.id === updatedProduct.id) {
+          state.product = updatedProduct;
+        }
       })
 
-      // ✅ Delete
+      // Delete
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.status = "succeeded";
 
@@ -317,6 +333,12 @@ const productSlice = createSlice({
             (p) => String(p.id) !== String(action.meta.arg)
           );
           state.products.totalItems = Math.max(0, (state.products.totalItems || 1) - 1);
+          if (state.products.total !== undefined) {
+            state.products.total = Math.max(0, state.products.total - 1);
+          }
+          if (state.products.activeProducts !== undefined) {
+            state.products.activeProducts = Math.max(0, state.products.activeProducts - 1);
+          }
         }
       });
   },

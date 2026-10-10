@@ -102,6 +102,14 @@ export default function RichTextEditor({
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
   const [showTableMenu, setShowTableMenu] = useState(false);
 
+  const adminTheme = useSafeAdminTheme();
+  const isDarkMode =
+    propIsDark !== undefined
+      ? propIsDark
+      : adminTheme
+      ? Boolean(adminTheme.isDark || adminTheme.resolvedTheme === "dark")
+      : false;
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -223,14 +231,6 @@ export default function RichTextEditor({
   const textContent = editor.getText();
   const wordCount = textContent.trim() ? textContent.trim().split(/\s+/).length : 0;
   const charCount = textContent.length;
-
-  const adminTheme = useSafeAdminTheme();
-  const isDarkMode =
-    propIsDark !== undefined
-      ? propIsDark
-      : adminTheme
-      ? Boolean(adminTheme.isDark || adminTheme.resolvedTheme === "dark")
-      : false;
 
   const getBtnClass = (isActive = false, isDanger = false) => {
     if (isDanger) {

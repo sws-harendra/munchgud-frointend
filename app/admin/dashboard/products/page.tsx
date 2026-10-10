@@ -15,6 +15,7 @@ import {
   ShoppingCart,
   SeparatorVertical,
   Flame,
+  Palette,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import {
@@ -642,6 +643,18 @@ export default function AdminProductsPage() {
                         >
                           <Eye size={15} />
                         </button>
+
+                        <Link
+                          href={`/admin/dashboard/varient?productId=${product.id}`}
+                          title="Manage Colors & Variants"
+                          className={`p-2 rounded-lg transition-colors ${
+                            isDark
+                              ? "text-zinc-400 hover:text-cyan-400 hover:bg-zinc-900"
+                              : "text-slate-600 hover:text-cyan-600 hover:bg-cyan-50"
+                          }`}
+                        >
+                          <Palette size={15} />
+                        </Link>
 
                         <SidebarForm
                           title={`Edit ${product.name}`}
