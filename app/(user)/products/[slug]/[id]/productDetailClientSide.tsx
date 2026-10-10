@@ -176,6 +176,8 @@ export default function ProductDetailClient({
     return list.filter(Boolean);
   }, [rawImages]);
 
+  const activeImage = displayImages[selectedImage] || displayImages[0] || "";
+
   // Extract Color Options from ProductVariants or Tags (100% dynamic, no fake fallbacks)
   const availableColors: ColorOption[] = useMemo(() => {
     if (product.ProductVariants && product.ProductVariants.length > 0) {
@@ -581,12 +583,12 @@ export default function ProductDetailClient({
               )}
 
               {/* MAIN HERO SHOWCASE IMAGE */}
-              <div className="relative flex-1 w-full bg-[#F5F6F8] rounded-2xl sm:rounded-3xl overflow-hidden border border-neutral-200/80 flex items-center justify-center p-4 sm:p-8 h-[380px] sm:h-[480px] lg:h-[530px] group shadow-xs">
+              <div className="relative w-full md:flex-1 bg-[#F5F6F8] rounded-2xl sm:rounded-3xl overflow-hidden border border-neutral-200/80 flex items-center justify-center p-4 sm:p-8 min-h-[350px] h-[360px] sm:h-[480px] lg:h-[530px] shrink-0 md:shrink group shadow-xs">
                 
-                {displayImages.length > 0 ? (
-                  getFileType(displayImages[selectedImage]) === "video" ? (
+                {displayImages.length > 0 && activeImage ? (
+                  getFileType(activeImage) === "video" ? (
                     <video
-                      src={getImageUrl(displayImages[selectedImage])}
+                      src={getImageUrl(activeImage)}
                       className="w-full h-full object-contain"
                       controls
                       autoPlay
@@ -599,7 +601,7 @@ export default function ProductDetailClient({
                       onClick={() => setLightboxOpen(true)}
                     >
                       <Image
-                        src={getImageUrl(displayImages[selectedImage])}
+                        src={getImageUrl(activeImage)}
                         alt={product.name}
                         fill
                         unoptimized
@@ -1250,7 +1252,7 @@ export default function ProductDetailClient({
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src={getImageUrl(displayImages[selectedImage])}
+              src={getImageUrl(activeImage)}
               alt={product.name}
               fill
               unoptimized
