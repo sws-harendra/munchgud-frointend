@@ -5,7 +5,7 @@ import { StoreProvider } from "./lib/provider/StoreProvider";
 import AuthProvider from "./hooks/authProvider";
 import { Toaster } from "sonner";
 
-const siteUrl = "https://flazo.com";
+const siteUrl = "https://flazo.in";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,10 +20,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Flazo™ | Premium Wireless Earbuds & Luxury Audio",
+    default: "Flazo™ | Premium Wireless Earbuds & Luxury Audio Store",
     template: "%s | Flazo™",
   },
-  description: "Experience acoustic perfection with Flazo wireless earbuds. Featuring 50dB Hybrid ANC, 70H battery life, and signature gold acoustics.",
+  description: "Shop Flazo luxury wireless earbuds in India. Featuring 13mm BoomBass™ drivers, 50dB Hybrid ANC, 100H playtime, and signature gold luxury acoustics. Free express shipping.",
   applicationName: "Flazo",
   alternates: {
     canonical: "/",

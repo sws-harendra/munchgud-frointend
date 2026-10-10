@@ -56,10 +56,10 @@ const nextConfig: NextConfig = {
         has: [
           {
             type: "host",
-            value: "www.flazo.com",
+            value: "www.flazo.in",
           },
         ],
-        destination: "https://flazo.com/:path*",
+        destination: "https://flazo.in/:path*",
         permanent: true,
       },
     ];

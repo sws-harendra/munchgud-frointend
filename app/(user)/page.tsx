@@ -13,8 +13,8 @@ export default function HomePage() {
     "@context": "https://schema.org",
     "@type": "Brand",
     name: "Flazo",
-    url: "https://flazo.com",
-    logo: "https://flazo.com/images/hero-earbuds.jpg",
+    url: "https://flazo.in",
+    logo: "https://flazo.in/images/hero-earbuds.jpg",
     description: "Flazo premium wireless earbuds engineered with 13mm BoomBass™ titanium drivers and 50dB Hybrid Active Noise Cancellation in signature gold luxury.",
     sameAs: ["https://instagram.com/flazo_audio"],
   };

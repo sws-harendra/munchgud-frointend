@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /authentication/
 
-Sitemap: https://flazo.com/sitemap.xml
+Sitemap: https://flazo.in/sitemap.xml
