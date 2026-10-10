@@ -133,14 +133,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom Copyright */}
-        <div className="mt-12 pt-6 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-neutral-400 gap-4">
+        {/* <div className="mt-12 pt-6 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-neutral-400 gap-4">
           <p>© {new Date().getFullYear()} Flazo Pvt. Ltd. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Designed in Golden & White</span>
             <span>•</span>
             <span>Crafted for Audiophiles</span>
           </div>
-        </div>
+        </div> */}
 
       </div>
     </footer>
