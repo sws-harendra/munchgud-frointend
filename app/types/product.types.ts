@@ -58,6 +58,7 @@ export interface Product {
   trending_product?: boolean;
   trending?: boolean;
   reviews?: Review[];
+  ratings?: number | string | null;
   averageRating?: number;
   totalReviews?: number;
   sold_out: number;

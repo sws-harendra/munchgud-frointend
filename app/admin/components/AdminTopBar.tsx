@@ -42,7 +42,8 @@ const PATH_MAP: Record<string, string> = {
   "/admin/dashboard/media-coverage": "Press & Media",
   "/admin/dashboard/blogs": "Blog Articles",
   "/admin/dashboard/community": "Flazo Community Hub",
-  "/admin/dashboard/testimonials": "Customer Reviews",
+  "/admin/dashboard/reviews": "Product Ratings & Reviews",
+  "/admin/dashboard/testimonials": "Homepage Testimonials",
   "/admin/dashboard/socialmedia": "Social Links",
   "/admin/dashboard/varient": "Product Variants",
 };

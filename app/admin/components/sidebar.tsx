@@ -18,6 +18,7 @@ import {
   Pen,
   Camera,
   Star,
+  StarHalf,
   ChartNoAxesGanttIcon,
   Instagram,
   LocateIcon,
@@ -117,6 +118,11 @@ const menuItems: MenuItem[] = [
     name: "Community",
     icon: MessagesSquare,
     href: "/admin/dashboard/community",
+  },
+  {
+    name: "Customer Reviews",
+    icon: StarHalf,
+    href: "/admin/dashboard/reviews",
   },
   {
     name: "Testimonial",

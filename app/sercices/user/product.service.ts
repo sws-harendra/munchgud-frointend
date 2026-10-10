@@ -82,4 +82,37 @@ export const productService = {
     );
     return response.data;
   },
+
+  // Admin Reviews
+  getAllReviewsAdmin: async (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    rating?: number | string;
+    productId?: number | string;
+  }) => {
+    const response = await axiosInstance.get(`/review-rating/admin/all-reviews`, {
+      params,
+    });
+    return response.data;
+  },
+
+  createAdminReview: async (data: {
+    productId: number;
+    rating: number;
+    comment: string;
+  }) => {
+    const response = await axiosInstance.post(
+      `/review-rating/admin/add-review`,
+      data
+    );
+    return response.data;
+  },
+
+  deleteReview: async (id: number) => {
+    const response = await axiosInstance.delete(
+      `/review-rating/delete-review/${id}`
+    );
+    return response.data;
+  },
 };
