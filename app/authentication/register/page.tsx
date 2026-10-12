@@ -3,9 +3,6 @@
 import React, { useState } from "react";
 import {
   Mail,
-  Lock,
-  Eye,
-  EyeOff,
   User,
   Phone,
   ArrowRight,
@@ -31,13 +28,9 @@ export default function RegisterForm() {
   const [fullname, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -46,8 +39,6 @@ export default function RegisterForm() {
     fullname: "",
     phoneNumber: "",
     email: "",
-    password: "",
-    confirmPassword: "",
     image: "",
     terms: "",
   });
@@ -98,8 +89,6 @@ export default function RegisterForm() {
       fullname: "",
       phoneNumber: "",
       email: "",
-      password: "",
-      confirmPassword: "",
       image: "",
       terms: "",
     });
@@ -109,8 +98,6 @@ export default function RegisterForm() {
       fullname: "",
       phoneNumber: "",
       email: "",
-      password: "",
-      confirmPassword: "",
       image: "",
       terms: "",
     };
@@ -140,22 +127,6 @@ export default function RegisterForm() {
       hasErrors = true;
     }
 
-    if (!password) {
-      newErrors.password = "Password is required";
-      hasErrors = true;
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-      hasErrors = true;
-    }
-
-    if (!confirmPassword) {
-      newErrors.confirmPassword = "Confirm password is required";
-      hasErrors = true;
-    } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-      hasErrors = true;
-    }
-
     if (!acceptTerms) {
       newErrors.terms = "You must agree to the Terms and Privacy Policy";
       hasErrors = true;
@@ -175,7 +146,6 @@ export default function RegisterForm() {
       if (trimmedEmail) {
         formData.append("email", trimmedEmail);
       }
-      formData.append("password", password);
       formData.append("purpose", "register");
       if (profileImage) {
         formData.append("file", profileImage);
@@ -490,122 +460,12 @@ export default function RegisterForm() {
                   )}
                 </div>
 
-                {/* Password & Confirm Password Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Password */}
-                  <div className="space-y-1.5">
-                    <label
-                      htmlFor="password"
-                      className="text-xs font-bold uppercase tracking-wider text-neutral-700 block"
-                    >
-                      Password
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <Lock
-                          className={`h-5 w-5 ${
-                            errors.password ? "text-rose-400" : "text-neutral-400"
-                          }`}
-                        />
-                      </div>
-                      <input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        value={password}
-                        onChange={(e) => {
-                          setPassword(e.target.value);
-                          if (errors.password)
-                            setErrors((prev) => ({ ...prev, password: "" }));
-                        }}
-                        className={`w-full pl-11 pr-11 py-3 rounded-xl bg-neutral-50/50 border text-sm text-neutral-900 placeholder:text-neutral-400 transition-all duration-200 focus:outline-none focus:ring-3 ${
-                          errors.password
-                            ? "border-rose-400 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20"
-                            : "border-neutral-200 hover:border-neutral-300 focus:border-amber-500 focus:ring-amber-200/50"
-                        }`}
-                        placeholder="Min 6 characters"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        tabIndex={-1}
-                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-neutral-700 transition-colors"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
-                    {errors.password && (
-                      <div className="flex items-center gap-1.5 text-rose-600 text-xs font-medium mt-1">
-                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span>{errors.password}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Confirm Password */}
-                  <div className="space-y-1.5">
-                    <label
-                      htmlFor="confirmPassword"
-                      className="text-xs font-bold uppercase tracking-wider text-neutral-700 block"
-                    >
-                      Confirm Password
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <Lock
-                          className={`h-5 w-5 ${
-                            errors.confirmPassword
-                              ? "text-rose-400"
-                              : "text-neutral-400"
-                          }`}
-                        />
-                      </div>
-                      <input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        value={confirmPassword}
-                        onChange={(e) => {
-                          setConfirmPassword(e.target.value);
-                          if (errors.confirmPassword)
-                            setErrors((prev) => ({
-                              ...prev,
-                              confirmPassword: "",
-                            }));
-                        }}
-                        className={`w-full pl-11 pr-11 py-3 rounded-xl bg-neutral-50/50 border text-sm text-neutral-900 placeholder:text-neutral-400 transition-all duration-200 focus:outline-none focus:ring-3 ${
-                          errors.confirmPassword
-                            ? "border-rose-400 focus:border-rose-500 focus:ring-rose-200 bg-rose-50/20"
-                            : "border-neutral-200 hover:border-neutral-300 focus:border-amber-500 focus:ring-amber-200/50"
-                        }`}
-                        placeholder="Re-enter password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        tabIndex={-1}
-                        className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-neutral-700 transition-colors"
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOff className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
-                    {errors.confirmPassword && (
-                      <div className="flex items-center gap-1.5 text-rose-600 text-xs font-medium mt-1">
-                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span>{errors.confirmPassword}</span>
-                      </div>
-                    )}
-                  </div>
+                {/* Instant Mobile OTP Verification Notice */}
+                <div className="flex items-center gap-2 p-3 bg-amber-50/70 border border-amber-200/60 rounded-xl text-amber-900 text-xs">
+                  <ShieldCheck className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                  <span>
+                    No password required! We will verify your account instantly via SMS OTP.
+                  </span>
                 </div>
 
                 {/* Terms and Conditions */}
@@ -660,7 +520,7 @@ export default function RegisterForm() {
                       </>
                     ) : (
                       <>
-                        <span>Create Account & Verify</span>
+                        <span>Get Verification OTP</span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}

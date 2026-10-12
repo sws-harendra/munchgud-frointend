@@ -16,7 +16,7 @@ export interface VerifyOtpRequest {
 export interface RegisterUserRequest {
   email?: string;
   phoneNumber: string;
-  password: string;
+  password?: string;
   fullname: string;
   file?: string;
 }
