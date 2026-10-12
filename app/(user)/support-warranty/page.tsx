@@ -46,7 +46,7 @@ export default function SupportWarrantyPage() {
     name: "",
     email: "",
     phone: "",
-    model: "Flazo Nirvana Gold Pro X",
+    model: "Flazo Nirvana Gold Pro X (Champagne Gold)",
     serial: "",
     source: "Official Flazo Store",
   });
@@ -926,16 +926,21 @@ export default function SupportWarrantyPage() {
                   <label className="block text-xs font-semibold text-neutral-700 mb-1">
                     Select Product Model
                   </label>
-                  <select
+                  <input
+                    type="text"
+                    required
+                    list="product-model-options"
                     value={regForm.model}
                     onChange={(e) => setRegForm({ ...regForm, model: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-xl border border-[#D9C4A4] text-xs focus:ring-1 focus:ring-[#9E6B20]"
-                  >
-                    <option>Flazo Nirvana Gold Pro X (Champagne Gold)</option>
-                    <option>Flazo BassPod Extreme (13.4mm Titanium)</option>
-                    <option>Flazo Aerobeat Ultralight (3.6g Workout Fit)</option>
-                    <option>Flazo Acoustic Labs Pro (Dual Diaphragm)</option>
-                  </select>
+                    placeholder="Type or select model (e.g. Flazo Nirvana Gold Pro X)"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D9C4A4] text-xs focus:ring-1 focus:ring-[#9E6B20] bg-white text-neutral-800 placeholder:text-neutral-400"
+                  />
+                  <datalist id="product-model-options">
+                    <option value="Flazo Nirvana Gold Pro X (Champagne Gold)" />
+                    <option value="Flazo BassPod Extreme (13.4mm Titanium)" />
+                    <option value="Flazo Aerobeat Ultralight (3.6g Workout Fit)" />
+                    <option value="Flazo Acoustic Labs Pro (Dual Diaphragm)" />
+                  </datalist>
                 </div>
 
                 <button
