@@ -30,6 +30,7 @@ import {
   Sparkles,
   ArrowUpDown,
   Layers,
+  Printer,
 } from "lucide-react";
 import {
   fetchOrders,
@@ -40,6 +41,8 @@ import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
 import { useAdminTheme } from "../../context/AdminThemeContext";
 import Loader from "@/app/commonComponents/loader";
 import OrderDetailsModal from "../../components/orderDetailModal";
+import PackingSlipModal from "../../components/PackingSlipModal";
+import { printPackingSlip } from "../../utils/printPackingSlip";
 import SidebarForm from "../../components/SidebarForm";
 import EditOrder from "../../components/editOrder";
 import { toast } from "sonner";
@@ -174,6 +177,7 @@ const OrderManagement = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
+  const [packingSlipOrder, setPackingSlipOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     dispatch(fetchOrders(filters));
@@ -1123,6 +1127,19 @@ const OrderManagement = () => {
                                 <Eye className="h-4 w-4" />
                               </button>
 
+                              {/* Print Packing Slip / Box Label */}
+                              <button
+                                onClick={() => setPackingSlipOrder(order)}
+                                className={`p-2 rounded-xl border transition-all ${
+                                  isDark
+                                    ? "border-zinc-800 text-zinc-400 hover:text-emerald-400 hover:bg-zinc-900 hover:border-emerald-500/30"
+                                    : "border-slate-200 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300"
+                                }`}
+                                title="Packing Slip / Box Label (PDF)"
+                              >
+                                <Printer className="h-4 w-4" />
+                              </button>
+
                               {/* Edit Order & Driver Drawer */}
                               <SidebarForm
                                 title={`Edit Order #${order.id}`}
@@ -1252,6 +1269,14 @@ const OrderManagement = () => {
               setSelectedOrder(updated);
               dispatch(fetchOrders(filters));
             }}
+          />
+        )}
+
+        {/* Packing Slip / Box Label Modal */}
+        {packingSlipOrder && (
+          <PackingSlipModal
+            order={packingSlipOrder}
+            onClose={() => setPackingSlipOrder(null)}
           />
         )}
 

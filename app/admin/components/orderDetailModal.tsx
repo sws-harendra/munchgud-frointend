@@ -29,6 +29,8 @@ import { useAppDispatch } from "@/app/lib/store/store";
 import { updateOrder } from "@/app/lib/store/features/orderSlice";
 import { useAdminTheme } from "../context/AdminThemeContext";
 import { toast } from "sonner";
+import PackingSlipModal from "./PackingSlipModal";
+import { printPackingSlip } from "../utils/printPackingSlip";
 
 interface OrderDetailsModalProps {
   order: Order;
@@ -47,6 +49,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
   const [order, setOrder] = useState<Order>(initialOrder);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [showPackingSlip, setShowPackingSlip] = useState(false);
 
   const statuses = [
     { key: "pending", label: "Pending", desc: "Awaiting confirmation" },
@@ -79,7 +82,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   };
 
   const handlePrint = () => {
-    window.print();
+    setShowPackingSlip(true);
   };
 
   const getStepIndex = (status: string) => {
@@ -232,18 +235,18 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
               </select>
             </div>
 
-            {/* Print Button */}
+            {/* Print Box Slip Button */}
             <button
-              onClick={handlePrint}
+              onClick={() => setShowPackingSlip(true)}
               className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border rounded-xl transition-all shadow-xs ${
                 isDark
-                  ? "bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border-zinc-800"
-                  : "bg-white hover:bg-slate-50 text-slate-700 border-slate-200"
+                  ? "bg-zinc-900 hover:bg-zinc-800 text-emerald-400 border-zinc-800 hover:border-emerald-500/30"
+                  : "bg-white hover:bg-emerald-50 text-emerald-700 border-slate-200 hover:border-emerald-300"
               }`}
-              title="Print Order Invoice"
+              title="Print Packing Slip & Box Label (PDF)"
             >
-              <Printer className="w-4 h-4 text-amber-500" />
-              <span>Print Invoice</span>
+              <Printer className="w-4 h-4 text-emerald-500" />
+              <span>Packing Slip (PDF)</span>
             </button>
 
             {/* Close Button */}
@@ -760,6 +763,14 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Packing Slip Modal */}
+      {showPackingSlip && (
+        <PackingSlipModal
+          order={order}
+          onClose={() => setShowPackingSlip(false)}
+        />
+      )}
     </div>
   );
 };
