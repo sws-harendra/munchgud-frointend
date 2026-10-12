@@ -61,7 +61,7 @@ export default function EcommerceNavbar() {
         <div className="w-full max-w-[1560px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2 mx-auto md:mx-0 font-medium tracking-wide">
             <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-            <span>FLAZO SIGNATURE GOLD SERIES • 13mm BoomBass™ Drivers • Free Express Delivery in India</span>
+            <span>FLAZO</span>
           </div>
           <div className="hidden md:flex items-center gap-4 text-neutral-400 text-xs">
             <Link href="/support-warranty" className="hover:text-amber-300 transition-colors cursor-pointer">1-Year Flazo Warranty</Link>
