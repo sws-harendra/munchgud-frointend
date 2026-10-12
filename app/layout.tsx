@@ -19,11 +19,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "Flazo™ | Premium Wireless Earbuds & Luxury Audio Store",
-    template: "%s | Flazo™",
-  },
-  description: "Shop Flazo luxury wireless earbuds in India. Featuring 13mm BoomBass™ drivers, 50dB Hybrid ANC, 100H playtime, and signature gold luxury acoustics. Free express shipping.",
+  title: "FLAZO",
+  description: "Official FLAZO Store. Shop online at Flazo.",
   applicationName: "Flazo",
   alternates: {
     canonical: "/",
@@ -49,22 +46,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: siteUrl,
-    siteName: "Flazo",
-    title: "Flazo™ | Premium Wireless Earbuds & Luxury Audio",
-    description: "Experience acoustic perfection with Flazo wireless earbuds. Featuring 50dB Hybrid ANC, 70H battery life, and signature gold acoustics.",
+    siteName: "FLAZO",
+    title: "FLAZO",
+    description: "Official FLAZO Store. Shop online at Flazo.",
     images: [
       {
         url: "/images/hero-earbuds.jpg",
         width: 1200,
         height: 675,
-        alt: "Flazo Wireless Earbuds",
+        alt: "FLAZO",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Flazo™ | Premium Wireless Earbuds & Luxury Audio",
-    description: "Experience acoustic perfection with Flazo wireless earbuds.",
+    title: "FLAZO",
+    description: "Official FLAZO Store. Shop online at Flazo.",
     images: ["/images/hero-earbuds.jpg"],
   },
 };

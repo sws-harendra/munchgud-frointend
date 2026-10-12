@@ -15,7 +15,7 @@ export default function HomePage() {
     name: "Flazo",
     url: "https://flazo.in",
     logo: "https://flazo.in/images/hero-earbuds.jpg",
-    description: "Flazo premium wireless earbuds engineered with 13mm BoomBass™ titanium drivers and 50dB Hybrid Active Noise Cancellation in signature gold luxury.",
+    description: "Flazo Official Store.",
     sameAs: ["https://instagram.com/flazo_audio"],
   };
 
@@ -32,7 +32,7 @@ export default function HomePage() {
       
       {/* Invisible SEO h1 */}
       <h1 className="sr-only">
-        Flazo | Premium Wireless Earbuds, Active Noise Cancellation & Signature Gold Audio
+        FLAZO
       </h1>
 
       {/* 1. Flazo Flagship Hero Section (boAt Style Sliding Carousel) */}

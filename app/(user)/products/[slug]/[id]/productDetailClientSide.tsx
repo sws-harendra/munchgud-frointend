@@ -834,10 +834,10 @@ export default function ProductDetailClient({
                         Share this product
                       </div>
                       <div className="flex items-center gap-2">
-                        <WhatsappShareButton url={shareUrl} title={shareTitle}>
+                        <WhatsappShareButton url={shareUrl}>
                           <WhatsappIcon size={30} round />
                         </WhatsappShareButton>
-                        <TwitterShareButton url={shareUrl} title={shareTitle}>
+                        <TwitterShareButton url={shareUrl}>
                           <TwitterIcon size={30} round />
                         </TwitterShareButton>
                         <FacebookShareButton url={shareUrl}>

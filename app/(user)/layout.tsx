@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Flazo™ | Luxury Wireless Earbuds & Audio Store",
-  description: "Shop Flazo flagship wireless earbuds in India. Featuring 13mm BoomBass™ drivers, 50dB Hybrid ANC, 100-hour battery life & signature gold acoustics. Free express shipping.",
+  title: "FLAZO",
+  description: "Official FLAZO Store. Shop online at Flazo.",
   alternates: {
     canonical: "/",
   },
@@ -26,15 +26,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://flazo.in",
-    siteName: "Flazo Audio",
-    title: "Flazo™ | Luxury Wireless Earbuds & Audio Store",
-    description: "Shop Flazo flagship wireless earbuds in India. Featuring 13mm BoomBass™ drivers, 50dB Hybrid ANC, 100-hour battery life & signature gold acoustics. Free express shipping.",
+    siteName: "FLAZO",
+    title: "FLAZO",
+    description: "Official FLAZO Store. Shop online at Flazo.",
     images: [
       {
         url: "/images/hero-earbuds.jpg",
         width: 1200,
         height: 675,
-        alt: "Flazo Luxury Earbuds",
+        alt: "FLAZO",
       },
     ],
   },
