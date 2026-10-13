@@ -21,10 +21,16 @@ import {
   CheckCircle2,
   FileText,
   Star,
+  ShieldCheck,
+  AlertCircle,
+  Copy,
+  RefreshCw,
+  Wrench,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAppSelector } from "@/app/lib/store/store";
 import { contactService } from "@/app/sercices/user/contact.service";
+import { warrantyService } from "@/app/sercices/user/warranty.service";
 
 export default function SupportWarrantyPage() {
   const { user } = useAppSelector((state) => state.auth);
@@ -40,17 +46,22 @@ export default function SupportWarrantyPage() {
   // Warranty Check State
   const [warrantyInput, setWarrantyInput] = useState("");
   const [warrantyResult, setWarrantyResult] = useState<any>(null);
+  const [isCheckingWarranty, setIsCheckingWarranty] = useState(false);
 
-  // Product Registration State
+  // Product Registration & Warranty Claim State
   const [regForm, setRegForm] = useState({
     name: "",
     email: "",
     phone: "",
     model: "Flazo Nirvana Gold Pro X (Champagne Gold)",
     serial: "",
+    claimType: "registration" as "registration" | "claim",
+    issueDescription: "",
     source: "Official Flazo Store",
   });
   const [isRegistered, setIsRegistered] = useState(false);
+  const [isSubmittingWarranty, setIsSubmittingWarranty] = useState(false);
+  const [registeredData, setRegisteredData] = useState<any>(null);
 
   // Chat message simulation state
   const [chatMessages, setChatMessages] = useState<
@@ -83,6 +94,12 @@ export default function SupportWarrantyPage() {
         email: prev.email || user.email || "",
         phone: prev.phone || (user.phoneNumber ? String(user.phoneNumber) : ""),
       }));
+      setRegForm((prev) => ({
+        ...prev,
+        name: prev.name || user.fullname || "",
+        email: prev.email || user.email || "",
+        phone: prev.phone || (user.phoneNumber ? String(user.phoneNumber) : ""),
+      }));
     }
   }, [user]);
 
@@ -109,7 +126,11 @@ export default function SupportWarrantyPage() {
       title: "Warranty Claim",
       desc: "Register your product or raise a warranty request easily.",
       linkText: "Start Claim",
-      action: () => setActiveModal("register"),
+      action: () => {
+        setRegForm((prev) => ({ ...prev, claimType: "claim" }));
+        setIsRegistered(false);
+        setActiveModal("register");
+      },
       icon: Shield,
     },
     {
@@ -138,28 +159,85 @@ export default function SupportWarrantyPage() {
       t.desc.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleCheckWarranty = (e: React.FormEvent) => {
+  const handleCheckWarranty = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!warrantyInput.trim()) {
       toast.error("Please enter a valid Serial Number or Order ID.");
       return;
     }
-    setWarrantyResult({
-      model: "Flazo Nirvana Gold Pro X (Champagne Gold)",
-      status: "Active • 1-Year Warranty and Service",
-      expiresOn: "September 21, 2027",
-      coverage: "100% Hardware Defects, Driver Issues, Charging Case",
-    });
+    setIsCheckingWarranty(true);
+    try {
+      const res = await warrantyService.checkWarranty(warrantyInput.trim());
+      if (res.success && res.found && res.data) {
+        setWarrantyResult({
+          notFound: false,
+          claimId: res.data.claimId,
+          model: res.data.productModel,
+          status: res.data.status,
+          expiresOn: res.data.warrantyEndDate
+            ? new Date(res.data.warrantyEndDate).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })
+            : "Active",
+          coverage: res.data.coverage,
+          isExpired: res.data.isExpired,
+        });
+        toast.success("Warranty verified successfully!");
+      } else {
+        setWarrantyResult({
+          notFound: true,
+          query: warrantyInput.trim(),
+          message: "No warranty record found matching this Serial Number or Order ID.",
+        });
+        toast.error("No active warranty record found. You can register it below.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to verify warranty coverage.");
+    } finally {
+      setIsCheckingWarranty(false);
+    }
   };
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!regForm.name || !regForm.phone || !regForm.serial) {
+    if (!regForm.name.trim() || !regForm.phone.trim() || !regForm.serial.trim()) {
       toast.error("Please fill in all mandatory fields.");
       return;
     }
-    setIsRegistered(true);
-    toast.success("1-Year Warranty and Service registered successfully!");
+
+    if (regForm.claimType === "claim" && !regForm.issueDescription.trim()) {
+      toast.error("Please describe the issue or problem you are facing.");
+      return;
+    }
+
+    setIsSubmittingWarranty(true);
+    try {
+      const res = await warrantyService.registerWarranty({
+        fullName: regForm.name.trim(),
+        phone: regForm.phone.trim(),
+        email: regForm.email?.trim() || user?.email || undefined,
+        serialNumber: regForm.serial.trim(),
+        orderId: regForm.serial.trim(),
+        productModel: regForm.model.trim(),
+        claimType: regForm.claimType || "registration",
+        issueDescription: regForm.issueDescription?.trim() || undefined,
+        source: "support_warranty",
+      });
+
+      if (res.success) {
+        setRegisteredData(res.data);
+        setIsRegistered(true);
+        toast.success(res.message || "1-Year Warranty & Service registered successfully!");
+      }
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message || err.message || "Failed to submit warranty request."
+      );
+    } finally {
+      setIsSubmittingWarranty(false);
+    }
   };
 
   const handleSendChat = (e: React.FormEvent) => {
@@ -549,7 +627,11 @@ export default function SupportWarrantyPage() {
             <div>
               <button
                 type="button"
-                onClick={() => setActiveModal("register")}
+                onClick={() => {
+                  setRegForm((prev) => ({ ...prev, claimType: "registration" }));
+                  setIsRegistered(false);
+                  setActiveModal("register");
+                }}
                 className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white hover:bg-[#FAF3E5] border border-[#D9C4A4] text-[#8C5E18] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 group"
               >
                 <span>Register Now</span>
@@ -807,35 +889,78 @@ export default function SupportWarrantyPage() {
                   required
                   value={warrantyInput}
                   onChange={(e) => setWarrantyInput(e.target.value)}
-                  placeholder="e.g. FLZ-2026-98129 or Order ID"
+                  placeholder="e.g. FLZ-WAR-261013-1024 or Serial Number or Order ID"
                   className="w-full px-4 py-2.5 rounded-xl border border-[#D9C4A4] text-xs focus:ring-1 focus:ring-[#9E6B20] focus:border-[#9E6B20]"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-[#9E6B20] hover:bg-[#8A5B17] text-white text-xs font-bold rounded-xl transition shadow-xs"
+                disabled={isCheckingWarranty}
+                className="w-full py-2.5 bg-[#9E6B20] hover:bg-[#8A5B17] text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-60 cursor-pointer"
               >
-                Verify Warranty Coverage →
+                {isCheckingWarranty ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Verifying with Database...</span>
+                  </>
+                ) : (
+                  <span>Verify Warranty Coverage →</span>
+                )}
               </button>
             </form>
 
             {warrantyResult && (
-              <div className="mt-5 p-4 rounded-2xl bg-[#FAF6EE] border border-[#E6D7BE] text-xs space-y-2">
-                <div className="flex items-center gap-2 text-emerald-700 font-bold">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>{warrantyResult.status}</span>
+              warrantyResult.notFound ? (
+                <div className="mt-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs space-y-2">
+                  <div className="flex items-center gap-2 text-amber-800 font-bold">
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span>No Active Warranty Found</span>
+                  </div>
+                  <p className="text-neutral-600 leading-relaxed">
+                    No active record found for &ldquo;<strong className="text-neutral-800">{warrantyResult.query}</strong>&rdquo;. If you recently purchased this product, please activate your 1-Year warranty below.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setRegForm((prev) => ({
+                        ...prev,
+                        serial: warrantyResult.query,
+                        claimType: "registration",
+                      }));
+                      setIsRegistered(false);
+                      setActiveModal("register");
+                    }}
+                    className="mt-2 px-3.5 py-1.5 bg-[#9E6B20] hover:bg-[#8A5B17] text-white rounded-lg font-bold text-[11px] transition cursor-pointer"
+                  >
+                    Register This Product Now →
+                  </button>
                 </div>
-                <p className="text-neutral-800 font-semibold">{warrantyResult.model}</p>
-                <p className="text-neutral-500">Valid until: <strong className="text-neutral-800">{warrantyResult.expiresOn}</strong></p>
-                <p className="text-neutral-500 text-[11px]">{warrantyResult.coverage}</p>
-              </div>
+              ) : (
+                <div className="mt-5 p-4 rounded-2xl bg-[#FAF6EE] border border-[#E6D7BE] text-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-emerald-700 font-bold">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>{warrantyResult.status}</span>
+                    </div>
+                    {warrantyResult.claimId && (
+                      <span className="font-mono text-[10px] bg-white px-2 py-0.5 rounded border border-[#E6D7BE] text-[#9E6B20] font-bold">
+                        #{warrantyResult.claimId}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-neutral-800 font-semibold">{warrantyResult.model}</p>
+                  <p className="text-neutral-500">
+                    Valid until: <strong className="text-neutral-800">{warrantyResult.expiresOn}</strong>
+                  </p>
+                  <p className="text-neutral-500 text-[11px]">{warrantyResult.coverage}</p>
+                </div>
+              )
             )}
           </div>
         </div>
       )}
 
-      {/* 3. Register Product Modal */}
+      {/* 3. Register Product & Warranty Claim Modal */}
       {activeModal === "register" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
           <div className="bg-white rounded-3xl p-7 border border-[#E5D4BC] max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
@@ -844,38 +969,132 @@ export default function SupportWarrantyPage() {
                 setActiveModal(null);
                 setIsRegistered(false);
               }}
-              className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-700"
+              className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-700 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
+            {/* Modal Header */}
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#FAF3E6] text-[#9E6B20] flex items-center justify-center">
-                <FileText className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-full bg-[#FAF3E6] text-[#9E6B20] flex items-center justify-center shrink-0">
+                {regForm.claimType === "claim" ? (
+                  <Wrench className="w-5 h-5" />
+                ) : (
+                  <ShieldCheck className="w-5 h-5" />
+                )}
               </div>
               <div>
                 <h3 className="text-lg font-serif font-black text-[#1A1A1A]">
-                  Register Your Flazo Product
+                  {regForm.claimType === "claim"
+                    ? "Raise a Warranty Claim"
+                    : "Register Your Flazo Product"}
                 </h3>
                 <p className="text-xs text-neutral-500">
-                  Activates 1-Year Warranty and Service instantly
+                  {regForm.claimType === "claim"
+                    ? "Submit a repair or replacement request under warranty"
+                    : "Activates 1-Year Warranty and Pan-India Service instantly"}
                 </p>
               </div>
             </div>
 
-            {isRegistered ? (
-              <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
-                <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
-                <h4 className="text-base font-bold text-emerald-900">Warranty Activated!</h4>
-                <p className="text-xs text-emerald-700 leading-relaxed">
-                  Your {regForm.model} is now protected with Flazo 1-Year Warranty and Service. Confirmation has been sent to {regForm.phone}.
-                </p>
+            {/* Claim Type Tabs */}
+            {!isRegistered && (
+              <div className="flex p-1 bg-[#FAF5EB] rounded-xl border border-[#EADBCA] mb-4 text-xs font-bold">
                 <button
-                  onClick={() => setActiveModal(null)}
-                  className="px-5 py-2 bg-emerald-700 text-white rounded-xl text-xs font-bold"
+                  type="button"
+                  onClick={() => setRegForm({ ...regForm, claimType: "registration" })}
+                  className={`flex-1 py-1.5 rounded-lg transition text-center cursor-pointer ${
+                    regForm.claimType === "registration"
+                      ? "bg-white text-[#8C5E18] shadow-xs"
+                      : "text-neutral-500 hover:text-neutral-800"
+                  }`}
                 >
-                  Done
+                  Product Registration
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setRegForm({ ...regForm, claimType: "claim" })}
+                  className={`flex-1 py-1.5 rounded-lg transition text-center cursor-pointer ${
+                    regForm.claimType === "claim"
+                      ? "bg-white text-[#8C5E18] shadow-xs"
+                      : "text-neutral-500 hover:text-neutral-800"
+                  }`}
+                >
+                  Warranty Claim
+                </button>
+              </div>
+            )}
+
+            {isRegistered ? (
+              <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3.5">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-7 h-7" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-emerald-950">
+                    {registeredData?.claimType === "claim"
+                      ? "Warranty Claim Logged Successfully!"
+                      : "1-Year Warranty Activated!"}
+                  </h4>
+                  <p className="text-xs text-emerald-700 mt-1">
+                    Certificate recorded under Flazo Priority Support Database.
+                  </p>
+                </div>
+
+                {registeredData?.claimId && (
+                  <div className="p-3 bg-white rounded-xl border border-emerald-200 text-xs flex items-center justify-between">
+                    <span className="text-neutral-500">Certificate ID:</span>
+                    <span className="font-mono font-bold text-[#9E6B20]">
+                      #{registeredData.claimId}
+                    </span>
+                  </div>
+                )}
+
+                <div className="p-3 bg-white/70 rounded-xl text-left text-xs space-y-1 text-neutral-700">
+                  <p>
+                    <strong className="text-neutral-900">Model:</strong> {registeredData?.productModel || regForm.model}
+                  </p>
+                  <p>
+                    <strong className="text-neutral-900">Serial/Order ID:</strong> {registeredData?.serialNumber || regForm.serial}
+                  </p>
+                  {registeredData?.warrantyEndDate && (
+                    <p>
+                      <strong className="text-neutral-900">Valid Until:</strong>{" "}
+                      {new Date(registeredData.warrantyEndDate).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </p>
+                  )}
+                  <p>
+                    <strong className="text-neutral-900">Registered Phone:</strong> {regForm.phone}
+                  </p>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  {registeredData?.claimId && (
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(registeredData.claimId);
+                        toast.success("Certificate ID copied!");
+                      }}
+                      className="flex-1 py-2 bg-white border border-emerald-300 text-emerald-800 rounded-xl text-xs font-bold hover:bg-emerald-100 transition cursor-pointer flex items-center justify-center gap-1"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy ID</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setActiveModal(null);
+                      setIsRegistered(false);
+                    }}
+                    className="flex-1 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                  >
+                    Done
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
@@ -924,7 +1143,7 @@ export default function SupportWarrantyPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                    Select Product Model
+                    Select Product Model *
                   </label>
                   <input
                     type="text"
@@ -943,11 +1162,52 @@ export default function SupportWarrantyPage() {
                   </datalist>
                 </div>
 
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Email Address (Optional)
+                  </label>
+                  <input
+                    type="email"
+                    value={regForm.email}
+                    onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
+                    placeholder="e.g. customer@example.com"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D9C4A4] text-xs focus:ring-1 focus:ring-[#9E6B20]"
+                  />
+                </div>
+
+                {regForm.claimType === "claim" && (
+                  <div>
+                    <label className="block text-xs font-semibold text-neutral-700 mb-1">
+                      Describe Issue / Defect *
+                    </label>
+                    <textarea
+                      required
+                      rows={3}
+                      value={regForm.issueDescription}
+                      onChange={(e) =>
+                        setRegForm({ ...regForm, issueDescription: e.target.value })
+                      }
+                      placeholder="e.g. Left earbud has no audio output, charging case LED blinking red..."
+                      className="w-full px-3.5 py-2 rounded-xl border border-[#D9C4A4] text-xs focus:ring-1 focus:ring-[#9E6B20]"
+                    />
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-[#9E6B20] hover:bg-[#8A5B17] text-white text-xs font-bold rounded-xl transition shadow-xs mt-2"
+                  disabled={isSubmittingWarranty}
+                  className="w-full py-2.5 bg-[#9E6B20] hover:bg-[#8A5B17] text-white text-xs font-bold rounded-xl transition shadow-xs mt-2 flex items-center justify-center gap-1.5 disabled:opacity-60 cursor-pointer"
                 >
-                  Activate 1-Year Warranty and Service →
+                  {isSubmittingWarranty ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : regForm.claimType === "claim" ? (
+                    <span>Submit Warranty Claim →</span>
+                  ) : (
+                    <span>Activate 1-Year Warranty and Service →</span>
+                  )}
                 </button>
               </form>
             )}

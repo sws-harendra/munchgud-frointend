@@ -30,6 +30,7 @@ import {
   FolderTree,
   MessagesSquare,
   Mail,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -63,6 +64,11 @@ const menuItems: MenuItem[] = [
     name: "Customer Inquiries",
     icon: Mail,
     href: "/admin/dashboard/inquiries",
+  },
+  {
+    name: "Warranty Claims",
+    icon: ShieldCheck,
+    href: "/admin/dashboard/warranty-claims",
   },
   {
     name: "Video Management",
