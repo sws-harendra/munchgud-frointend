@@ -6,7 +6,6 @@ import {
   CreditCard,
   MapPin,
   User,
-  Mail,
   Phone,
   Lock,
   Shield,
@@ -53,7 +52,7 @@ declare global {
   }
 }
 interface FormData {
-  email: string;
+  email?: string;
   fullname: string;
   phone: string;
   selectedAddressId: string;
@@ -242,10 +241,6 @@ const CheckoutPage = () => {
     const newErrors: FormErrors = {};
 
     if (step === 1) {
-      if (!formData.email) newErrors.email = "Email is required";
-      else if (!/\S+@\S+\.\S+/.test(formData.email))
-        newErrors.email = "Email is invalid";
-
       if (!formData.fullname) newErrors.fullname = "First name is required";
       if (!formData.phone) newErrors.phone = "Phone number is required";
       if (formData.phone && formData.phone.length < 10)
@@ -383,7 +378,7 @@ const CheckoutPage = () => {
 
         prefill: {
           name: formData.fullname || user?.fullname || "Customer",
-          email: formData.email || user?.email || "customer@example.com",
+          ...(formData.email || user?.email ? { email: formData.email || user?.email } : {}),
           contact: formData.phone || user?.phoneNumber || "9999999999",
         },
         theme: { color: "#d97706" },
@@ -536,7 +531,7 @@ const CheckoutPage = () => {
               <span className="font-bold text-amber-600">{orderId}</span>
             </p>
             <p className="text-gray-600 mb-8">
-              You will receive a confirmation email shortly.
+              You will receive your order updates and confirmation shortly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/">
@@ -685,52 +680,30 @@ const CheckoutPage = () => {
                       </p>
                     )}
                   </div>
-                  <div className="mb-6">
+                  <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      Email Address *
+                      Primary Phone Number *
                     </label>
                     <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
-                        errors.email
+                        errors.phone
                           ? "border-red-400 bg-red-50/40"
                           : "border-gray-200 hover:border-gray-300"
                       }`}
-                      placeholder="Enter your email address"
+                      placeholder="Enter your primary phone number"
                     />
-                    {errors.email && (
+                    {errors.phone && (
                       <p className="mt-2 text-sm text-red-500 font-medium">
-                        {errors.email}
+                        {errors.phone}
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div className="mb-8">
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    Primary Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-4 border-2 rounded-2xl focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 outline-none transition-all duration-200 ${
-                      errors.phone
-                        ? "border-red-400 bg-red-50/40"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                    placeholder="Enter your primary phone number"
-                  />
-                  {errors.phone && (
-                    <p className="mt-2 text-sm text-red-500 font-medium">
-                      {errors.phone}
-                    </p>
-                  )}
-                </div>
                 <div className="mb-8">
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
                     Secondary Phone Number (Optional)
