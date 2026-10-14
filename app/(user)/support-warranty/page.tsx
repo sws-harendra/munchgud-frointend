@@ -26,6 +26,7 @@ import {
   Copy,
   RefreshCw,
   Wrench,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAppSelector } from "@/app/lib/store/store";
@@ -63,20 +64,7 @@ export default function SupportWarrantyPage() {
   const [isSubmittingWarranty, setIsSubmittingWarranty] = useState(false);
   const [registeredData, setRegisteredData] = useState<any>(null);
 
-  // Chat message simulation state
-  const [chatMessages, setChatMessages] = useState<
-    { sender: "bot" | "user"; text: string; time: string }[]
-  >([
-    {
-      sender: "bot",
-      text: "Namaste! Welcome to Flazo Priority Concierge. How may we assist your sound journey today?",
-      time: "Just now",
-    },
-  ]);
-  const [chatInput, setChatInput] = useState("");
-
-  // Contact Support Modal State (Form vs Chat)
-  const [contactMode, setContactMode] = useState<"form" | "chat">("form");
+  // Contact Support Modal Form State
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
@@ -85,6 +73,19 @@ export default function SupportWarrantyPage() {
     message: "",
   });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
+
+  // Nu Republic Style Hero Warranty Station State
+  const [heroTab, setHeroTab] = useState<"register" | "claim" | "status">("register");
+  const [heroForm, setHeroForm] = useState({
+    name: "",
+    phone: "",
+    serial: "",
+    model: "Flazo Nirvana Gold Pro X",
+    channel: "Official Flazo Online Store",
+    issueCategory: "Audio Issue - One Earbud Silent / Low Volume",
+    issueDescription: "",
+  });
+  const [heroSuccess, setHeroSuccess] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
@@ -98,6 +99,11 @@ export default function SupportWarrantyPage() {
         ...prev,
         name: prev.name || user.fullname || "",
         email: prev.email || user.email || "",
+        phone: prev.phone || (user.phoneNumber ? String(user.phoneNumber) : ""),
+      }));
+      setHeroForm((prev) => ({
+        ...prev,
+        name: prev.name || user.fullname || "",
         phone: prev.phone || (user.phoneNumber ? String(user.phoneNumber) : ""),
       }));
     }
@@ -240,41 +246,93 @@ export default function SupportWarrantyPage() {
     }
   };
 
-  const handleSendChat = (e: React.FormEvent) => {
+  const handleHeroSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!chatInput.trim()) return;
 
-    const userMsg = chatInput;
-    setChatMessages((prev) => [
-      ...prev,
-      { sender: "user", text: userMsg, time: "Just now" },
-    ]);
-    setChatInput("");
+    if (heroTab === "status") {
+      handleCheckWarranty(e);
+      return;
+    }
 
-    // Forward to backend contact inquiries
-    contactService
-      .sendContactInquiry({
-        name: user?.fullname || regForm.name || "Live Concierge Visitor",
-        email: user?.email || regForm.email || "concierge_visitor@flazo.in",
-        phone: user?.phoneNumber ? String(user.phoneNumber) : regForm.phone || undefined,
-        subject: "Flazo Live Concierge Chat",
-        message: userMsg,
-        source: "live_concierge",
-      })
-      .catch((err) => {
-        console.warn("Failed to persist live concierge message:", err);
-      });
+    if (heroTab === "register") {
+      if (!heroForm.name.trim() || !heroForm.phone.trim() || !heroForm.serial.trim()) {
+        toast.error("Please fill in your Name, Phone Number, and Serial # / Order ID.");
+        return;
+      }
 
-    setTimeout(() => {
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          sender: "bot",
-          text: `Thank you for reaching out regarding "${userMsg}". A dedicated Flazo acoustic concierge has logged your request under ticket #FLZ-${Math.floor(1000 + Math.random() * 9000)}.`,
-          time: "Just now",
-        },
-      ]);
-    }, 1000);
+      setIsSubmittingWarranty(true);
+      try {
+        const res = await warrantyService.registerWarranty({
+          fullName: heroForm.name.trim(),
+          phone: heroForm.phone.trim(),
+          email: user?.email || undefined,
+          serialNumber: heroForm.serial.trim(),
+          orderId: heroForm.serial.trim(),
+          productModel: heroForm.model,
+          claimType: "registration",
+          source: heroForm.channel,
+        });
+
+        if (res.success) {
+          setHeroSuccess({
+            type: "registration",
+            title: "1-Year Warranty Activated!",
+            refId: res.data?.claimId || `FLZ-WAR-${Math.floor(100000 + Math.random() * 900000)}`,
+            model: heroForm.model,
+            serial: heroForm.serial.trim(),
+            expiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString("en-IN", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            }),
+          });
+          toast.success("1-Year Comprehensive Warranty registered successfully!");
+        }
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || err.message || "Failed to register warranty.");
+      } finally {
+        setIsSubmittingWarranty(false);
+      }
+      return;
+    }
+
+    if (heroTab === "claim") {
+      if (!heroForm.phone.trim() || !heroForm.serial.trim()) {
+        toast.error("Please enter your Phone Number and Serial # / Order ID.");
+        return;
+      }
+
+      setIsSubmittingWarranty(true);
+      try {
+        const res = await warrantyService.registerWarranty({
+          fullName: heroForm.name.trim() || user?.fullname || "Customer",
+          phone: heroForm.phone.trim(),
+          email: user?.email || undefined,
+          serialNumber: heroForm.serial.trim(),
+          orderId: heroForm.serial.trim(),
+          productModel: heroForm.model,
+          claimType: "claim",
+          issueDescription: `${heroForm.issueCategory}${heroForm.issueDescription ? ` - ${heroForm.issueDescription}` : ""}`,
+          source: heroForm.channel,
+        });
+
+        if (res.success) {
+          setHeroSuccess({
+            type: "claim",
+            title: "Doorstep Claim Submitted!",
+            refId: res.data?.claimId || `FLZ-CLM-${Math.floor(100000 + Math.random() * 900000)}`,
+            model: heroForm.model,
+            serial: heroForm.serial.trim(),
+            issue: heroForm.issueCategory,
+          });
+          toast.success("Doorstep replacement request registered! Our team will contact you in 24h.");
+        }
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || err.message || "Failed to submit replacement claim.");
+      } finally {
+        setIsSubmittingWarranty(false);
+      }
+    }
   };
 
   const handleContactFormSubmit = async (e: React.FormEvent) => {
@@ -324,112 +382,179 @@ export default function SupportWarrantyPage() {
     <div className="min-h-screen bg-[#FAF7F2] text-neutral-900 pb-20 selection:bg-[#B8860B] selection:text-white">
       
       {/* ─────────────────────────────────────────────────────────────
-          1. HERO SECTION
+          1. HERO SECTION (Nu Republic Style Next-Level Support & Lifestyle Collage)
          ───────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden pt-10 sm:pt-14 pb-16 px-4 sm:px-6 lg:px-12 max-w-[1560px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <section className="relative overflow-hidden pt-8 sm:pt-12 pb-16 px-4 sm:px-6 lg:px-12 max-w-[1560px] mx-auto">
+        {/* Ambient Warm Golden Aura */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[850px] h-[500px] bg-gradient-to-r from-amber-200/25 via-amber-100/20 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
           
-          {/* Left Hero Column */}
-          <div className="lg:col-span-7 space-y-6">
+          {/* Left Column: Manifesto & Human Support (Matches Exact Nu Republic Layout in Second Screenshot) */}
+          <div className="lg:col-span-6 space-y-6 text-left">
             
             {/* Pill Tag */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5ECDC] border border-[#E8D7BF] text-[#8C6016] text-xs font-bold uppercase tracking-wider">
-              <Shield className="w-3.5 h-3.5 text-[#9E6B20]" />
-              SUPPORT & WARRANTY
+              <ShieldCheck className="w-3.5 h-3.5 text-[#9E6B20]" />
+              <span>OFFICIAL FLAZO CARE+</span>
             </div>
 
-            {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-[#1A1A1A] leading-[1.12]">
-              We&apos;re Here <br />
-              For Your{" "}
-              <span className="font-serif italic text-[#C28C1A] bg-gradient-to-r from-[#B8860B] via-[#C99726] to-[#A07014] bg-clip-text text-transparent">
-                Sound Journey
+            {/* Headline: Punchy Bold Lowercase Nu Republic Style */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-[#1A1815] tracking-tight leading-[1.08] lowercase">
+              next-level support. <br />
+              <span className="bg-gradient-to-r from-[#9E7324] via-[#C99726] to-[#8C6016] bg-clip-text text-transparent italic font-serif">
+                for next-level you.
               </span>
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-sm sm:text-base text-neutral-600 max-w-xl leading-relaxed">
-              From setup to troubleshooting, warranty claims to product care — Flazo Support ensures a seamless experience, always.
-            </p>
-
-            {/* 4 Feature Pills in a Row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-[#F3E7D3] border border-[#E5D2B5] flex items-center justify-center shrink-0">
-                  <Headphones className="w-4 h-4 text-[#8C5E18]" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#1C1C1C] leading-tight">Expert Support</h4>
-                  <p className="text-[11px] text-neutral-500">Direct from Flazo</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-[#F3E7D3] border border-[#E5D2B5] flex items-center justify-center shrink-0">
-                  <Clock className="w-4 h-4 text-[#8C5E18]" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#1C1C1C] leading-tight">Quick Resolution</h4>
-                  <p className="text-[11px] text-neutral-500">Most solved in 24 hrs</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-[#F3E7D3] border border-[#E5D2B5] flex items-center justify-center shrink-0">
-                  <Users className="w-4 h-4 text-[#8C5E18]" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#1C1C1C] leading-tight">1+ Lakh Happy Users</h4>
-                  <p className="text-[11px] text-neutral-500">Across India</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-[#F3E7D3] border border-[#E5D2B5] flex items-center justify-center shrink-0">
-                  <Shield className="w-4 h-4 text-[#8C5E18]" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#1C1C1C] leading-tight">Secure & Hassle-Free</h4>
-                  <p className="text-[11px] text-neutral-500">Warranty Process</p>
-                </div>
-              </div>
+            {/* Manifesto Body Text */}
+            <div className="space-y-3 text-neutral-600 text-xs sm:text-sm leading-relaxed max-w-xl">
+              <p>
+                at the <strong className="text-neutral-900 font-bold">Flazo universe</strong>, we believe great acoustics deserve even better support. and great listeners? they deserve the absolute best.
+              </p>
+              <p>
+                that&apos;s why our team shows up fast, stays reliable, and has your back at every step. from doorstep replacements to real human answers, we keep things seamless, effortless, and stress-free — so your experience stays as pure as the sound you love.
+              </p>
             </div>
 
-            {/* 2 CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-4">
-              <a
-                href="#help-topics"
-                className="px-7 py-3 rounded-full bg-[#9E6B20] hover:bg-[#8A5B17] text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-md flex items-center gap-2 group hover:translate-x-0.5"
-              >
-                <span>Get Support Now</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+            {/* Staccato Value Bullet Points */}
+            <div className="space-y-1.5 text-xs sm:text-sm font-bold text-neutral-900 pt-1">
+              <p className="flex items-center gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                <span>no automated runarounds.</span>
+              </p>
+              <p className="flex items-center gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                <span>no cold waiting responses.</span>
+              </p>
+              <p className="flex items-center gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                <span>just genuine human support that moves at your speed.</span>
+              </p>
+              <p className="text-[#8C6016] font-extrabold italic pt-1.5 text-xs sm:text-sm">
+                because when you&apos;re next-level, your support should be too.
+              </p>
+            </div>
 
+            {/* 2 High-Conversion Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-3">
               <button
                 type="button"
-                onClick={() => setActiveModal("video")}
-                className="px-6 py-3 rounded-full bg-white hover:bg-[#F7F2E9] border border-[#D9C4A4] text-[#2A241C] font-bold text-xs transition-all flex items-center gap-2 group"
+                onClick={() => {
+                  setRegForm((prev) => ({ ...prev, claimType: "claim" }));
+                  setIsRegistered(false);
+                  setActiveModal("register");
+                }}
+                className="btn-shimmer px-7 py-3.5 rounded-full bg-gradient-to-r from-[#9E6B20] via-[#B8860B] to-[#D4AF37] hover:scale-[1.02] active:scale-[0.98] text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-amber-900/15 transition-all flex items-center gap-2 cursor-pointer"
               >
-                <div className="w-5 h-5 rounded-full bg-[#9E6B20] text-white flex items-center justify-center">
-                  <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
-                </div>
-                <span>Watch Support Video</span>
+                <span>Claim 1-Year Warranty</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
+
+              {/* <button
+                type="button"
+                onClick={() => setActiveModal("chat")}
+                className="px-6 py-3.5 rounded-full bg-white hover:bg-neutral-950 text-neutral-900 hover:text-white border border-[#D8C7A5] hover:border-neutral-950 font-extrabold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-2xs group"
+              >
+                <MessageSquare className="w-4 h-4 text-[#9E6B20] group-hover:text-amber-300 transition-colors" />
+                <span>Chat With Concierge</span>
+              </button> */}
             </div>
+
+            {/* Signature Universe Strip */}
+            <div className="pt-6 border-t border-[#E8DCC4] space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
+                from the flazo sound universe
+              </p>
+              <div className="flex flex-wrap items-center gap-3 text-xs font-black tracking-wider text-neutral-700 uppercase">
+                <span className="px-2.5 py-1 rounded-md bg-[#F4ECDC] text-[#7A5314] border border-[#E5D5B8]">FLAZO CARE 365</span>
+                <span className="text-neutral-300">•</span>
+                <span>DOORSTEP SWAP</span>
+                <span className="text-neutral-300">•</span>
+                <span>PAN-INDIA LOGISTICS</span>
+                <span className="text-neutral-300">•</span>
+                <span>100% GENUINE</span>
+              </div>
+            </div>
+
           </div>
 
-          {/* Right Hero Column: Golden Earbuds Visual Stage (Stable & Seamless, No Card Box) */}
-          <div className="lg:col-span-5 relative flex items-center justify-center">
-            <div className="relative w-full max-w-[480px] flex items-center justify-center">
-              <Image
-                src="/images/support_hero_earbud_seamless.png"
-                alt="Flazo Acoustic Sound Stage"
-                width={520}
-                height={460}
-                priority
-                className="object-contain w-full h-auto select-none"
-              />
+          {/* Right Column: Dynamic Editorial Lifestyle Photo Collage (Zero Products, Authentic Human Emotion) */}
+          <div className="lg:col-span-6 relative flex items-center justify-center pt-4 lg:pt-0">
+            
+            {/* Background Ambient Warm Frame */}
+            <div className="relative w-full max-w-[560px] aspect-square sm:aspect-[4/3] lg:aspect-[5/4] flex items-center justify-center p-2">
+              
+              {/* Photo 1: Top-Left (Smiling Woman Golden Hour) - Tilted -2deg */}
+              <div className="absolute top-2 left-2 sm:left-4 w-[48%] aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 -rotate-2 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
+                <Image
+                  src="/images/flazo_support_lifestyle_1.jpg"
+                  alt="Happy Indian woman enjoying golden hour sunset"
+                  fill
+                  priority
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                  pure joy • authentic smiles
+                </span>
+              </div>
+
+              {/* Photo 2: Top-Right (Friendly Support Concierge) - Tilted +3deg */}
+              <div className="absolute top-0 right-2 sm:right-4 w-[46%] aspect-square rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 rotate-3 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
+                <Image
+                  src="/images/flazo_support_lifestyle_2.jpg"
+                  alt="Friendly customer support concierge smiling warmly"
+                  fill
+                  priority
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                  dedicated concierge
+                </span>
+              </div>
+
+              {/* Photo 3: Bottom-Left (Friends Laughing Balcony) - Tilted +2deg */}
+              <div className="absolute bottom-2 left-4 sm:left-8 w-[45%] aspect-square rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 rotate-2 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
+                <Image
+                  src="/images/flazo_support_lifestyle_3.jpg"
+                  alt="Indian friends laughing together on rooftop balcony"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                  100k+ happy listeners
+                </span>
+              </div>
+
+              {/* Photo 4: Bottom-Right (Urban Confident Young Man) - Tilted -3deg */}
+              <div className="absolute bottom-0 right-2 sm:right-6 w-[47%] aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 -rotate-3 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
+                <Image
+                  src="/images/flazo_support_lifestyle_4.jpg"
+                  alt="Confident young man walking in urban plaza"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                  19,000+ pincodes
+                </span>
+              </div>
+
+              {/* Center Floating Signature Seal */}
+              {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none select-none">
+                <div className="px-3.5 py-2 rounded-full bg-neutral-950/90 backdrop-blur-md border-2 border-amber-400/50 shadow-2xl flex items-center gap-2 text-white">
+                  <Sparkles className="w-4 h-4 text-amber-400 shrink-0 animate-spin" style={{ animationDuration: "12s" }} />
+                  <span className="text-[11px] font-black uppercase tracking-wider text-amber-300">
+                   
+                  </span>
+                </div>
+              </div> */}
+
             </div>
+
           </div>
 
         </div>
@@ -687,22 +812,22 @@ export default function SupportWarrantyPage() {
             </div>
           </div>
 
-          {/* Card 3: Live Chat */}
+          {/* Card 3: Quick Inquiry */}
           <div className="bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs flex items-start gap-4 hover:shadow-md transition">
             <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center shrink-0 text-[#9E6B20]">
               <MessageSquare className="w-5 h-5" />
             </div>
             <div className="space-y-1">
-              <span className="text-xs font-semibold text-neutral-500">Live Chat</span>
+              <span className="text-xs font-semibold text-neutral-500">Quick Inquiry</span>
               <p className="text-[11px] text-neutral-500 leading-snug">
-                Chat with our support team for instant help.
+                Send our customer care team a direct inquiry.
               </p>
               <button
                 type="button"
                 onClick={() => setActiveModal("chat")}
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#9E6B20] hover:underline pt-1"
+                className="inline-flex items-center gap-1 text-xs font-bold text-[#9E6B20] hover:underline pt-1 cursor-pointer"
               >
-                Start Chat →
+                Send Message →
               </button>
             </div>
           </div>
@@ -1215,209 +1340,129 @@ export default function SupportWarrantyPage() {
         </div>
       )}
 
-      {/* 4. Contact Support / Live Concierge Modal */}
+      {/* 4. Contact Support / Quick Inquiry Modal */}
       {activeModal === "chat" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl border border-[#E5D4BC] max-w-lg w-full shadow-2xl flex flex-col h-[560px] overflow-hidden">
+          <div className="bg-white rounded-3xl border border-[#E5D4BC] max-w-lg w-full shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
             {/* Modal Header */}
-            <div className="px-5 py-3.5 bg-[#FAF5EC] border-b border-[#E8D7BE] flex items-center justify-between">
+            <div className="px-5 py-4 bg-[#FAF5EC] border-b border-[#E8D7BE] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-[#9E6B20] text-white flex items-center justify-center font-bold text-xs shrink-0">
                   FLZ
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-[#1A1A1A]">Flazo Customer Support</h4>
-                  <p className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Online • Average reply 1 min
+                  <p className="text-[10px] text-neutral-500 font-medium">
+                    Submit Inquiry • Quick Response
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                {/* Mode Selector */}
-                <div className="flex items-center bg-[#EFE4D2] p-1 rounded-xl text-xs font-bold">
-                  <button
-                    type="button"
-                    onClick={() => setContactMode("form")}
-                    className={`px-3 py-1 rounded-lg transition cursor-pointer text-xs ${
-                      contactMode === "form"
-                        ? "bg-[#9E6B20] text-white shadow-xs"
-                        : "text-[#704F18] hover:text-[#1A1A1A]"
-                    }`}
-                  >
-                    Quick Form
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setContactMode("chat")}
-                    className={`px-3 py-1 rounded-lg transition cursor-pointer text-xs ${
-                      contactMode === "chat"
-                        ? "bg-[#9E6B20] text-white shadow-xs"
-                        : "text-[#704F18] hover:text-[#1A1A1A]"
-                    }`}
-                  >
-                    Live Chat
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveModal(null)}
-                  className="text-neutral-400 hover:text-neutral-700 cursor-pointer p-1"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setActiveModal(null)}
+                className="text-neutral-400 hover:text-neutral-700 cursor-pointer p-1 rounded-lg hover:bg-[#EFE4D2] transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            {/* Modal Body */}
-            {contactMode === "form" ? (
-              <form
-                onSubmit={handleContactFormSubmit}
-                className="flex-1 p-5 overflow-y-auto space-y-3.5 bg-[#FCFBF8] flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <p className="text-xs text-neutral-600 leading-relaxed">
-                    Leave your inquiry details below. Our customer care team will review your request and reach out promptly.
-                  </p>
+            {/* Modal Body - Direct Inquiry Form */}
+            <form
+              onSubmit={handleContactFormSubmit}
+              className="p-5 overflow-y-auto space-y-3.5 bg-[#FCFBF8]"
+            >
+              <p className="text-xs text-neutral-600 leading-relaxed">
+                Leave your inquiry details below. Our customer care team will review your request and reach out promptly.
+              </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Your name"
-                        value={contactForm.name}
-                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                        className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="Your email"
-                        value={contactForm.email}
-                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                        className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">
-                        Phone Number (Optional)
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="Mobile number"
-                        value={contactForm.phone}
-                        onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
-                        className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-neutral-700 block mb-1">
-                        Order ID (Optional)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="FLZ-1234"
-                        value={contactForm.orderId}
-                        onChange={(e) => setContactForm({ ...contactForm, orderId: e.target.value })}
-                        className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-[11px] font-bold text-neutral-700 block mb-1">
-                      Your Message *
-                    </label>
-                    <textarea
-                      rows={4}
-                      required
-                      placeholder="Write your question, warranty issue, or request..."
-                      value={contactForm.message}
-                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                      className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900 resize-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-[#E8D7BE] flex items-center justify-between">
-                  <a
-                    href="/contactus"
-                    className="text-[11px] font-semibold text-[#9E6B20] hover:underline"
-                  >
-                    Open full contact page →
-                  </a>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmittingContact}
-                    className="px-5 py-2.5 bg-[#9E6B20] hover:bg-[#8A5B17] text-white text-xs font-bold rounded-xl transition cursor-pointer disabled:opacity-50"
-                  >
-                    {isSubmittingContact ? "Sending..." : "Submit Inquiry"}
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="flex-1 flex flex-col justify-between overflow-hidden">
-                {/* Chat Messages */}
-                <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#FCFBF8]">
-                  {chatMessages.map((msg, idx) => (
-                    <div
-                      key={idx}
-                      className={`flex flex-col ${
-                        msg.sender === "user" ? "items-end" : "items-start"
-                      }`}
-                    >
-                      <div
-                        className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-xs ${
-                          msg.sender === "user"
-                            ? "bg-[#9E6B20] text-white"
-                            : "bg-white border border-[#E8D7BE] text-neutral-800 shadow-2xs"
-                        }`}
-                      >
-                        {msg.text}
-                      </div>
-                      <span className="text-[9px] text-neutral-400 mt-0.5 px-1">
-                        {msg.time}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Chat Input */}
-                <form
-                  onSubmit={handleSendChat}
-                  className="p-3 bg-white border-t border-[#E8D7BE] flex gap-2"
-                >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                    Full Name *
+                  </label>
                   <input
                     type="text"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Type your question here..."
-                    className="flex-1 px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20]"
+                    required
+                    placeholder="Your name"
+                    value={contactForm.name}
+                    onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                    className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
                   />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-[#9E6B20] text-white text-xs font-bold rounded-xl hover:bg-[#8A5B17] transition cursor-pointer"
-                  >
-                    Send
-                  </button>
-                </form>
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="Your email"
+                    value={contactForm.email}
+                    onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                    className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
+                  />
+                </div>
               </div>
-            )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                    Phone Number (Optional)
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="Mobile number"
+                    value={contactForm.phone}
+                    onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                    className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                    Order ID (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="FLZ-1234"
+                    value={contactForm.orderId}
+                    onChange={(e) => setContactForm({ ...contactForm, orderId: e.target.value })}
+                    className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                  Your Message *
+                </label>
+                <textarea
+                  rows={4}
+                  required
+                  placeholder="Write your question, warranty issue, or request..."
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                  className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900 resize-none"
+                />
+              </div>
+
+              <div className="pt-2 border-t border-[#E8D7BE] flex items-center justify-between">
+                <a
+                  href="/contactus"
+                  className="text-[11px] font-semibold text-[#9E6B20] hover:underline"
+                >
+                  Open full contact page →
+                </a>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingContact}
+                  className="px-5 py-2.5 bg-[#9E6B20] hover:bg-[#8A5B17] text-white text-xs font-bold rounded-xl transition cursor-pointer disabled:opacity-50"
+                >
+                  {isSubmittingContact ? "Sending..." : "Submit Inquiry"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
