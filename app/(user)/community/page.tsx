@@ -32,6 +32,7 @@ import {
   voteDiscussionThunk,
 } from "@/app/lib/store/features/communitySlice";
 import { getImageUrl } from "@/app/utils/getImageUrl";
+import { FadeIn, Stagger, StaggerItem, HoverCard, motion } from "@/app/commonComponents/motion";
 
 const ICON_MAP: Record<string, any> = {
   Headphones,
@@ -147,147 +148,153 @@ export default function FlazoCommunityPage() {
             
             {/* Left Content Column */}
             <div className="lg:col-span-6 space-y-6 relative z-10">
-              
-              {/* Category Pill Tag */}
-              <div className="inline-flex items-center gap-2 text-xs font-mono font-bold tracking-[0.25em] text-[#9E6B20] uppercase">
-                <span>{settings?.heroTag || "// FLAZO COMMUNITY"}</span>
-              </div>
+              <FadeIn direction="right">
+                {/* Category Pill Tag */}
+                <div className="inline-flex items-center gap-2 text-xs font-mono font-bold tracking-[0.25em] text-[#9E6B20] uppercase mb-4">
+                  <span>{settings?.heroTag || "// FLAZO COMMUNITY"}</span>
+                </div>
 
-              {/* Main Headline */}
-              <div className="relative">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-neutral-950 leading-[1.08] tracking-tight whitespace-pre-line">
-                  {settings?.heroHeadline || settings?.heroTitle || (
-                    <>
-                      Not Just Listeners. <br />
-                      <span className="font-serif italic font-normal text-[#C99726]">A Community</span> <br />
-                      That Feels.
-                    </>
+                {/* Main Headline */}
+                <div className="relative mb-4">
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-neutral-950 leading-[1.08] tracking-tight whitespace-pre-line">
+                    {settings?.heroHeadline || settings?.heroTitle || (
+                      <>
+                        Not Just Listeners. <br />
+                        <span className="font-serif italic font-normal text-[#C99726]">A Community</span> <br />
+                        That Feels.
+                      </>
+                    )}
+                  </h1>
+
+                  {/* Floating Handwritten Style Script */}
+                  {settings?.heroQuoteAuthor && (
+                    <div className="absolute right-0 -bottom-4 hidden sm:block pointer-events-none select-none text-right">
+                      <span className="font-serif italic text-base sm:text-lg text-neutral-600 font-medium">
+                        {settings.heroQuoteAuthor}
+                      </span>
+                      <div className="w-16 h-1 bg-[#C99726] rounded-full ml-auto mt-0.5" />
+                    </div>
                   )}
-                </h1>
-
-                {/* Floating Handwritten Style Script */}
-                {settings?.heroQuoteAuthor && (
-                  <div className="absolute right-0 -bottom-4 hidden sm:block pointer-events-none select-none text-right">
-                    <span className="font-serif italic text-base sm:text-lg text-neutral-600 font-medium">
-                      {settings.heroQuoteAuthor}
-                    </span>
-                    <div className="w-16 h-1 bg-[#C99726] rounded-full ml-auto mt-0.5" />
-                  </div>
-                )}
-              </div>
-
-              {/* Subheadline */}
-              <p className="text-sm sm:text-base text-neutral-600 max-w-lg leading-relaxed font-normal whitespace-pre-line">
-                {settings?.heroSubtitle ||
-                  "Connect. Share. Learn. Create. Grow. \nBecause better sound brings better people together."}
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <button
-                  onClick={() => setIsJoinModalOpen(true)}
-                  className="px-7 py-3.5 rounded-full bg-gradient-to-r from-[#8C5F19] via-[#A87422] to-[#C99726] hover:from-[#7A5013] hover:to-[#B8860B] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
-                >
-                  <span>{settings?.joinButtonText || "Join the Community"}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <button
-                  onClick={() => {
-                    if (settings?.watchStoryUrl) {
-                      window.open(settings.watchStoryUrl, "_blank");
-                    } else {
-                      toast.info("Playing: The Flazo Community Story");
-                    }
-                  }}
-                  className="px-6 py-3.5 rounded-full bg-white border border-[#E0D3C1] text-neutral-800 hover:text-neutral-950 font-bold text-sm shadow-xs hover:bg-[#F8F3EB] transition-all flex items-center gap-2.5 cursor-pointer"
-                >
-                  <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center text-[#8C5F19]">
-                    <Play className="w-2.5 h-2.5 fill-current" />
-                  </div>
-                  <span>{settings?.watchStoryText || "Watch Our Story"}</span>
-                </button>
-              </div>
-
-              {/* Dynamic Trust & Engagement Stats Pill */}
-              <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-[#E8DFC8]/60">
-                {/* Dynamic Avatar Stack from real contributors */}
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2 overflow-hidden">
-                    {contributors.slice(0, 4).map((member, i) => (
-                      <div
-                        key={member.id || i}
-                        className="w-8 h-8 rounded-full border-2 border-white overflow-hidden relative shadow-xs bg-neutral-200"
-                      >
-                        {member.avatar ? (
-                          <Image
-                            src={getImageUrl(member.avatar)}
-                            alt={member.name}
-                            fill
-                            unoptimized
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-xs font-bold text-amber-900 bg-amber-100">
-                            {member.name.charAt(0)}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="text-left">
-                    <span className="text-xs font-mono font-black text-neutral-950 block">
-                      {displayMembersCount}
-                    </span>
-                    <span className="text-[11px] text-neutral-500 font-medium">Members & Growing</span>
-                  </div>
                 </div>
 
-                <div className="h-8 w-px bg-[#E8DFC8]" />
+                {/* Subheadline */}
+                <p className="text-sm sm:text-base text-neutral-600 max-w-lg leading-relaxed font-normal whitespace-pre-line mb-6">
+                  {settings?.heroSubtitle ||
+                    "Connect. Share. Learn. Create. Grow. \nBecause better sound brings better people together."}
+                </p>
 
-                {/* Real Conversations Badge */}
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center text-[#9E6B20]">
-                    <ShieldCheck className="w-4 h-4" />
+                {/* Action Buttons */}
+                <div className="flex flex-wrap items-center gap-3 pt-2 mb-6">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => setIsJoinModalOpen(true)}
+                    className="px-7 py-3.5 rounded-full bg-gradient-to-r from-[#8C5F19] via-[#A87422] to-[#C99726] hover:from-[#7A5013] hover:to-[#B8860B] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>{settings?.joinButtonText || "Join the Community"}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => {
+                      if (settings?.watchStoryUrl) {
+                        window.open(settings.watchStoryUrl, "_blank");
+                      } else {
+                        toast.info("Playing: The Flazo Community Story");
+                      }
+                    }}
+                    className="px-6 py-3.5 rounded-full bg-white border border-[#E0D3C1] text-neutral-800 hover:text-neutral-950 font-bold text-sm shadow-xs hover:bg-[#F8F3EB] transition-all flex items-center gap-2.5 cursor-pointer"
+                  >
+                    <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center text-[#8C5F19]">
+                      <Play className="w-2.5 h-2.5 fill-current" />
+                    </div>
+                    <span>{settings?.watchStoryText || "Watch Our Story"}</span>
+                  </motion.button>
+                </div>
+
+                {/* Dynamic Trust & Engagement Stats Pill */}
+                <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-[#E8DFC8]/60">
+                  {/* Dynamic Avatar Stack from real contributors */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex -space-x-2 overflow-hidden">
+                      {contributors.slice(0, 4).map((member, i) => (
+                        <div
+                          key={member.id || i}
+                          className="w-8 h-8 rounded-full border-2 border-white overflow-hidden relative shadow-xs bg-neutral-200"
+                        >
+                          {member.avatar ? (
+                            <Image
+                              src={getImageUrl(member.avatar)}
+                              alt={member.name}
+                              fill
+                              unoptimized
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-xs font-bold text-amber-900 bg-amber-100">
+                              {member.name.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-left">
+                      <span className="text-xs font-mono font-black text-neutral-950 block">
+                        {displayMembersCount}
+                      </span>
+                      <span className="text-[11px] text-neutral-500 font-medium">Members & Growing</span>
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <span className="text-xs font-black text-neutral-950 block">Real People</span>
-                    <span className="text-[11px] text-neutral-500 font-medium">Real Conversations</span>
+
+                  <div className="h-8 w-px bg-[#E8DFC8]" />
+
+                  {/* Real Conversations Badge */}
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center text-[#9E6B20]">
+                      <ShieldCheck className="w-4 h-4" />
+                    </div>
+                    <div className="text-left">
+                      <span className="text-xs font-black text-neutral-950 block">Real People</span>
+                      <span className="text-[11px] text-neutral-500 font-medium">Real Conversations</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-
+              </FadeIn>
             </div>
 
             {/* Right Hero Visual Column */}
             <div className="lg:col-span-6 relative">
-              <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-amber-200/80 bg-neutral-900 group">
-                <Image
-                  src={heroImageSrc}
-                  alt="Flazo Community"
-                  fill
-                  className="object-cover group-hover:scale-102 transition-transform duration-700"
-                  priority
-                  unoptimized
-                />
+              <FadeIn direction="left">
+                <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-amber-200/80 bg-neutral-900 group">
+                  <Image
+                    src={heroImageSrc}
+                    alt="Flazo Community"
+                    fill
+                    className="object-cover group-hover:scale-102 transition-transform duration-700"
+                    priority
+                    unoptimized
+                  />
 
-                {/* Dynamic Architectural Pillars Watermark */}
-                <div className="absolute top-6 right-6 text-right space-y-0.5 select-none pointer-events-none drop-shadow-md">
-                  {pillars.map((pillar) => (
-                    <p key={pillar} className="text-[11px] font-mono tracking-widest text-white/90 font-bold uppercase">
-                      {pillar}
-                    </p>
-                  ))}
-                </div>
+                  {/* Dynamic Architectural Pillars Watermark */}
+                  <div className="absolute top-6 right-6 text-right space-y-0.5 select-none pointer-events-none drop-shadow-md">
+                    {pillars.map((pillar) => (
+                      <p key={pillar} className="text-[11px] font-mono tracking-widest text-white/90 font-bold uppercase">
+                        {pillar}
+                      </p>
+                    ))}
+                  </div>
 
-                {/* Dynamic Quote Overlay */}
-                <div className="absolute bottom-6 right-6 text-right select-none pointer-events-none">
-                  <span className="font-serif italic text-lg sm:text-xl text-amber-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] font-semibold block">
-                    {settings?.heroQuote || settings?.memberQuote || "Together for a Brighter India"}
-                  </span>
-                  <div className="w-14 h-0.5 bg-amber-400 rounded-full ml-auto mt-1" />
+                  {/* Dynamic Quote Overlay */}
+                  <div className="absolute bottom-6 right-6 text-right select-none pointer-events-none">
+                    <span className="font-serif italic text-lg sm:text-xl text-amber-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] font-semibold block">
+                      {settings?.heroQuote || settings?.memberQuote || "Together for a Brighter India"}
+                    </span>
+                    <div className="w-14 h-0.5 bg-amber-400 rounded-full ml-auto mt-1" />
+                  </div>
                 </div>
-              </div>
+              </FadeIn>
             </div>
 
           </div>
@@ -315,7 +322,7 @@ export default function FlazoCommunityPage() {
 
             {topics.map((cat) => {
               const Icon = (cat.icon && ICON_MAP[cat.icon]) || (cat.iconName && ICON_MAP[cat.iconName]) || Headphones;
-              const topicKey = cat.slug || cat.topicId;
+              const topicKey = cat.slug || cat.topicId || "all";
               const isActive = selectedCategory === topicKey;
               return (
                 <button
@@ -616,7 +623,7 @@ export default function FlazoCommunityPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
             {topics.map((topic) => {
               const Icon = (topic.icon && ICON_MAP[topic.icon]) || (topic.iconName && ICON_MAP[topic.iconName]) || Headphones;
-              const topicKey = topic.slug || topic.topicId;
+              const topicKey = topic.slug || topic.topicId || "all";
               const isSelected = selectedCategory === topicKey;
               return (
                 <div

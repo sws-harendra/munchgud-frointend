@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
@@ -32,6 +32,16 @@ import { toast } from "sonner";
 import { useAppSelector } from "@/app/lib/store/store";
 import { contactService } from "@/app/sercices/user/contact.service";
 import { warrantyService } from "@/app/sercices/user/warranty.service";
+import {
+  FadeIn,
+  Stagger,
+  StaggerItem,
+  HoverCard,
+  ScaleIn,
+  Float,
+  AnimatedModal,
+  motion,
+} from "@/app/commonComponents/motion";
 
 export default function SupportWarrantyPage() {
   const { user } = useAppSelector((state) => state.auth);
@@ -391,7 +401,7 @@ export default function SupportWarrantyPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
           
           {/* Left Column: Manifesto & Human Support (Matches Exact Nu Republic Layout in Second Screenshot) */}
-          <div className="lg:col-span-6 space-y-6 text-left">
+          <FadeIn direction="up" delay={0.1} className="lg:col-span-6 space-y-6 text-left">
             
             {/* Pill Tag */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5ECDC] border border-[#E8D7BF] text-[#8C6016] text-xs font-bold uppercase tracking-wider">
@@ -438,27 +448,20 @@ export default function SupportWarrantyPage() {
 
             {/* 2 High-Conversion Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-3">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 type="button"
                 onClick={() => {
                   setRegForm((prev) => ({ ...prev, claimType: "claim" }));
                   setIsRegistered(false);
                   setActiveModal("register");
                 }}
-                className="btn-shimmer px-7 py-3.5 rounded-full bg-gradient-to-r from-[#9E6B20] via-[#B8860B] to-[#D4AF37] hover:scale-[1.02] active:scale-[0.98] text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-amber-900/15 transition-all flex items-center gap-2 cursor-pointer"
+                className="btn-shimmer px-7 py-3.5 rounded-full bg-gradient-to-r from-[#9E6B20] via-[#B8860B] to-[#D4AF37] text-white font-extrabold text-xs uppercase tracking-wider shadow-md shadow-amber-900/15 transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>Claim 1-Year Warranty</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
-
-              {/* <button
-                type="button"
-                onClick={() => setActiveModal("chat")}
-                className="px-6 py-3.5 rounded-full bg-white hover:bg-neutral-950 text-neutral-900 hover:text-white border border-[#D8C7A5] hover:border-neutral-950 font-extrabold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-2xs group"
-              >
-                <MessageSquare className="w-4 h-4 text-[#9E6B20] group-hover:text-amber-300 transition-colors" />
-                <span>Chat With Concierge</span>
-              </button> */}
+              </motion.button>
             </div>
 
             {/* Signature Universe Strip */}
@@ -477,96 +480,83 @@ export default function SupportWarrantyPage() {
               </div>
             </div>
 
-          </div>
+          </FadeIn>
 
           {/* Right Column: Dynamic Editorial Lifestyle Photo Collage (Zero Products, Authentic Human Emotion) */}
-          <div className="lg:col-span-6 relative flex items-center justify-center pt-4 lg:pt-0">
-            
-            {/* Background Ambient Warm Frame */}
-            <div className="relative w-full max-w-[560px] aspect-square sm:aspect-[4/3] lg:aspect-[5/4] flex items-center justify-center p-2">
-              
-              {/* Photo 1: Top-Left (Smiling Woman Golden Hour) - Tilted -2deg */}
-              <div className="absolute top-2 left-2 sm:left-4 w-[48%] aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 -rotate-2 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
-                <Image
-                  src="/images/flazo_support_lifestyle_1.jpg"
-                  alt="Happy Indian woman enjoying golden hour sunset"
-                  fill
-                  priority
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                  pure joy • authentic smiles
-                </span>
-              </div>
-
-              {/* Photo 2: Top-Right (Friendly Support Concierge) - Tilted +3deg */}
-              <div className="absolute top-0 right-2 sm:right-4 w-[46%] aspect-square rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 rotate-3 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
-                <Image
-                  src="/images/flazo_support_lifestyle_2.jpg"
-                  alt="Friendly customer support concierge smiling warmly"
-                  fill
-                  priority
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                  dedicated concierge
-                </span>
-              </div>
-
-              {/* Photo 3: Bottom-Left (Friends Laughing Balcony) - Tilted +2deg */}
-              <div className="absolute bottom-2 left-4 sm:left-8 w-[45%] aspect-square rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 rotate-2 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
-                <Image
-                  src="/images/flazo_support_lifestyle_3.jpg"
-                  alt="Indian friends laughing together on rooftop balcony"
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                  100k+ happy listeners
-                </span>
-              </div>
-
-              {/* Photo 4: Bottom-Right (Urban Confident Young Man) - Tilted -3deg */}
-              <div className="absolute bottom-0 right-2 sm:right-6 w-[47%] aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 -rotate-3 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
-                <Image
-                  src="/images/flazo_support_lifestyle_4.jpg"
-                  alt="Confident young man walking in urban plaza"
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                  19,000+ pincodes
-                </span>
-              </div>
-
-              {/* Center Floating Signature Seal */}
-              {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none select-none">
-                <div className="px-3.5 py-2 rounded-full bg-neutral-950/90 backdrop-blur-md border-2 border-amber-400/50 shadow-2xl flex items-center gap-2 text-white">
-                  <Sparkles className="w-4 h-4 text-amber-400 shrink-0 animate-spin" style={{ animationDuration: "12s" }} />
-                  <span className="text-[11px] font-black uppercase tracking-wider text-amber-300">
-                   
+          <FadeIn direction="left" delay={0.25} className="lg:col-span-6 relative flex items-center justify-center pt-4 lg:pt-0">
+            <Float amplitude={5} duration={6} className="w-full flex items-center justify-center">
+              {/* Background Ambient Warm Frame */}
+              <div className="relative w-full max-w-[560px] aspect-square sm:aspect-[4/3] lg:aspect-[5/4] flex items-center justify-center p-2">
+                
+                {/* Photo 1: Top-Left (Smiling Woman Golden Hour) - Tilted -2deg */}
+                <div className="absolute top-2 left-2 sm:left-4 w-[48%] aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 -rotate-2 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
+                  <Image
+                    src="/images/flazo_support_lifestyle_1.jpg"
+                    alt="Happy Indian woman enjoying golden hour sunset"
+                    fill
+                    priority
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                    pure joy • authentic smiles
                   </span>
                 </div>
-              </div> */}
 
-            </div>
+                {/* Photo 2: Top-Right (Friendly Support Concierge) - Tilted +3deg */}
+                <div className="absolute top-0 right-2 sm:right-4 w-[46%] aspect-square rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 rotate-3 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
+                  <Image
+                    src="/images/flazo_support_lifestyle_2.jpg"
+                    alt="Friendly customer support concierge smiling warmly"
+                    fill
+                    priority
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                    dedicated concierge
+                  </span>
+                </div>
 
-          </div>
+                {/* Photo 3: Bottom-Left (Friends Laughing Balcony) - Tilted +2deg */}
+                <div className="absolute bottom-2 left-4 sm:left-8 w-[45%] aspect-square rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 rotate-2 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
+                  <Image
+                    src="/images/flazo_support_lifestyle_3.jpg"
+                    alt="Indian friends laughing together on rooftop balcony"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                    100k+ happy listeners
+                  </span>
+                </div>
+
+                {/* Photo 4: Bottom-Right (Urban Confident Young Man) - Tilted -3deg */}
+                <div className="absolute bottom-0 right-2 sm:right-6 w-[47%] aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white shadow-xl shadow-amber-950/15 -rotate-3 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 group bg-neutral-100">
+                  <Image
+                    src="/images/flazo_support_lifestyle_4.jpg"
+                    alt="Confident young man walking in urban plaza"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                    19,000+ pincodes
+                  </span>
+                </div>
+
+              </div>
+            </Float>
+          </FadeIn>
 
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────────────────────────
-          2. HOW CAN WE HELP YOU TODAY? SECTION
-         ───────────────────────────────────────────────────────────── */}
+      {/* 2. HOW CAN WE HELP YOU TODAY? SECTION */}
       <section id="help-topics" className="py-12 px-4 sm:px-6 lg:px-12 max-w-[1560px] mx-auto">
-        
         {/* Header with Search Bar */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <FadeIn direction="up" className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#1A1A1A] tracking-tight">
               How can we help you today?
@@ -587,281 +577,296 @@ export default function SupportWarrantyPage() {
                 placeholder="Search for help (e.g. pairing, charging, warranty, claim)"
                 className="w-full pl-11 pr-28 py-3 bg-white border border-[#E2D4BF] rounded-full text-xs text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-[#9E6B20] focus:ring-1 focus:ring-[#9E6B20] shadow-xs"
               />
-              <button
+              <motion.button
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
                 type="button"
-                className="absolute right-1.5 px-5 py-2 bg-[#9E6B20] hover:bg-[#8A5B17] text-white font-bold text-xs rounded-full transition shadow-xs"
+                className="absolute right-1.5 px-5 py-2 bg-[#9E6B20] hover:bg-[#8A5B17] text-white font-bold text-xs rounded-full transition shadow-xs cursor-pointer"
               >
                 Search
-              </button>
+              </motion.button>
             </div>
           </div>
-        </div>
+        </FadeIn>
 
         {/* 5 Topic Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <Stagger staggerChildren={0.08} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {filteredTopics.map((topic) => {
             const IconComponent = topic.icon;
             return (
-              <div
-                key={topic.id}
-                onClick={topic.action}
-                className="bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer group"
-              >
-                <div>
-                  <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center mb-4 group-hover:bg-[#9E6B20] group-hover:text-white transition-colors duration-300 text-[#9E6B20]">
-                    <IconComponent className="w-5 h-5" />
+              <StaggerItem key={topic.id}>
+                <HoverCard
+                  onClick={topic.action}
+                  className="h-full bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between cursor-pointer group"
+                >
+                  <div>
+                    <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center mb-4 group-hover:bg-[#9E6B20] group-hover:text-white transition-colors duration-300 text-[#9E6B20]">
+                      <IconComponent className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-base font-serif font-black text-[#1A1A1A] mb-2">
+                      {topic.title}
+                    </h3>
+                    <p className="text-xs text-neutral-500 leading-relaxed">
+                      {topic.desc}
+                    </p>
                   </div>
-                  <h3 className="text-base font-serif font-black text-[#1A1A1A] mb-2">
-                    {topic.title}
-                  </h3>
-                  <p className="text-xs text-neutral-500 leading-relaxed">
-                    {topic.desc}
-                  </p>
-                </div>
 
-                <div className="mt-6 pt-4 border-t border-neutral-100 flex items-center justify-between text-xs font-bold text-[#8C6016] group-hover:text-[#A67324]">
-                  <span className="flex items-center gap-1.5">
-                    {topic.linkText}
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                  <div className="flex items-center text-neutral-300">
-                    <span className="text-xs">|</span>
-                    <ChevronRight className="w-4 h-4 ml-1 text-neutral-400 group-hover:text-[#8C6016]" />
+                  <div className="mt-6 pt-4 border-t border-neutral-100 flex items-center justify-between text-xs font-bold text-[#8C6016] group-hover:text-[#A67324]">
+                    <span className="flex items-center gap-1.5">
+                      {topic.linkText}
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                    <div className="flex items-center text-neutral-300">
+                      <span className="text-xs">|</span>
+                      <ChevronRight className="w-4 h-4 ml-1 text-neutral-400 group-hover:text-[#8C6016]" />
+                    </div>
                   </div>
-                </div>
-              </div>
+                </HoverCard>
+              </StaggerItem>
             );
           })}
-        </div>
+        </Stagger>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
           3. WARRANTY SECTION (Split Card)
          ───────────────────────────────────────────────────────────── */}
       <section className="py-8 px-4 sm:px-6 lg:px-12 max-w-[1560px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <Stagger staggerChildren={0.12} className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
           
           {/* Left Wide Card: 1 Year Limited Warranty */}
-          <div className="lg:col-span-8 bg-gradient-to-br from-[#FFFDF9] via-[#FAF6EE] to-[#F5ECE0] rounded-3xl p-7 sm:p-9 border border-[#E6D7BE] shadow-xs flex flex-col md:flex-row items-center justify-between gap-8">
-            
-            {/* Left Shield Emblem Image */}
-            <div className="w-36 sm:w-44 shrink-0 flex items-center justify-center">
-              <div className="relative w-36 h-36 sm:w-40 sm:h-40 animate-float-slow">
-                <Image
-                  src="/images/gold_warranty_shield.jpg"
-                  alt="1 Year Warranty Shield Emblem"
-                  width={200}
-                  height={200}
-                  className="w-full h-full object-contain drop-shadow-md rounded-2xl"
-                />
+          <StaggerItem className="lg:col-span-8">
+            <HoverCard yOffset={-3} scale={1.006} className="h-full bg-gradient-to-br from-[#FFFDF9] via-[#FAF6EE] to-[#F5ECE0] rounded-3xl p-7 sm:p-9 border border-[#E6D7BE] shadow-xs flex flex-col md:flex-row items-center justify-between gap-8">
+              
+              {/* Left Shield Emblem Image */}
+              <div className="w-36 sm:w-44 shrink-0 flex items-center justify-center">
+                <Float amplitude={6} duration={4} className="relative w-36 h-36 sm:w-40 sm:h-40">
+                  <Image
+                    src="/images/gold_warranty_shield.jpg"
+                    alt="1 Year Warranty Shield Emblem"
+                    width={200}
+                    height={200}
+                    className="w-full h-full object-contain drop-shadow-md rounded-2xl"
+                  />
+                </Float>
               </div>
-            </div>
 
-            {/* Middle Content */}
-            <div className="flex-1 space-y-3">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#8C6016]">
-                WORRY-FREE LISTENING
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-serif font-black text-[#1A1A1A]">
-                1 Year Limited Warranty
-              </h3>
-              <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed max-w-md">
-                Your Flazo product is covered against manufacturing defects for 1 year from the date of purchase.
-              </p>
+              {/* Middle Content */}
+              <div className="flex-1 space-y-3">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#8C6016]">
+                  WORRY-FREE LISTENING
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-serif font-black text-[#1A1A1A]">
+                  1 Year Limited Warranty
+                </h3>
+                <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed max-w-md">
+                  Your Flazo product is covered against manufacturing defects for 1 year from the date of purchase.
+                </p>
 
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => setActiveModal("check-warranty")}
-                  className="px-5 py-2.5 rounded-full bg-white hover:bg-[#FAF3E5] border border-[#D9C4A4] text-[#8C5E18] text-xs font-bold transition-all shadow-xs flex items-center gap-2 group"
-                >
-                  <span>Check Warranty Status</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </button>
-
-                <div className="mt-2.5">
+                <div className="pt-2">
                   <button
                     type="button"
-                    onClick={() => setActiveModal("terms")}
-                    className="text-[11px] text-[#8C5E18] hover:underline underline-offset-2 font-medium"
+                    onClick={() => setActiveModal("check-warranty")}
+                    className="px-5 py-2.5 rounded-full bg-white hover:bg-[#FAF3E5] border border-[#D9C4A4] text-[#8C5E18] text-xs font-bold transition-all shadow-xs flex items-center gap-2 group cursor-pointer"
                   >
-                    Warranty Terms & Conditions
+                    <span>Check Warranty Status</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </button>
+
+                  <div className="mt-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal("terms")}
+                      className="text-[11px] text-[#8C5E18] hover:underline underline-offset-2 font-medium cursor-pointer"
+                    >
+                      Warranty Terms & Conditions
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Right 4 Bullet Checklist */}
-            <div className="w-full md:w-auto shrink-0 space-y-3 border-t md:border-t-0 md:border-l border-[#E6D7BE] pt-4 md:pt-0 md:pl-6 text-xs text-[#2A241C]">
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-[#EFE3CF] text-[#8C5E18] flex items-center justify-center shrink-0">
-                  <Shield className="w-3.5 h-3.5" />
+              {/* Right 4 Bullet Checklist */}
+              <div className="w-full md:w-auto shrink-0 space-y-3 border-t md:border-t-0 md:border-l border-[#E6D7BE] pt-4 md:pt-0 md:pl-6 text-xs text-[#2A241C]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-full bg-[#EFE3CF] text-[#8C5E18] flex items-center justify-center shrink-0">
+                    <Shield className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="font-semibold">Manufacturing Defects Covered</span>
                 </div>
-                <span className="font-semibold">Manufacturing Defects Covered</span>
+
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-full bg-[#EFE3CF] text-[#8C5E18] flex items-center justify-center shrink-0">
+                    <Package className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="font-semibold">Hassle-Free Claim Process</span>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-full bg-[#EFE3CF] text-[#8C5E18] flex items-center justify-center shrink-0">
+                    <MapPin className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="font-semibold">Pan-India Service Support</span>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-full bg-[#EFE3CF] text-[#8C5E18] flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="font-semibold">Genuine Replacement or Repair</span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-[#EFE3CF] text-[#8C5E18] flex items-center justify-center shrink-0">
-                  <Package className="w-3.5 h-3.5" />
-                </div>
-                <span className="font-semibold">Hassle-Free Claim Process</span>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-[#EFE3CF] text-[#8C5E18] flex items-center justify-center shrink-0">
-                  <MapPin className="w-3.5 h-3.5" />
-                </div>
-                <span className="font-semibold">Pan-India Service Support</span>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-[#EFE3CF] text-[#8C5E18] flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                </div>
-                <span className="font-semibold">Genuine Replacement or Repair</span>
-              </div>
-            </div>
-
-          </div>
+            </HoverCard>
+          </StaggerItem>
 
           {/* Right Card: Register Your Product */}
-          <div className="lg:col-span-4 bg-gradient-to-br from-[#FFFDF9] via-[#FAF6EE] to-[#F5ECE0] rounded-3xl p-7 sm:p-9 border border-[#E6D7BE] shadow-xs flex flex-col justify-between">
-            <div>
-              {/* QR Code & Document Icon Graphic */}
-              <div className="flex items-center justify-between mb-5">
-                <div className="w-14 h-14 bg-white p-2 rounded-xl border border-[#E0D0B6] shadow-xs flex items-center justify-center">
-                  {/* Stylized QR representation */}
-                  <div className="w-full h-full border-2 border-neutral-900 border-dashed rounded flex items-center justify-center text-[9px] font-mono font-bold text-neutral-800">
-                    QR CODE
+          <StaggerItem className="lg:col-span-4">
+            <HoverCard yOffset={-3} scale={1.01} className="h-full bg-gradient-to-br from-[#FFFDF9] via-[#FAF6EE] to-[#F5ECE0] rounded-3xl p-7 sm:p-9 border border-[#E6D7BE] shadow-xs flex flex-col justify-between">
+              <div>
+                {/* QR Code & Document Icon Graphic */}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="w-14 h-14 bg-white p-2 rounded-xl border border-[#E0D0B6] shadow-xs flex items-center justify-center">
+                    {/* Stylized QR representation */}
+                    <div className="w-full h-full border-2 border-neutral-900 border-dashed rounded flex items-center justify-center text-[9px] font-mono font-bold text-neutral-800">
+                      QR CODE
+                    </div>
+                  </div>
+
+                  <div className="w-12 h-12 rounded-xl bg-[#F0E4D2] border border-[#E3D3BA] flex items-center justify-center text-[#8C5E18]">
+                    <FileText className="w-6 h-6" />
                   </div>
                 </div>
 
-                <div className="w-12 h-12 rounded-xl bg-[#F0E4D2] border border-[#E3D3BA] flex items-center justify-center text-[#8C5E18]">
-                  <FileText className="w-6 h-6" />
-                </div>
+                <h3 className="text-xl font-serif font-black text-[#1A1A1A] mb-2">
+                  Register Your Product
+                </h3>
+                <p className="text-xs text-neutral-600 leading-relaxed mb-6">
+                  Get faster support and important updates by registering your product.
+                </p>
               </div>
 
-              <h3 className="text-xl font-serif font-black text-[#1A1A1A] mb-2">
-                Register Your Product
-              </h3>
-              <p className="text-xs text-neutral-600 leading-relaxed mb-6">
-                Get faster support and important updates by registering your product.
-              </p>
-            </div>
+              <div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRegForm((prev) => ({ ...prev, claimType: "registration" }));
+                    setIsRegistered(false);
+                    setActiveModal("register");
+                  }}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white hover:bg-[#FAF3E5] border border-[#D9C4A4] text-[#8C5E18] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 group cursor-pointer"
+                >
+                  <span>Register Now</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </HoverCard>
+          </StaggerItem>
 
-            <div>
-              <button
-                type="button"
-                onClick={() => {
-                  setRegForm((prev) => ({ ...prev, claimType: "registration" }));
-                  setIsRegistered(false);
-                  setActiveModal("register");
-                }}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white hover:bg-[#FAF3E5] border border-[#D9C4A4] text-[#8C5E18] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 group"
-              >
-                <span>Register Now</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </div>
-
-        </div>
+        </Stagger>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
           4. GET IN TOUCH SECTION
          ───────────────────────────────────────────────────────────── */}
       <section className="py-12 px-4 sm:px-6 lg:px-12 max-w-[1560px] mx-auto">
-        <div className="mb-8">
+        <FadeIn direction="up" className="mb-8">
           <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#1A1A1A] tracking-tight">
             Get in Touch
           </h2>
           <p className="text-xs sm:text-sm text-neutral-500 mt-1">
             Our support team is available to assist you through multiple channels.
           </p>
-        </div>
+        </FadeIn>
 
         {/* 4 Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <Stagger staggerChildren={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           
           {/* Card 1: Call Us */}
-          <div className="bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs flex items-start gap-4 hover:shadow-md transition">
-            <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center shrink-0 text-[#9E6B20]">
-              <Phone className="w-5 h-5" />
-            </div>
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-neutral-500">Call Us</span>
-              <p className="text-base font-bold text-[#1A1A1A]">+91 9199859862</p>
-              <p className="text-[11px] text-neutral-500 leading-snug">
-                Mon – Sat | 9:00 AM – 7:00 PM (IST)
-              </p>
-            </div>
-          </div>
+          <StaggerItem>
+            <HoverCard className="h-full bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs flex items-start gap-4">
+              <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center shrink-0 text-[#9E6B20]">
+                <Phone className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs font-semibold text-neutral-500">Call Us</span>
+                <p className="text-base font-bold text-[#1A1A1A]">+91 9199859862</p>
+                <p className="text-[11px] text-neutral-500 leading-snug">
+                  Mon – Sat | 9:00 AM – 7:00 PM (IST)
+                </p>
+              </div>
+            </HoverCard>
+          </StaggerItem>
 
           {/* Card 2: Email Us */}
-          <div className="bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs flex items-start gap-4 hover:shadow-md transition">
-            <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center shrink-0 text-[#9E6B20]">
-              <Mail className="w-5 h-5" />
-            </div>
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-neutral-500">Email Us</span>
-              <p className="text-base font-bold text-[#1A1A1A]">care@flazo.in</p>
-              <p className="text-[11px] text-neutral-500 leading-snug">
-                We usually respond within 24 hours.
-              </p>
-            </div>
-          </div>
+          <StaggerItem>
+            <HoverCard className="h-full bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs flex items-start gap-4">
+              <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center shrink-0 text-[#9E6B20]">
+                <Mail className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs font-semibold text-neutral-500">Email Us</span>
+                <p className="text-base font-bold text-[#1A1A1A]">care@flazo.in</p>
+                <p className="text-[11px] text-neutral-500 leading-snug">
+                  We usually respond within 24 hours.
+                </p>
+              </div>
+            </HoverCard>
+          </StaggerItem>
 
           {/* Card 3: Quick Inquiry */}
-          <div className="bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs flex items-start gap-4 hover:shadow-md transition">
-            <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center shrink-0 text-[#9E6B20]">
-              <MessageSquare className="w-5 h-5" />
-            </div>
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-neutral-500">Quick Inquiry</span>
-              <p className="text-[11px] text-neutral-500 leading-snug">
-                Send our customer care team a direct inquiry.
-              </p>
-              <button
-                type="button"
-                onClick={() => setActiveModal("chat")}
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#9E6B20] hover:underline pt-1 cursor-pointer"
-              >
-                Send Message →
-              </button>
-            </div>
-          </div>
+          <StaggerItem>
+            <HoverCard className="h-full bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs flex items-start gap-4">
+              <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center shrink-0 text-[#9E6B20]">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs font-semibold text-neutral-500">Quick Inquiry</span>
+                <p className="text-[11px] text-neutral-500 leading-snug">
+                  Send our customer care team a direct inquiry.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("chat")}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#9E6B20] hover:underline pt-1 cursor-pointer"
+                >
+                  Send Message →
+                </button>
+              </div>
+            </HoverCard>
+          </StaggerItem>
 
           {/* Card 4: Service Centers */}
-          <div className="bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs flex items-start gap-4 hover:shadow-md transition">
-            <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center shrink-0 text-[#9E6B20]">
-              <MapPin className="w-5 h-5" />
-            </div>
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-neutral-500">Service Centers</span>
-              <p className="text-[11px] text-neutral-500 leading-snug">
-                Find an authorized service center near you.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  toast.info("Over 450+ authorized Flazo Service Centers active across Delhi, Mumbai, Bengaluru, Chennai, and tier 1/2 cities.");
-                }}
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#9E6B20] hover:underline pt-1"
-              >
-                Locate Now →
-              </button>
-            </div>
-          </div>
+          <StaggerItem>
+            <HoverCard className="h-full bg-white rounded-2xl p-6 border border-[#EFE5D5] shadow-xs flex items-start gap-4">
+              <div className="w-11 h-11 rounded-full bg-[#FAF3E6] border border-[#E9D9C3] flex items-center justify-center shrink-0 text-[#9E6B20]">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs font-semibold text-neutral-500">Service Centers</span>
+                <p className="text-[11px] text-neutral-500 leading-snug">
+                  Find an authorized service center near you.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    toast.info("Over 450+ authorized Flazo Service Centers active across Delhi, Mumbai, Bengaluru, Chennai, and tier 1/2 cities.");
+                  }}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#9E6B20] hover:underline pt-1 cursor-pointer"
+                >
+                  Locate Now →
+                </button>
+              </div>
+            </HoverCard>
+          </StaggerItem>
 
-        </div>
+        </Stagger>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
           5. BOTTOM BANNER ("A Promise of Better Sound")
          ───────────────────────────────────────────────────────────── */}
       <section className="pt-6 px-4 sm:px-6 lg:px-12 max-w-[1560px] mx-auto">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#FBF7EE] via-[#F6ECE0] to-[#EFE2D0] border border-[#E5D5BA] p-6 sm:p-10 shadow-xs">
+        <FadeIn direction="up" distance={20} className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#FBF7EE] via-[#F6ECE0] to-[#EFE2D0] border border-[#E5D5BA] p-6 sm:p-10 shadow-xs">
           
           {/* Cursive Script Watermark on Far Right */}
           <div className="absolute right-6 sm:right-12 top-6 sm:top-8 pointer-events-none select-none">
@@ -944,7 +949,7 @@ export default function SupportWarrantyPage() {
             </div>
 
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────

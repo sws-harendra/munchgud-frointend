@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { FadeIn, Stagger, StaggerItem, HoverCard, motion } from "@/app/commonComponents/motion";
 
 export default function Page() {
   const { user } = useAppSelector((state) => state.auth);
@@ -91,60 +92,72 @@ export default function Page() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(245,158,11,0.2),rgba(255,255,255,0))] pointer-events-none" />
         
         <div className="relative max-w-5xl mx-auto px-6 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-widest">
-            <span>Customer Experience &amp; Care</span>
-          </div>
+          <FadeIn direction="up" distance={20}>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-widest">
+              <span>Customer Experience &amp; Care</span>
+            </div>
+          </FadeIn>
           
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white">
-            Contact <span className="gold-gradient-text">{brandName}</span>
-          </h1>
+          <FadeIn direction="up" distance={24} delay={0.08}>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white">
+              Contact <span className="gold-gradient-text">{brandName}</span>
+            </h1>
+          </FadeIn>
           
-          <p className="text-neutral-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            We are here to help you with orders, delivery tracking, acoustic recommendations, and warranty queries.
-          </p>
+          <FadeIn direction="up" distance={20} delay={0.16}>
+            <p className="text-neutral-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+              We are here to help you with orders, delivery tracking, acoustic recommendations, and warranty queries.
+            </p>
+          </FadeIn>
         </div>
       </section>
 
       {/* Support Highlights */}
       <section className="py-12 bg-neutral-50/70 border-b border-neutral-200/60">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-2xl border border-amber-100 shadow-xs hover:shadow-md hover:border-amber-300 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4 shadow-2xs">
-              <Truck size={26} />
-            </div>
-            <h3 className="font-bold text-neutral-900 text-lg">Delivery Support</h3>
-            <p className="text-neutral-600 text-sm mt-2 leading-relaxed">
-              Questions about shipping, delivery tracking, or service areas.
-            </p>
-          </div>
+        <Stagger staggerChildren={0.1} className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-6">
+          <StaggerItem>
+            <HoverCard yOffset={-6} scale={1.015} className="h-full bg-white p-6 rounded-2xl border border-amber-100 shadow-xs hover:shadow-lg hover:border-amber-300 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4 shadow-2xs">
+                <Truck size={26} />
+              </div>
+              <h3 className="font-bold text-neutral-900 text-lg">Delivery Support</h3>
+              <p className="text-neutral-600 text-sm mt-2 leading-relaxed">
+                Questions about shipping, delivery tracking, or service areas.
+              </p>
+            </HoverCard>
+          </StaggerItem>
 
-          <div className="bg-white p-6 rounded-2xl border border-amber-100 shadow-xs hover:shadow-md hover:border-amber-300 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4 shadow-2xs">
-              <RefreshCcw size={26} />
-            </div>
-            <h3 className="font-bold text-neutral-900 text-lg">Returns &amp; Refunds</h3>
-            <p className="text-neutral-600 text-sm mt-2 leading-relaxed">
-              Need help with product returns, replacements, or refund requests.
-            </p>
-          </div>
+          <StaggerItem>
+            <HoverCard yOffset={-6} scale={1.015} className="h-full bg-white p-6 rounded-2xl border border-amber-100 shadow-xs hover:shadow-lg hover:border-amber-300 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4 shadow-2xs">
+                <RefreshCcw size={26} />
+              </div>
+              <h3 className="font-bold text-neutral-900 text-lg">Returns &amp; Refunds</h3>
+              <p className="text-neutral-600 text-sm mt-2 leading-relaxed">
+                Need help with product returns, replacements, or refund requests.
+              </p>
+            </HoverCard>
+          </StaggerItem>
 
-          <div className="bg-white p-6 rounded-2xl border border-amber-100 shadow-xs hover:shadow-md hover:border-amber-300 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4 shadow-2xs">
-              <ShieldCheck size={26} />
-            </div>
-            <h3 className="font-bold text-neutral-900 text-lg">Secure Orders</h3>
-            <p className="text-neutral-600 text-sm mt-2 leading-relaxed">
-              We ensure safe payment and 100% verified shopping experience.
-            </p>
-          </div>
-        </div>
+          <StaggerItem>
+            <HoverCard yOffset={-6} scale={1.015} className="h-full bg-white p-6 rounded-2xl border border-amber-100 shadow-xs hover:shadow-lg hover:border-amber-300 transition-all">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 mb-4 shadow-2xs">
+                <ShieldCheck size={26} />
+              </div>
+              <h3 className="font-bold text-neutral-900 text-lg">Secure Orders</h3>
+              <p className="text-neutral-600 text-sm mt-2 leading-relaxed">
+                We ensure safe payment and 100% verified shopping experience.
+              </p>
+            </HoverCard>
+          </StaggerItem>
+        </Stagger>
       </section>
 
       {/* Contact Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
           {/* Contact Info */}
-          <div>
+          <FadeIn direction="right" distance={30}>
             <h2 className="text-3xl font-bold text-gray-800">
               Customer Support
             </h2>
@@ -191,118 +204,130 @@ UTTAR PRADESH, 201304
                 </div>
               </div>
             </div>
-          </div>
+          </FadeIn>
 
           {/* Contact Form */}
-          <div className="bg-gray-50 p-8 rounded-xl shadow">
-            <h3 className="text-2xl font-semibold text-gray-800">
-              Send us a Message
-            </h3>
+          <FadeIn direction="left" distance={30} delay={0.1}>
+            <div className="bg-gray-50 p-8 rounded-2xl shadow-xs border border-neutral-100">
+              <h3 className="text-2xl font-semibold text-gray-800">
+                Send us a Message
+              </h3>
 
-            {isSuccess && (
-              <div className="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-                <span>
-                  Thank you! Your message has been received. Our team will contact you shortly.
-                </span>
-              </div>
-            )}
+              {isSuccess && (
+                <div className="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                  <span>
+                    Thank you! Your message has been received. Our team will contact you shortly.
+                  </span>
+                </div>
+              )}
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Full Name *"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
-                  required
-                />
-              </div>
+              <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Full Name *"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
+                    required
+                  />
+                </div>
 
-              <div>
-                <input
-                  type="email"
-                  placeholder="Email Address *"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
-                  required
-                />
-              </div>
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Email Address *"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
+                    required
+                  />
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input
-                  type="tel"
-                  placeholder="Phone Number (Optional)"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <input
+                    type="tel"
+                    placeholder="Phone Number (Optional)"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
+                  />
 
-                <input
-                  type="text"
-                  placeholder="Order ID (Optional)"
-                  value={formData.orderId}
-                  onChange={(e) => setFormData({ ...formData, orderId: e.target.value })}
-                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
-                />
-              </div>
+                  <input
+                    type="text"
+                    placeholder="Order ID (Optional)"
+                    value={formData.orderId}
+                    onChange={(e) => setFormData({ ...formData, orderId: e.target.value })}
+                    className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
+                  />
+                </div>
 
-              <div>
-                <textarea
-                  rows={4}
-                  placeholder="Write your message... *"
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
-                  required
-                />
-              </div>
+                <div>
+                  <textarea
+                    rows={4}
+                    placeholder="Write your message... *"
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full border border-neutral-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none bg-white text-sm transition-all"
+                    required
+                  />
+                </div>
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-neutral-950 font-black py-3.5 rounded-xl hover:brightness-105 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md shadow-amber-500/20"
-              >
-                <Send className="w-4 h-4" />
-                <span>{isSubmitting ? "Submitting..." : "Submit Request"}</span>
-              </button>
-            </form>
-          </div>
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-neutral-950 font-black py-3.5 rounded-xl hover:brightness-105 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md shadow-amber-500/20"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>{isSubmitting ? "Submitting..." : "Submit Request"}</span>
+                </motion.button>
+              </form>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
       {/* FAQ Section (Ecommerce style) */}
-      <section className="py-14 bg-gray-50">
+      <section className="py-14 bg-gray-50 border-t border-neutral-200/60">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold text-gray-800">
-            Frequently Asked Questions
-          </h2>
+          <FadeIn direction="up">
+            <h2 className="text-3xl font-bold text-gray-800">
+              Frequently Asked Questions
+            </h2>
+          </FadeIn>
 
-          <div className="mt-8 space-y-4 text-left">
-            <div className="bg-white p-5 rounded-lg shadow">
-              <p className="font-semibold">How long does delivery take?</p>
-              <p className="text-gray-600 text-sm mt-2">
-                Orders are typically delivered within 2-4 business days with Express Air shipping across India.
-              </p>
-            </div>
+          <Stagger staggerChildren={0.08} className="mt-8 space-y-4 text-left">
+            <StaggerItem>
+              <HoverCard yOffset={-3} className="bg-white p-5 rounded-xl shadow-xs border border-neutral-200/70">
+                <p className="font-semibold text-neutral-900">How long does delivery take?</p>
+                <p className="text-gray-600 text-sm mt-2">
+                  Orders are typically delivered within 2-4 business days with Express Air shipping across India.
+                </p>
+              </HoverCard>
+            </StaggerItem>
 
-            <div className="bg-white p-5 rounded-lg shadow">
-              <p className="font-semibold">Can I return or replace a product?</p>
-              <p className="text-gray-600 text-sm mt-2">
-                Yes! We offer a 7-day doorstep replacement guarantee for any manufacturing defects or audio issues. In addition, all Flazo earbuds come with an official 1-Year Comprehensive Warranty.
-              </p>
-            </div>
+            <StaggerItem>
+              <HoverCard yOffset={-3} className="bg-white p-5 rounded-xl shadow-xs border border-neutral-200/70">
+                <p className="font-semibold text-neutral-900">Can I return or replace a product?</p>
+                <p className="text-gray-600 text-sm mt-2">
+                  Yes! We offer a 7-day doorstep replacement guarantee for any manufacturing defects or audio issues. In addition, all Flazo earbuds come with an official 1-Year Comprehensive Warranty.
+                </p>
+              </HoverCard>
+            </StaggerItem>
 
-            <div className="bg-white p-5 rounded-lg shadow">
-              <p className="font-semibold">How can I track my order?</p>
-              <p className="text-gray-600 text-sm mt-2">
-                After placing an order you will receive tracking details via
-                email or SMS.
-              </p>
-            </div>
-          </div>
+            <StaggerItem>
+              <HoverCard yOffset={-3} className="bg-white p-5 rounded-xl shadow-xs border border-neutral-200/70">
+                <p className="font-semibold text-neutral-900">How can I track my order?</p>
+                <p className="text-gray-600 text-sm mt-2">
+                  After placing an order you will receive tracking details via
+                  email or SMS.
+                </p>
+              </HoverCard>
+            </StaggerItem>
+          </Stagger>
         </div>
       </section>
     </>

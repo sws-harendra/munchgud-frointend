@@ -54,6 +54,7 @@ import { clienturl } from "@/app/contants";
 import ProductCard from "@/app/(user)/components/productCard";
 import ProductMarketplaceLinks from "@/app/(user)/components/ProductMarketplaceLinks";
 import { fetchRelatedProducts } from "@/app/lib/store/features/relatedProductSlice";
+import { FadeIn, Stagger, StaggerItem, motion } from "@/app/commonComponents/motion";
 
 interface ProductDetailClientProps {
   product: Product;
@@ -985,10 +986,11 @@ export default function ProductDetailClient({
               </div>
 
               {/* Add to Cart Button */}
-              <button
+              <motion.button
+                whileTap={{ scale: 0.97 }}
                 disabled={currentStock <= 0}
                 onClick={handleAddToCart}
-                className={`flex-1 font-bold py-3.5 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 text-sm shadow-xs ${
+                className={`flex-1 font-bold py-3.5 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 text-sm shadow-xs cursor-pointer ${
                   currentStock <= 0
                     ? "bg-neutral-200 text-neutral-400 cursor-not-allowed border border-neutral-300"
                     : "bg-[#FBBF24] hover:bg-[#F59E0B] text-neutral-950"
@@ -996,13 +998,14 @@ export default function ProductDetailClient({
               >
                 <ShoppingCart size={17} />
                 <span>{currentStock <= 0 ? "Out of Stock" : "Add to Cart"}</span>
-              </button>
+              </motion.button>
 
               {/* Buy Now Button */}
-              <button
+              <motion.button
+                whileTap={{ scale: 0.97 }}
                 disabled={currentStock <= 0}
                 onClick={handleBuyNow}
-                className={`flex-1 font-bold border py-3.5 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-1.5 text-sm shadow-xs ${
+                className={`flex-1 font-bold border py-3.5 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center gap-1.5 text-sm shadow-xs cursor-pointer ${
                   currentStock <= 0
                     ? "bg-neutral-100 text-neutral-300 border-neutral-200 cursor-not-allowed"
                     : "bg-[#FEF3C7] hover:bg-[#FDE68A] text-[#92400E] border-[#FCD34D]"
@@ -1010,7 +1013,7 @@ export default function ProductDetailClient({
               >
                 <Zap size={16} className={currentStock <= 0 ? "fill-neutral-300 text-neutral-300" : "fill-[#92400E]"} />
                 <span>Buy Now</span>
-              </button>
+              </motion.button>
             </div>
 
             {/* Also Available on External Marketplaces (Amazon, Flipkart, Myntra, etc.) */}
@@ -1606,36 +1609,41 @@ export default function ProductDetailClient({
 
         {/* ================= 7. SIMILAR PRODUCTS SECTION ================= */}
         {relatedProducts && relatedProducts.length > 0 && (
-          <div className="mt-16 pt-8 border-t border-neutral-200">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 tracking-tight">
-                Similar Products
-              </h2>
-              <Link
-                href={`/${product.Category?.name ? slugify(product.Category.name) : "paintings"}`}
-                className="flex items-center gap-1 text-xs sm:text-sm font-bold text-neutral-700 hover:text-neutral-950 transition-colors"
-              >
-                <span>View All</span>
-                <ArrowRight size={14} />
-              </Link>
-            </div>
+          <FadeIn direction="up">
+            <div className="mt-16 pt-8 border-t border-neutral-200">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 tracking-tight">
+                  Similar Products
+                </h2>
+                <Link
+                  href={`/${product.Category?.name ? slugify(product.Category.name) : "paintings"}`}
+                  className="flex items-center gap-1 text-xs sm:text-sm font-bold text-neutral-700 hover:text-neutral-950 transition-colors"
+                >
+                  <span>View All</span>
+                  <ArrowRight size={14} />
+                </Link>
+              </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-              {relatedProducts.slice(0, 4).map((item: any) => (
-                <ProductCard
-                  key={item.id}
-                  id={item.id}
-                  name={item.name}
-                  image={item.images?.[0]}
-                  price={item.discountPrice}
-                  originalPrice={item.originalPrice}
-                  rating={item.ratings ?? 4.8}
-                  discount={item.discountPercentage}
-                  paymentMethods={item.paymentMethods}
-                />
-              ))}
+              <Stagger staggerDelay={0.08}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                  {relatedProducts.slice(0, 4).map((item: any) => (
+                    <StaggerItem key={item.id}>
+                      <ProductCard
+                        id={item.id}
+                        name={item.name}
+                        image={item.images?.[0]}
+                        price={item.discountPrice}
+                        originalPrice={item.originalPrice}
+                        rating={item.ratings ?? 4.8}
+                        discount={item.discountPercentage}
+                        paymentMethods={item.paymentMethods}
+                      />
+                    </StaggerItem>
+                  ))}
+                </div>
+              </Stagger>
             </div>
-          </div>
+          </FadeIn>
         )}
 
       </div>

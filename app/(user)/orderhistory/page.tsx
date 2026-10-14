@@ -21,6 +21,7 @@ import {
 import AppLoader from "@/app/commonComponents/loader";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { useAppDispatch } from "@/app/lib/store/store";
+import { FadeIn, Stagger, StaggerItem, HoverCard, AnimatedModal, motion } from "@/app/commonComponents/motion";
 
 const OrderHistoryPage = () => {
   const dispatch = useAppDispatch();
@@ -194,183 +195,187 @@ const OrderHistoryPage = () => {
   return (
     <div className="min-h-screen bg-neutral-50/70">
       {/* Header */}
-      <div className="bg-white shadow-xs border-b border-neutral-200">
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          <div className="flex items-center space-x-3">
-            <div className="p-3 bg-gradient-to-r from-amber-500 to-yellow-400 rounded-xl shadow-md shadow-amber-500/20">
-              <Package className="w-8 h-8 text-neutral-950" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black text-neutral-900">
-                Order History
-              </h1>
-              <p className="text-neutral-600 mt-1">Track and manage your orders</p>
+      <FadeIn direction="down">
+        <div className="bg-white shadow-xs border-b border-neutral-200">
+          <div className="max-w-6xl mx-auto px-6 py-8">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-gradient-to-r from-amber-500 to-yellow-400 rounded-xl shadow-md shadow-amber-500/20">
+                <Package className="w-8 h-8 text-neutral-950" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-black text-neutral-900">
+                  Order History
+                </h1>
+                <p className="text-neutral-600 mt-1">Track and manage your orders</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </FadeIn>
 
       {/* Orders List */}
       <div className="max-w-6xl mx-auto px-6 py-8">
-        <div className="grid gap-6">
-          {orders &&
-            orders.map((order: any, index: number) => (
-              <div
-                key={order.id}
-                className={`transform transition-all duration-500 ${
-                  animatedCards.includes(index)
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-10 opacity-0"
-                }`}
-              >
-                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden group">
-                  <div className="p-6">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
-                      {/* Order Info */}
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-4 mb-4">
-                          <div className="flex items-center space-x-2">
-                            {getStatusIcon(order.status)}
-                            <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
-                                order.status
-                              )}`}
-                            >
-                              {order.status && typeof order.status === "string"
-                                ? order.status.charAt(0).toUpperCase() +
-                                  order.status.slice(1)
-                                : "Unknown"}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2 text-gray-600">
-                            <Calendar className="w-4 h-4" />
-                            <span className="text-sm">
-                              {formatDate(order.createdAt)}
-                            </span>
-                          </div>
-                        </div>
+        {orders && orders.length > 0 && (
+          <Stagger staggerDelay={0.08}>
+            <div className="grid gap-6">
+              {orders.map((order: any) => (
+                <StaggerItem key={order.id}>
+                  <HoverCard hoverY={-3}>
+                    <div className="bg-white rounded-2xl shadow-md border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                      <div className="p-6">
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+                          {/* Order Info */}
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-4 mb-4">
+                              <div className="flex items-center space-x-2">
+                                {getStatusIcon(order.status)}
+                                <span
+                                  className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
+                                    order.status
+                                  )}`}
+                                >
+                                  {order.status && typeof order.status === "string"
+                                    ? order.status.charAt(0).toUpperCase() +
+                                      order.status.slice(1)
+                                    : "Unknown"}
+                                </span>
+                              </div>
+                              <div className="flex items-center space-x-2 text-gray-600">
+                                <Calendar className="w-4 h-4" />
+                                <span className="text-sm">
+                                  {formatDate(order.createdAt)}
+                                </span>
+                              </div>
+                            </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                          <div>
-                            <p className="text-sm text-gray-500">Order ID</p>
-                            <p className="font-semibold text-gray-900">
-                              #{(order.id || 0).toString().padStart(6, "0")}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">
-                              Total Amount
-                            </p>
-                            <p className="font-bold text-lg text-green-700">
-                              {formatAmount(order.totalAmount)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Payment</p>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-lg">
-                                {getPaymentMethodIcon(order.paymentMethod)}
-                              </span>
-                              <span className="text-sm font-medium">
-                                {formatPaymentMethod(order.paymentMethod)}
-                              </span>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                              <div>
+                                <p className="text-sm text-gray-500">Order ID</p>
+                                <p className="font-semibold text-gray-900">
+                                  #{(order.id || 0).toString().padStart(6, "0")}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500">
+                                  Total Amount
+                                </p>
+                                <p className="font-bold text-lg text-green-700">
+                                  {formatAmount(order.totalAmount)}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500">Payment</p>
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-lg">
+                                    {getPaymentMethodIcon(order.paymentMethod)}
+                                  </span>
+                                  <span className="text-sm font-medium">
+                                    {formatPaymentMethod(order.paymentMethod)}
+                                  </span>
+                                </div>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500">Items</p>
+                                <p className="font-semibold">
+                                  {order.OrderItems?.length || 0} item(s)
+                                </p>
+                              </div>
                             </div>
                           </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Items</p>
-                            <p className="font-semibold">
-                              {order.OrderItems?.length || 0} item(s)
-                            </p>
+
+                          {/* Action Button */}
+                          <div className="flex items-center space-x-4">
+                            <motion.button
+                              whileHover={{ scale: 1.03 }}
+                              whileTap={{ scale: 0.97 }}
+                              onClick={() => handleViewDetails(order.id)}
+                              className="group/btn flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+                            >
+                              <Eye className="w-4 h-4 group-hover/btn:rotate-12 transition-transform duration-200" />
+                              <span>View Details</span>
+                            </motion.button>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Action Button */}
-                      <div className="flex items-center space-x-4">
-                        <button
-                          onClick={() => handleViewDetails(order.id)}
-                          className="group/btn flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-xl font-medium hover:from-green-700 hover:to-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-                        >
-                          <Eye className="w-4 h-4 group-hover/btn:rotate-12 transition-transform duration-200" />
-                          <span>View Details</span>
-                        </button>
+                        {/* Product Preview */}
+                        {order.OrderItems && order.OrderItems.length > 0 && (
+                          <div className="mt-6 pt-6 border-t border-gray-100">
+                            <div className="flex items-center space-x-4 overflow-x-auto">
+                              {order.OrderItems &&
+                                order.OrderItems.slice(0, 3).map(
+                                  (item: any, itemIndex: number) => (
+                                    <div
+                                      key={itemIndex}
+                                      className="flex items-center space-x-3 bg-gray-50 rounded-lg p-3 min-w-max"
+                                    >
+                                      <div className="w-12 h-12 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
+                                        {item.Product?.images?.[0] ? (
+                                          <img
+                                            src={getImageUrl(
+                                              item.Product.images[0]
+                                            )}
+                                            alt={item.Product.name || "Product"}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                              const target = e.currentTarget;
+                                              target.style.display = "none";
+                                              const next = target.nextElementSibling as HTMLElement | null;
+                                              if (next) next.style.display = "flex";
+                                            }}
+                                          />
+                                        ) : null}
+                                        <Package
+                                          className={`w-6 h-6 text-gray-500 ${
+                                            item.Product?.images?.[0]
+                                              ? "hidden"
+                                              : ""
+                                          }`}
+                                        />
+                                      </div>
+                                      <div>
+                                        <p className="font-medium text-sm text-gray-900">
+                                          {item.Product?.name || "Product"}
+                                        </p>
+                                        <p className="text-xs text-gray-500">
+                                          Qty: {item.quantity || 0}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  )
+                                )}
+                              {order.OrderItems && order.OrderItems.length > 3 && (
+                                <div className="text-sm text-gray-500 px-3">
+                                  +{order.OrderItems.length - 3} more
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-
-                    {/* Product Preview */}
-                    {order.OrderItems && order.OrderItems.length > 0 && (
-                      <div className="mt-6 pt-6 border-t border-gray-100">
-                        <div className="flex items-center space-x-4 overflow-x-auto">
-                          {order.OrderItems &&
-                            order.OrderItems.slice(0, 3).map(
-                              (item: any, itemIndex: number) => (
-                                <div
-                                  key={itemIndex}
-                                  className="flex items-center space-x-3 bg-gray-50 rounded-lg p-3 min-w-max"
-                                >
-                                  <div className="w-12 h-12 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
-                                    {item.Product?.images?.[0] ? (
-                                      <img
-                                        src={getImageUrl(
-                                          item.Product.images[0]
-                                        )}
-                                        alt={item.Product.name || "Product"}
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                          const target = e.currentTarget;
-                                          target.style.display = "none";
-                                          const next = target.nextElementSibling as HTMLElement | null;
-                                          if (next) next.style.display = "flex";
-                                        }}
-                                      />
-                                    ) : null}
-                                    <Package
-                                      className={`w-6 h-6 text-gray-500 ${
-                                        item.Product?.images?.[0]
-                                          ? "hidden"
-                                          : ""
-                                      }`}
-                                    />
-                                  </div>
-                                  <div>
-                                    <p className="font-medium text-sm text-gray-900">
-                                      {item.Product?.name || "Product"}
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                      Qty: {item.quantity || 0}
-                                    </p>
-                                  </div>
-                                </div>
-                              )
-                            )}
-                          {order.OrderItems && order.OrderItems.length > 3 && (
-                            <div className="text-sm text-gray-500 px-3">
-                              +{order.OrderItems.length - 3} more
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
+                  </HoverCard>
+                </StaggerItem>
+              ))}
+            </div>
+          </Stagger>
+        )}
 
         {(!orders || orders.length === 0) && (
-          <div className="text-center py-16">
-            <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md mx-auto">
-              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Package className="w-12 h-12 text-gray-400" />
+          <FadeIn direction="up">
+            <div className="text-center py-16">
+              <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md mx-auto">
+                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Package className="w-12 h-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  No Orders Found
+                </h3>
+                <p className="text-gray-600">
+                  You haven't placed any orders yet.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No Orders Found
-              </h3>
-              <p className="text-gray-600">
-                You haven't placed any orders yet.
-              </p>
             </div>
-          </div>
+          </FadeIn>
         )}
       </div>
 

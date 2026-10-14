@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { serverurl } from "@/app/contants";
+import { FadeIn, motion } from "@/app/commonComponents/motion";
 
 interface HeroSlideData {
   id: string | number;
@@ -115,87 +116,93 @@ export default function FlazoHero() {
   }
 
   return (
-    <div
-      className="relative w-full overflow-hidden bg-neutral-950 select-none group"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={(e) => {
-        touchStartX.current = e.touches[0].clientX;
-      }}
-      onTouchEnd={(e) => {
-        if (!touchStartX.current) return;
-        const diff = touchStartX.current - e.changedTouches[0].clientX;
-        if (diff > 50) handleNext();
-        if (diff < -50) handlePrev();
-        touchStartX.current = null;
-      }}
-    >
-      {/* Slider Carousel Container */}
+    <FadeIn>
       <div
-        className="flex transition-transform duration-700 ease-out will-change-transform"
-        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+        className="relative w-full overflow-hidden bg-neutral-950 select-none group"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={(e) => {
+          touchStartX.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          if (!touchStartX.current) return;
+          const diff = touchStartX.current - e.changedTouches[0].clientX;
+          if (diff > 50) handleNext();
+          if (diff < -50) handlePrev();
+          touchStartX.current = null;
+        }}
       >
-        {slides.map((slide, idx) => (
-          <div
-            key={slide.id}
-            className="min-w-full relative flex items-center justify-center overflow-hidden aspect-[16/9] sm:aspect-[16/7] md:aspect-[21/9] min-h-[300px] sm:min-h-[420px] md:min-h-[500px] lg:min-h-[580px] xl:min-h-[640px]"
-          >
-            {/* Dynamic Clickable Full-Bleed Panoramic Image Banner */}
-            <Link
-              href={slide.link}
-              className="relative block w-full h-full cursor-pointer"
-              aria-label={slide.alt}
+        {/* Slider Carousel Container */}
+        <div
+          className="flex transition-transform duration-700 ease-out will-change-transform"
+          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+        >
+          {slides.map((slide, idx) => (
+            <div
+              key={slide.id}
+              className="min-w-full relative flex items-center justify-center overflow-hidden aspect-[16/9] sm:aspect-[16/7] md:aspect-[21/9] min-h-[300px] sm:min-h-[420px] md:min-h-[500px] lg:min-h-[580px] xl:min-h-[640px]"
             >
-              <img
-                src={slide.bannerImage}
-                alt={slide.alt}
-                loading={idx === 0 ? "eager" : "lazy"}
-                fetchPriority={idx === 0 ? "high" : "auto"}
-                className="object-cover object-center w-full h-full transition-transform duration-700 hover:scale-[1.01]"
-              />
-            </Link>
-          </div>
-        ))}
+              {/* Dynamic Clickable Full-Bleed Panoramic Image Banner */}
+              <Link
+                href={slide.link}
+                className="relative block w-full h-full cursor-pointer"
+                aria-label={slide.alt}
+              >
+                <img
+                  src={slide.bannerImage}
+                  alt={slide.alt}
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  fetchPriority={idx === 0 ? "high" : "auto"}
+                  className="object-cover object-center w-full h-full transition-transform duration-700 hover:scale-[1.01]"
+                />
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        {/* Navigation Arrows (Only shown when there are multiple slides) */}
+        {totalSlides > 1 && (
+          <>
+            {/* Left Chevron Navigation Button */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handlePrev}
+              aria-label="Previous Slide"
+              className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 hover:bg-black/85 border border-white/20 text-white flex items-center justify-center backdrop-blur-sm shadow-xl cursor-pointer"
+            >
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            </motion.button>
+
+            {/* Right Chevron Navigation Button */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleNext}
+              aria-label="Next Slide"
+              className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 hover:bg-black/85 border border-white/20 text-white flex items-center justify-center backdrop-blur-sm shadow-xl cursor-pointer"
+            >
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+            </motion.button>
+
+            {/* Slide Pagination Indicator Bars (Bottom Center) */}
+            <div className="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentSlide(i)}
+                  aria-label={`Go to slide ${i + 1}`}
+                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    currentSlide === i
+                      ? "w-8 bg-amber-400 shadow-sm shadow-amber-400/50"
+                      : "w-2.5 bg-white/40 hover:bg-white/70"
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
-
-      {/* Navigation Arrows (Only shown when there are multiple slides) */}
-      {totalSlides > 1 && (
-        <>
-          {/* Left Chevron Navigation Button */}
-          <button
-            onClick={handlePrev}
-            aria-label="Previous Slide"
-            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 hover:bg-black/85 border border-white/20 text-white flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 shadow-xl cursor-pointer"
-          >
-            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
-
-          {/* Right Chevron Navigation Button */}
-          <button
-            onClick={handleNext}
-            aria-label="Next Slide"
-            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 hover:bg-black/85 border border-white/20 text-white flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 shadow-xl cursor-pointer"
-          >
-            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
-
-          {/* Slide Pagination Indicator Bars (Bottom Center) */}
-          <div className="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentSlide(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  currentSlide === i
-                    ? "w-8 bg-amber-400 shadow-sm shadow-amber-400/50"
-                    : "w-2.5 bg-white/40 hover:bg-white/70"
-                }`}
-              />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+    </FadeIn>
   );
 }

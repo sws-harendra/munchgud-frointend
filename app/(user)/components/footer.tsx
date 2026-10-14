@@ -15,6 +15,7 @@ import {
 import { FaInstagram, FaFacebookF, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { toast } from "sonner";
 import FlazoLogo from "@/app/commonComponents/FlazoLogo";
+import { motion } from "@/app/commonComponents/motion";
 
 export default function Footer() {
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -47,34 +48,42 @@ export default function Footer() {
 
             {/* Social Links */}
             <div className="flex items-center gap-3 pt-2">
-              <a
+              <motion.a
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.92 }}
                 href="#"
-                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-all shadow-2xs"
+                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-colors shadow-2xs"
                 aria-label="Instagram"
               >
                 <FaInstagram size={14} />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.92 }}
                 href="#"
-                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-all shadow-2xs"
+                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-colors shadow-2xs"
                 aria-label="Facebook"
               >
                 <FaFacebookF size={14} />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.92 }}
                 href="#"
-                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-all shadow-2xs"
+                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-colors shadow-2xs"
                 aria-label="X (Twitter)"
               >
                 <FaXTwitter size={14} />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.92 }}
                 href="#"
-                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-all shadow-2xs"
+                className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 hover:bg-amber-500 hover:text-white transition-colors shadow-2xs"
                 aria-label="YouTube"
               >
                 <FaYoutube size={14} />
-              </a>
+              </motion.a>
             </div>
           </div>
 
@@ -114,12 +123,14 @@ export default function Footer() {
                 placeholder="Your email address..."
                 className="flex-1 px-4 py-2.5 rounded-full border border-amber-300 text-xs bg-amber-50/30 focus:outline-hidden focus:ring-1 focus:ring-amber-500 text-neutral-800"
               />
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 type="submit"
                 className="px-4 py-2.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-neutral-950 font-bold text-xs hover:from-amber-500 hover:to-yellow-300 transition-all shadow-xs shrink-0 cursor-pointer"
               >
                 Join
-              </button>
+              </motion.button>
             </form>
 
             <div className="text-[11px] text-neutral-500 flex items-center gap-1.5 flex-wrap">

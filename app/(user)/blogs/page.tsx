@@ -24,6 +24,7 @@ import {
   User,
   Filter,
 } from "lucide-react";
+import { FadeIn, Stagger, StaggerItem, HoverCard } from "@/app/commonComponents/motion";
 
 export default function BlogListPage() {
   const dispatch = useAppDispatch();
@@ -351,72 +352,75 @@ export default function BlogListPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <Stagger staggerChildren={0.07} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredArticles.map((article) => (
-              <Link
-                key={article.id}
-                href={`/blogs/${article.id}/${article.slug}`}
-                className="bg-white rounded-3xl overflow-hidden border border-[#E8D7BF] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
-              >
-                <div>
-                  {/* Article Thumbnail */}
-                  <div className="relative aspect-[16/10] bg-neutral-950 overflow-hidden">
-                    {article.featuredImage ? (
-                      <img
-                        src={getImageUrl(article.featuredImage)}
-                        alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-neutral-500">
-                        <BookOpen className="w-8 h-8 opacity-30 mb-1" />
-                        <span className="text-[11px]">No Image</span>
+              <StaggerItem key={article.id}>
+                <HoverCard yOffset={-6} scale={1.015} className="h-full">
+                  <Link
+                    href={`/blogs/${article.id}/${article.slug}`}
+                    className="h-full bg-white rounded-3xl overflow-hidden border border-[#E8D7BF] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+                  >
+                    <div>
+                      {/* Article Thumbnail */}
+                      <div className="relative aspect-[16/10] bg-neutral-950 overflow-hidden">
+                        {article.featuredImage ? (
+                          <img
+                            src={getImageUrl(article.featuredImage)}
+                            alt={article.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-neutral-500">
+                            <BookOpen className="w-8 h-8 opacity-30 mb-1" />
+                            <span className="text-[11px]">No Image</span>
+                          </div>
+                        )}
+
+                        {article.category && (
+                          <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur-xs text-[10px] font-black uppercase text-[#9E6B20] shadow-xs">
+                            {article.category}
+                          </span>
+                        )}
+
+                        {article.isFeatured && (
+                          <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-bold shadow-xs">
+                            ★ Featured
+                          </span>
+                        )}
                       </div>
-                    )}
 
-                    {article.category && (
-                      <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur-xs text-[10px] font-black uppercase text-[#9E6B20] shadow-xs">
-                        {article.category}
-                      </span>
-                    )}
+                      {/* Article Info */}
+                      <div className="p-5 space-y-2 text-left">
+                        <div className="flex items-center gap-3 text-[11px] text-neutral-400">
+                          <span>{formatDate(article.publishedAt || article.createdAt)}</span>
+                          <span>•</span>
+                          <span>{article.readTime || "5 min read"}</span>
+                        </div>
 
-                    {article.isFeatured && (
-                      <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-bold shadow-xs">
-                        ★ Featured
-                      </span>
-                    )}
-                  </div>
+                        <h3 className="font-serif font-black text-base sm:text-lg text-neutral-900 group-hover:text-[#9E6B20] transition-colors line-clamp-2 leading-snug">
+                          {article.title}
+                        </h3>
 
-                  {/* Article Info */}
-                  <div className="p-5 space-y-2 text-left">
-                    <div className="flex items-center gap-3 text-[11px] text-neutral-400">
-                      <span>{formatDate(article.publishedAt || article.createdAt)}</span>
-                      <span>•</span>
-                      <span>{article.readTime || "5 min read"}</span>
+                        {article.excerpt && (
+                          <p className="text-xs text-neutral-600 line-clamp-3 leading-relaxed">
+                            {article.excerpt}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
-                    <h3 className="font-serif font-black text-base sm:text-lg text-neutral-900 group-hover:text-[#9E6B20] transition-colors line-clamp-2 leading-snug">
-                      {article.title}
-                    </h3>
-
-                    {article.excerpt && (
-                      <p className="text-xs text-neutral-600 line-clamp-3 leading-relaxed">
-                        {article.excerpt}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Footer Read Link & Author */}
-                <div className="p-5 pt-3 border-t border-[#F5EEDD] mt-2 flex items-center justify-between text-xs text-neutral-400">
-                  <span>By {article.authorName || "Team Flazo"}</span>
-                  <span className="font-bold text-[#9E6B20] flex items-center gap-1 group-hover:gap-1.5 transition-all">
-                    Read Story <ArrowRight size={13} />
-                  </span>
-                </div>
-              </Link>
+                    {/* Footer Read Link & Author */}
+                    <div className="p-5 pt-3 border-t border-[#F5EEDD] mt-2 flex items-center justify-between text-xs text-neutral-400">
+                      <span>By {article.authorName || "Team Flazo"}</span>
+                      <span className="font-bold text-[#9E6B20] flex items-center gap-1 group-hover:gap-1.5 transition-all">
+                        Read Story <ArrowRight size={13} />
+                      </span>
+                    </div>
+                  </Link>
+                </HoverCard>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
       </section>
     </div>

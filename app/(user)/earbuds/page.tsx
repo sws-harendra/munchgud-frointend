@@ -20,6 +20,7 @@ import { addToCart } from "@/app/lib/store/features/cartSlice";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { toast } from "sonner";
 import Loader from "@/app/commonComponents/loader";
+import { FadeIn, Stagger, StaggerItem, HoverCard, motion } from "@/app/commonComponents/motion";
 
 interface EarbudProduct {
   id: number;
@@ -288,139 +289,140 @@ export default function EarbudsPage() {
           </div>
         ) : viewMode === "grid" ? (
           /* GRID VIEW - Exactly like Image 1 (4 columns) */
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <Stagger staggerChildren={0.06} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {sortedProducts.map((product) => {
               const isWishlisted = wishlist.includes(product.id);
               const activeColorIndex = selectedColors[product.id] || 0;
 
               return (
-                <div
-                  key={product.id}
-                  className="group relative bg-white rounded-2xl border border-neutral-200/80 hover:border-neutral-300 hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden p-4"
-                >
-                  <div>
-                    {/* Top Row: Badge & Wishlist Heart */}
-                    <div className="flex items-center justify-between mb-2">
-                      {product.badge ? (
-                        <span
-                          className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-md flex items-center gap-1 ${
-                            product.badgeType === "bestseller"
-                              ? "bg-orange-50 text-orange-600 border border-orange-200/60"
-                              : product.badgeType === "new"
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                              : product.badgeType === "trending"
-                              ? "bg-purple-50 text-purple-700 border border-purple-200/60"
-                              : "bg-amber-50 text-amber-700 border border-amber-200/60"
-                          }`}
-                        >
-                          {product.badge}
-                        </span>
-                      ) : (
-                        <span />
-                      )}
+                <StaggerItem key={product.id}>
+                  <HoverCard yOffset={-6} scale={1.015} className="h-full">
+                    <div className="h-full group relative bg-white rounded-2xl border border-neutral-200/80 hover:border-neutral-300 hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden p-4">
+                      <div>
+                        {/* Top Row: Badge & Wishlist Heart */}
+                        <div className="flex items-center justify-between mb-2">
+                          {product.badge ? (
+                            <span
+                              className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-md flex items-center gap-1 ${
+                                product.badgeType === "bestseller"
+                                  ? "bg-orange-50 text-orange-600 border border-orange-200/60"
+                                  : product.badgeType === "new"
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                                  : product.badgeType === "trending"
+                                  ? "bg-purple-50 text-purple-700 border border-purple-200/60"
+                                  : "bg-amber-50 text-amber-700 border border-amber-200/60"
+                              }`}
+                            >
+                              {product.badge}
+                            </span>
+                          ) : (
+                            <span />
+                          )}
 
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              toggleWishlist(product.id, product.name);
+                            }}
+                            title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                            className="p-1 rounded-full text-neutral-400 hover:text-red-500 hover:scale-110 active:scale-90 transition-all cursor-pointer"
+                          >
+                            <Heart
+                              className={`w-5 h-5 transition-colors ${
+                                isWishlisted ? "fill-red-500 text-red-500" : ""
+                              }`}
+                            />
+                          </button>
+                        </div>
+
+                        {/* Centered Product Image */}
+                        <Link
+                          href={`/products/${slugify(product.name)}/${product.id}`}
+                          className="block relative w-full h-44 sm:h-48 my-1 flex items-center justify-center cursor-pointer overflow-hidden"
+                        >
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            onError={(e) => {
+                              e.currentTarget.src = "/images/lifestyle-model.jpg";
+                            }}
+                            className="object-contain max-h-40 w-auto group-hover:scale-108 transition-transform duration-500 drop-shadow-sm select-none"
+                          />
+                        </Link>
+
+                        {/* Color Swatch Dots */}
+                        <div className="flex items-center gap-1.5 my-2.5">
+                          {product.colors.map((color, idx) => (
+                            <button
+                              key={color.name}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setSelectedColors((prev) => ({
+                                  ...prev,
+                                  [product.id]: idx,
+                                }));
+                              }}
+                              title={color.name}
+                              style={{ backgroundColor: color.hex }}
+                              className={`w-3.5 h-3.5 rounded-full border border-black/15 transition-all cursor-pointer ${
+                                activeColorIndex === idx
+                                  ? "ring-2 ring-neutral-900 scale-110"
+                                  : "opacity-80 hover:opacity-100"
+                              }`}
+                            />
+                          ))}
+                        </div>
+
+                        {/* Product Name */}
+                        <Link
+                          href={`/products/${slugify(product.name)}/${product.id}`}
+                          className="block"
+                        >
+                          <h3 className="font-bold text-sm sm:text-base text-neutral-900 group-hover:text-amber-600 transition-colors line-clamp-1">
+                            {product.name}
+                          </h3>
+                        </Link>
+
+                        {/* Short Tagline / Specs */}
+                        <p className="text-xs text-neutral-500 line-clamp-1 mt-0.5 mb-2">
+                          {product.tagline}
+                        </p>
+
+                        {/* Rating Row: Star 4.8 (2.4K) */}
+                        <div className="flex items-center gap-1.5 text-xs mb-3">
+                          <Star className="w-3.5 h-3.5 fill-[#FFC220] text-[#FFC220]" />
+                          <span className="font-bold text-neutral-900">{product.rating}</span>
+                          <span className="text-neutral-400">({product.reviews})</span>
+                        </div>
+
+                        {/* Price Row: ₹1,499  ₹2,999  50% Off */}
+                        <div className="flex items-baseline gap-2 mb-3.5">
+                          <span className="text-lg font-black text-neutral-900">
+                            ₹{product.price.toLocaleString("en-IN")}
+                          </span>
+                          <span className="text-xs text-neutral-400 line-through">
+                            ₹{product.originalPrice.toLocaleString("en-IN")}
+                          </span>
+                          <span className="text-[11px] font-bold text-amber-900 bg-amber-100/90 px-2 py-0.5 rounded">
+                            {product.discount}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Add to Cart Yellow Button */}
                       <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleWishlist(product.id, product.name);
-                        }}
-                        title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                        className="p-1 rounded-full text-neutral-400 hover:text-red-500 hover:scale-110 active:scale-90 transition-all cursor-pointer"
+                        onClick={() => handleAddToCart(product)}
+                        className="w-full bg-[#FFC220] hover:bg-[#E5AC1C] active:scale-[0.98] text-neutral-950 font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-2xs hover:shadow-sm transition-all cursor-pointer"
                       >
-                        <Heart
-                          className={`w-5 h-5 transition-colors ${
-                            isWishlisted ? "fill-red-500 text-red-500" : ""
-                          }`}
-                        />
+                        <ShoppingCart className="w-4 h-4" />
+                        <span>Add to Cart</span>
                       </button>
                     </div>
-
-                    {/* Centered Product Image */}
-                    <Link
-                      href={`/products/${slugify(product.name)}/${product.id}`}
-                      className="block relative w-full h-44 sm:h-48 my-1 flex items-center justify-center cursor-pointer overflow-hidden"
-                    >
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        onError={(e) => {
-                          e.currentTarget.src = "/images/lifestyle-model.jpg";
-                        }}
-                        className="object-contain max-h-40 w-auto group-hover:scale-108 transition-transform duration-500 drop-shadow-sm select-none"
-                      />
-                    </Link>
-
-                    {/* Color Swatch Dots */}
-                    <div className="flex items-center gap-1.5 my-2.5">
-                      {product.colors.map((color, idx) => (
-                        <button
-                          key={color.name}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setSelectedColors((prev) => ({
-                              ...prev,
-                              [product.id]: idx,
-                            }));
-                          }}
-                          title={color.name}
-                          style={{ backgroundColor: color.hex }}
-                          className={`w-3.5 h-3.5 rounded-full border border-black/15 transition-all cursor-pointer ${
-                            activeColorIndex === idx
-                              ? "ring-2 ring-neutral-900 scale-110"
-                              : "opacity-80 hover:opacity-100"
-                          }`}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Product Name */}
-                    <Link
-                      href={`/products/${slugify(product.name)}/${product.id}`}
-                      className="block"
-                    >
-                      <h3 className="font-bold text-sm sm:text-base text-neutral-900 group-hover:text-amber-600 transition-colors line-clamp-1">
-                        {product.name}
-                      </h3>
-                    </Link>
-
-                    {/* Short Tagline / Specs */}
-                    <p className="text-xs text-neutral-500 line-clamp-1 mt-0.5 mb-2">
-                      {product.tagline}
-                    </p>
-
-                    {/* Rating Row: Star 4.8 (2.4K) */}
-                    <div className="flex items-center gap-1.5 text-xs mb-3">
-                      <Star className="w-3.5 h-3.5 fill-[#FFC220] text-[#FFC220]" />
-                      <span className="font-bold text-neutral-900">{product.rating}</span>
-                      <span className="text-neutral-400">({product.reviews})</span>
-                    </div>
-
-                    {/* Price Row: ₹1,499  ₹2,999  50% Off */}
-                    <div className="flex items-baseline gap-2 mb-3.5">
-                      <span className="text-lg font-black text-neutral-900">
-                        ₹{product.price.toLocaleString("en-IN")}
-                      </span>
-                      <span className="text-xs text-neutral-400 line-through">
-                        ₹{product.originalPrice.toLocaleString("en-IN")}
-                      </span>
-                      <span className="text-[11px] font-bold text-amber-900 bg-amber-100/90 px-2 py-0.5 rounded">
-                        {product.discount}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Add to Cart Yellow Button */}
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="w-full bg-[#FFC220] hover:bg-[#E5AC1C] active:scale-[0.98] text-neutral-950 font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-2xs hover:shadow-sm transition-all cursor-pointer"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    <span>Add to Cart</span>
-                  </button>
-                </div>
+                  </HoverCard>
+                </StaggerItem>
               );
             })}
-          </div>
+          </Stagger>
         ) : (
           /* LIST VIEW */
           <div className="space-y-4">

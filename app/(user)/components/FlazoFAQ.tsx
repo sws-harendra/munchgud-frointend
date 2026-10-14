@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { ChevronDown, HelpCircle, MessageCircle, PhoneCall, ShieldCheck, Sparkles } from "lucide-react";
+import { AccordionCollapse, FadeIn, Stagger, StaggerItem, HoverCard } from "@/app/commonComponents/motion";
 
 interface FAQItem {
   id: number;
@@ -36,7 +37,7 @@ const faqs: FAQItem[] = [
     category: "Durability & Sports",
     question: "Can I wear Flazo earbuds during intense gym sessions or heavy rain?",
     answer:
-"Absolutely. Flazo earbuds feature IPX5 certified nano-coating seals that safeguard internal circuit boards against corrosive sweat salts, water splashes, light rain, and gym chalk dust. The ergonomic 45° angled acoustic nozzle ensures the earbuds stay securely locked in your ears even during sprinting or HIIT workouts."
+"Absolutely. Flazo earbuds feature IPX5 certified nano-coating seals that safeguard internal circuit boards against corrosive sweat salts, water splashes, light rain, and gym chalk dust. The ergonomic 45° angled acoustic nozzle ensures the earbuds stay securely locked in your ears even during sprinting or HIIT workouts.",
   },
   {
     id: 5,
@@ -66,7 +67,7 @@ export default function FlazoFAQ() {
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">
         
         {/* Section Header */}
-        <div className="text-center space-y-3">
+        <FadeIn direction="up" className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/80 text-amber-900 text-xs font-black uppercase tracking-wider">
             <HelpCircle className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
             <span>Buyer Assurance & FAQs</span>
@@ -77,87 +78,90 @@ export default function FlazoFAQ() {
           <p className="text-neutral-600 text-sm sm:text-base max-w-xl mx-auto">
             Everything you need to know about Flazo 13mm acoustic engineering, 1-Year warranty and service, and delivery assurance.
           </p>
-        </div>
+        </FadeIn>
 
         {/* Accordion List */}
-        <div className="space-y-4">
+        <Stagger staggerChildren={0.06} className="space-y-4">
           {faqs.map((faq) => {
             const isOpen = openId === faq.id;
             return (
-              <div
-                key={faq.id}
-                className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                  isOpen
-                    ? "bg-amber-50/30 border-amber-300 shadow-md"
-                    : "bg-white border-neutral-200/80 hover:border-amber-300 hover:shadow-xs"
-                }`}
-              >
-                <button
-                  onClick={() => toggleFAQ(faq.id)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer select-none"
-                  aria-expanded={isOpen}
+              <StaggerItem key={faq.id}>
+                <div
+                  className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                    isOpen
+                      ? "bg-amber-50/40 border-amber-300 shadow-md ring-1 ring-amber-300/50"
+                      : "bg-white border-neutral-200/80 hover:border-amber-300 hover:shadow-xs"
+                  }`}
                 >
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 block">
-                      {faq.category}
-                    </span>
-                    <h3 className="text-base sm:text-lg font-black text-neutral-950 leading-snug">
-                      {faq.question}
-                    </h3>
-                  </div>
-
-                  <div
-                    className={`w-8 h-8 rounded-full border border-amber-200 flex items-center justify-center shrink-0 transition-transform duration-300 ${
-                      isOpen
-                        ? "bg-amber-400 text-neutral-950 rotate-180 shadow-xs"
-                        : "bg-white text-neutral-600"
-                    }`}
+                  <button
+                    onClick={() => toggleFAQ(faq.id)}
+                    className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer select-none"
+                    aria-expanded={isOpen}
                   >
-                    <ChevronDown className="w-4 h-4" />
-                  </div>
-                </button>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 block">
+                        {faq.category}
+                      </span>
+                      <h3 className="text-base sm:text-lg font-black text-neutral-950 leading-snug">
+                        {faq.question}
+                      </h3>
+                    </div>
 
-                {isOpen && (
-                  <div className="px-5 sm:px-6 pb-6 pt-1 text-xs sm:text-sm text-neutral-600 leading-relaxed border-t border-amber-200/50 animate-in fade-in slide-in-from-top-1">
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
+                    <div
+                      className={`w-8 h-8 rounded-full border border-amber-200 flex items-center justify-center shrink-0 transition-transform duration-300 ${
+                        isOpen
+                          ? "bg-amber-400 text-neutral-950 rotate-180 shadow-xs"
+                          : "bg-white text-neutral-600"
+                      }`}
+                    >
+                      <ChevronDown className="w-4 h-4" />
+                    </div>
+                  </button>
+
+                  <AccordionCollapse isOpen={isOpen}>
+                    <div className="px-5 sm:px-6 pb-6 pt-1 text-xs sm:text-sm text-neutral-600 leading-relaxed border-t border-amber-200/50">
+                      {faq.answer}
+                    </div>
+                  </AccordionCollapse>
+                </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </Stagger>
 
         {/* Live Support Help Box */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-amber-50 via-white to-amber-100/50 border border-amber-300/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 card-lift">
-          <div className="space-y-1 text-center sm:text-left">
-            <h4 className="text-base sm:text-lg font-black text-neutral-950">
-              Still have questions about audio fit or specs?
-            </h4>
-            <p className="text-xs text-neutral-600">
-              Speak directly with a Flazo Sound Specialist in Mumbai • Mon–Sat (10:00 AM – 8:00 PM IST)
-            </p>
-          </div>
+        <FadeIn direction="up" delay={0.1}>
+          <HoverCard yOffset={-3} className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-amber-50 via-white to-amber-100/50 border border-amber-300/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="space-y-1 text-center sm:text-left">
+              <h4 className="text-base sm:text-lg font-black text-neutral-950">
+                Still have questions about audio fit or specs?
+              </h4>
+              <p className="text-xs text-neutral-600">
+                Speak directly with a Flazo Sound Specialist in Mumbai • Mon–Sat (10:00 AM – 8:00 PM IST)
+              </p>
+            </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <a
-              href="https://wa.me/919999999999?text=Hi%20Flazo%20Support%2C%20I%20have%20a%20question%20regarding%20earbuds"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-shimmer inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition-all cursor-pointer"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>WhatsApp Us</span>
-            </a>
+            <div className="flex items-center gap-3 shrink-0">
+              <a
+                href="https://wa.me/919999999999?text=Hi%20Flazo%20Support%2C%20I%20have%20a%20question%20regarding%20earbuds"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-shimmer inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition-all cursor-pointer"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>WhatsApp Us</span>
+              </a>
 
-            <a
-              href="tel:18003529646"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-neutral-300 hover:border-amber-500 text-neutral-900 font-bold text-xs shadow-2xs hover:bg-amber-50 transition-all"
-            >
-              <PhoneCall className="w-3.5 h-3.5 text-amber-700" />
-              <span>+91 9199859862</span>
-            </a>
-          </div>
-        </div>
+              <a
+                href="tel:18003529646"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-neutral-300 hover:border-amber-500 text-neutral-900 font-bold text-xs shadow-2xs hover:bg-amber-50 transition-all"
+              >
+                <PhoneCall className="w-3.5 h-3.5 text-amber-700" />
+                <span>+91 9199859862</span>
+              </a>
+            </div>
+          </HoverCard>
+        </FadeIn>
 
       </div>
     </section>

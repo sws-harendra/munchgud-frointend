@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Award } from "lucide-react";
+import { FadeIn } from "@/app/commonComponents/motion";
 
 export default function FlazoComparison() {
   const comparisonRows = [
@@ -142,7 +143,7 @@ export default function FlazoComparison() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         {/* Section Header */}
-        <div className="text-center space-y-3">
+        <FadeIn direction="up" className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/70 text-amber-900 text-xs font-black uppercase tracking-wider">
             <Award className="w-3.5 h-3.5 text-amber-600" />
             <span>The Flazo Advantage</span>
@@ -153,54 +154,56 @@ export default function FlazoComparison() {
           <p className="text-neutral-600 text-sm sm:text-base max-w-xl mx-auto">
             See how Flazo flagship acoustic engineering outperforms typical wireless earbuds in real-world everyday performance.
           </p>
-        </div>
+        </FadeIn>
 
         {/* Comparison Table Exactly Matching Screenshot */}
-        <div className="overflow-hidden rounded-2xl border border-[#cbd5e1]/70 shadow-sm bg-white">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[640px]">
-              <thead>
-                <tr className="border-b border-[#cbd5e1]">
-                  <th className="w-[26%] py-4 px-6 text-xs sm:text-sm font-extrabold text-[#334155] uppercase tracking-wider bg-[#edf2f7]">
-                    FEATURE &amp; SPECS
-                  </th>
-                  <th className="w-[44%] py-4 px-6 text-xs sm:text-sm font-extrabold text-[#0369a1] uppercase tracking-wider bg-[#e2f0fd] border-x border-[#cbd5e1]/50">
-                    FLAZO
-                  </th>
-                  <th className="w-[30%] py-4 px-6 text-xs sm:text-sm font-extrabold text-[#334155] uppercase tracking-wider bg-[#edf2f7]">
-                    ORDINARY MARKET BUDS
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#e2e8f0] text-sm">
-                {comparisonRows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="hover:bg-slate-50/70 transition-colors"
-                  >
-                    {/* Feature & Specs Column */}
-                    <td className="py-5 px-6 font-bold text-slate-900 align-top">
-                      <div className="flex items-start gap-1">
-                        <span>{row.number}</span>
-                        <span>{row.title}</span>
-                      </div>
-                    </td>
-
-                    {/* Flazo Highlighted Column */}
-                    <td className="py-5 px-6 bg-[#f4f9fd] border-x border-[#e2e8f0]/80 align-top">
-                      {row.flazo}
-                    </td>
-
-                    {/* Ordinary Market Buds Column */}
-                    <td className="py-5 px-6 text-slate-700 align-top font-normal text-xs sm:text-sm leading-relaxed">
-                      {row.ordinary}
-                    </td>
+        <FadeIn direction="up" delay={0.1}>
+          <div className="overflow-hidden rounded-2xl border border-[#cbd5e1]/70 shadow-sm bg-white">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[640px]">
+                <thead>
+                  <tr className="border-b border-[#cbd5e1]">
+                    <th className="w-[26%] py-4 px-6 text-xs sm:text-sm font-extrabold text-[#334155] uppercase tracking-wider bg-[#edf2f7]">
+                      FEATURE &amp; SPECS
+                    </th>
+                    <th className="w-[44%] py-4 px-6 text-xs sm:text-sm font-extrabold text-[#0369a1] uppercase tracking-wider bg-[#e2f0fd] border-x border-[#cbd5e1]/50">
+                      FLAZO
+                    </th>
+                    <th className="w-[30%] py-4 px-6 text-xs sm:text-sm font-extrabold text-[#334155] uppercase tracking-wider bg-[#edf2f7]">
+                      ORDINARY MARKET BUDS
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[#e2e8f0] text-sm">
+                  {comparisonRows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="hover:bg-slate-50/70 transition-colors"
+                    >
+                      {/* Feature & Specs Column */}
+                      <td className="py-5 px-6 font-bold text-slate-900 align-top">
+                        <div className="flex items-start gap-1">
+                          <span>{row.number}</span>
+                          <span>{row.title}</span>
+                        </div>
+                      </td>
+
+                      {/* Flazo Highlighted Column */}
+                      <td className="py-5 px-6 bg-[#f4f9fd] border-x border-[#e2e8f0]/80 align-top">
+                        {row.flazo}
+                      </td>
+
+                      {/* Ordinary Market Buds Column */}
+                      <td className="py-5 px-6 text-slate-700 align-top font-normal text-xs sm:text-sm leading-relaxed">
+                        {row.ordinary}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </FadeIn>
 
       </div>
     </section>

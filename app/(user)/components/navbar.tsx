@@ -20,6 +20,7 @@ import { logout } from "@/app/lib/store/features/authSlice";
 import { useRouter } from "next/navigation";
 import { selectCartItemsCount } from "@/app/lib/store/features/cartSlice";
 import FlazoLogo from "@/app/commonComponents/FlazoLogo";
+import { motion, AnimatePresence } from "@/app/commonComponents/motion";
 
 export default function EcommerceNavbar() {
   const dispatch = useAppDispatch();
@@ -158,30 +159,38 @@ export default function EcommerceNavbar() {
                   <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
                 </button>
 
-                {isProfileOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-amber-100 py-2 z-50 animate-in fade-in">
-                    <div className="px-4 py-2 border-b border-neutral-100">
-                      <p className="text-xs text-neutral-400">Signed in as</p>
-                      <p className="text-xs font-bold text-neutral-900 truncate">{user?.fullname || "Audiophile"}</p>
-                    </div>
-                    <Link
-                      href="/orderhistory"
-                      onClick={() => setIsProfileOpen(false)}
-                      className="block px-4 py-2 text-xs text-neutral-700 hover:bg-amber-50 hover:text-amber-700"
+                <AnimatePresence>
+                  {isProfileOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.18, ease: "easeOut" }}
+                      className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-amber-100 py-2 z-50"
                     >
-                      Orders & Tracking
-                    </Link>
-                    <button
-                      onClick={() => {
-                        dispatch(logout());
-                        setIsProfileOpen(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                )}
+                      <div className="px-4 py-2 border-b border-neutral-100">
+                        <p className="text-xs text-neutral-400">Signed in as</p>
+                        <p className="text-xs font-bold text-neutral-900 truncate">{user?.fullname || "Audiophile"}</p>
+                      </div>
+                      <Link
+                        href="/orderhistory"
+                        onClick={() => setIsProfileOpen(false)}
+                        className="block px-4 py-2 text-xs text-neutral-700 hover:bg-amber-50 hover:text-amber-700"
+                      >
+                        Orders & Tracking
+                      </Link>
+                      <button
+                        onClick={() => {
+                          dispatch(logout());
+                          setIsProfileOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50"
+                      >
+                        Sign Out
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ) : (
               <Link href="/authentication/login">
@@ -204,43 +213,51 @@ export default function EcommerceNavbar() {
       </div>
 
       {/* Mobile Drawer Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-amber-100 px-6 py-5 space-y-4 shadow-xl animate-in slide-in-from-top-2">
-          <div className="space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsMenuOpen(false)}
-                className="block text-base font-semibold text-neutral-800 hover:text-amber-600 transition-colors py-2 border-b border-neutral-100"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden md:hidden bg-white border-t border-amber-100 px-6 py-5 space-y-4 shadow-xl"
+          >
+            <div className="space-y-3">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block text-base font-semibold text-neutral-800 hover:text-amber-600 transition-colors py-2 border-b border-neutral-100"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
 
-          <div className="pt-2 flex items-center justify-between">
-            <Link
-              href="/cart"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-2 text-sm font-semibold text-neutral-800"
-            >
-              <ShoppingCart className="w-4 h-4 text-amber-600" />
-              <span>Cart ({mounted ? cartCount : 0})</span>
-            </Link>
-
-            {(!mounted || !isAuthenticated) && (
+            <div className="pt-2 flex items-center justify-between">
               <Link
-                href="/authentication/login"
+                href="/cart"
                 onClick={() => setIsMenuOpen(false)}
-                className="px-4 py-2 text-xs font-bold text-neutral-950 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full"
+                className="flex items-center gap-2 text-sm font-semibold text-neutral-800"
               >
-                Sign In
+                <ShoppingCart className="w-4 h-4 text-amber-600" />
+                <span>Cart ({mounted ? cartCount : 0})</span>
               </Link>
-            )}
-          </div>
-        </div>
-      )}
+
+              {(!mounted || !isAuthenticated) && (
+                <Link
+                  href="/authentication/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="px-4 py-2 text-xs font-bold text-neutral-950 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full"
+                >
+                  Sign In
+                </Link>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

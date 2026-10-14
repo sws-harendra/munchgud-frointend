@@ -29,6 +29,7 @@ import { addToCart } from "@/app/lib/store/features/cartSlice";
 import { getImageUrl } from "@/app/utils/getImageUrl";
 import { toast } from "sonner";
 import FlazoDogEmptyState from "./FlazoDogEmptyState";
+import { FadeIn, motion } from "@/app/commonComponents/motion";
 
 const slugify = (text: string) =>
   (text || "product")
@@ -170,74 +171,80 @@ export default function FlazoBrandSpotlight() {
         {/* =========================================================================
             1. SECTION HEADER WITH INTERACTIVE FILTER PILLS (World-Class E-Commerce UX)
            ========================================================================= */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-amber-200/50 pb-6">
-          <div className="space-y-2 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-[#8C6D37] text-xs font-bold tracking-widest uppercase shadow-2xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#B8860B]" />
-              <span>Curated Drops &amp; Collections</span>
+        <FadeIn direction="up">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-amber-200/50 pb-6">
+            <div className="space-y-2 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-[#8C6D37] text-xs font-bold tracking-widest uppercase shadow-2xs">
+                <Sparkles className="w-3.5 h-3.5 text-[#B8860B]" />
+                <span>Curated Drops &amp; Collections</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#1A1815] tracking-tight leading-tight">
+                Designed for Living,{" "}
+                <span className="bg-gradient-to-r from-[#9E7324] via-[#D4AF37] to-[#B38328] bg-clip-text text-transparent italic font-serif">
+                  Crafted for Distinction.
+                </span>
+              </h2>
+
+              <p className="text-xs sm:text-sm text-neutral-600 max-w-2xl leading-relaxed">
+                Discover iconic releases, handpicked limited drops, and everyday essentials engineered with an uncompromising commitment to quality.
+              </p>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#1A1815] tracking-tight leading-tight">
-              Designed for Living,{" "}
-              <span className="bg-gradient-to-r from-[#9E7324] via-[#D4AF37] to-[#B38328] bg-clip-text text-transparent italic font-serif">
-                Crafted for Distinction.
-              </span>
-            </h2>
+            {/* Interactive Collection Filter Pills */}
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => setActiveTab("all")}
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === "all"
+                    ? "bg-neutral-950 text-white shadow-sm"
+                    : "bg-white/90 hover:bg-white text-neutral-700 border border-neutral-200/80 hover:border-amber-300"
+                }`}
+              >
+                All Curations
+              </motion.button>
 
-            <p className="text-xs sm:text-sm text-neutral-600 max-w-2xl leading-relaxed">
-              Discover iconic releases, handpicked limited drops, and everyday essentials engineered with an uncompromising commitment to quality.
-            </p>
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => setActiveTab("trending")}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === "trending"
+                    ? "bg-neutral-950 text-white shadow-sm"
+                    : "bg-white/90 hover:bg-white text-neutral-700 border border-neutral-200/80 hover:border-amber-300"
+                }`}
+              >
+                <Flame className="w-3.5 h-3.5 text-amber-500" />
+                <span>Trending Now</span>
+              </motion.button>
+
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => setActiveTab("signature")}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === "signature"
+                    ? "bg-neutral-950 text-white shadow-sm"
+                    : "bg-white/90 hover:bg-white text-neutral-700 border border-neutral-200/80 hover:border-amber-300"
+                }`}
+              >
+                <Award className="w-3.5 h-3.5 text-amber-500" />
+                <span>Signature Series</span>
+              </motion.button>
+
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => setActiveTab("new")}
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === "new"
+                    ? "bg-neutral-950 text-white shadow-sm"
+                    : "bg-white/90 hover:bg-white text-neutral-700 border border-neutral-200/80 hover:border-amber-300"
+                }`}
+              >
+                New Drops
+              </motion.button>
+            </div>
           </div>
-
-          {/* Interactive Collection Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <button
-              onClick={() => setActiveTab("all")}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "all"
-                  ? "bg-neutral-950 text-white shadow-sm"
-                  : "bg-white/90 hover:bg-white text-neutral-700 border border-neutral-200/80 hover:border-amber-300"
-              }`}
-            >
-              All Curations
-            </button>
-
-            <button
-              onClick={() => setActiveTab("trending")}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "trending"
-                  ? "bg-neutral-950 text-white shadow-sm"
-                  : "bg-white/90 hover:bg-white text-neutral-700 border border-neutral-200/80 hover:border-amber-300"
-              }`}
-            >
-              <Flame className="w-3.5 h-3.5 text-amber-500" />
-              <span>Trending Now</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("signature")}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "signature"
-                  ? "bg-neutral-950 text-white shadow-sm"
-                  : "bg-white/90 hover:bg-white text-neutral-700 border border-neutral-200/80 hover:border-amber-300"
-              }`}
-            >
-              <Award className="w-3.5 h-3.5 text-amber-500" />
-              <span>Signature Series</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("new")}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "new"
-                  ? "bg-neutral-950 text-white shadow-sm"
-                  : "bg-white/90 hover:bg-white text-neutral-700 border border-neutral-200/80 hover:border-amber-300"
-              }`}
-            >
-              New Drops
-            </button>
-          </div>
-        </div>
+        </FadeIn>
 
         {/* =========================================================================
             2. ARCHITECTURAL LUXURY BENTO GRID

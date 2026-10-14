@@ -46,6 +46,7 @@ import { states } from "@/app/utils/indianStates";
 import { placeOrder } from "@/app/lib/store/features/orderSlice";
 import { orderService } from "@/app/sercices/user/order.service";
 import { toast } from "sonner";
+import { FadeIn, ScaleIn, Float, motion } from "@/app/commonComponents/motion";
 declare global {
   interface Window {
     Razorpay: any;
@@ -520,33 +521,45 @@ const CheckoutPage = () => {
   if (orderSuccess) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50/40 via-white to-neutral-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full border border-amber-100/80 text-center">
-          <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-amber-200/60">
-            <CheckCircle className="w-12 h-12 text-amber-600" />
+        <ScaleIn>
+          <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full border border-amber-100/80 text-center">
+            <Float distance={6} duration={2.5}>
+              <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-amber-200/60">
+                <CheckCircle className="w-12 h-12 text-amber-600" />
+              </div>
+            </Float>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Order Placed Successfully!
+            </h2>
+            <p className="text-gray-600 mb-2">
+              Your order ID is:{" "}
+              <span className="font-bold text-amber-600">{orderId}</span>
+            </p>
+            <p className="text-gray-600 mb-8">
+              You will receive a confirmation email shortly.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg shadow-amber-500/25 transition-all duration-300"
+                >
+                  Continue Shopping
+                </motion.button>
+              </Link>
+              <Link href="/orderhistory">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="bg-white text-amber-700 border-2 border-amber-300 px-8 py-4 rounded-2xl font-semibold hover:bg-amber-50 transition-all duration-300 shadow-sm"
+                >
+                  View Order Details
+                </motion.button>
+              </Link>
+            </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Order Placed Successfully!
-          </h2>
-          <p className="text-gray-600 mb-2">
-            Your order ID is:{" "}
-            <span className="font-bold text-amber-600">{orderId}</span>
-          </p>
-          <p className="text-gray-600 mb-8">
-            You will receive a confirmation email shortly.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/">
-              <button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg shadow-amber-500/25 transform hover:scale-[1.02] transition-all duration-300">
-                Continue Shopping
-              </button>
-            </Link>
-            <Link href="/orderhistory">
-              <button className="bg-white text-amber-700 border-2 border-amber-300 px-8 py-4 rounded-2xl font-semibold hover:bg-amber-50 transition-all duration-300 shadow-sm">
-                View Order Details
-              </button>
-            </Link>
-          </div>
-        </div>
+        </ScaleIn>
       </div>
     );
   }
@@ -555,27 +568,33 @@ const CheckoutPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-amber-50/30 via-white to-neutral-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-5">
-          <Link href="/cart">
-            <button className="flex items-center text-amber-700 font-semibold hover:text-amber-800 transition-colors bg-white border border-amber-200/60 px-6 py-3 rounded-2xl shadow-sm hover:shadow-md">
-              <ArrowLeft className="w-5 h-5 mr-2 text-amber-600" />
-              Back to Cart
-            </button>
-          </Link>
-          <div className="text-sm text-gray-700 bg-white border border-amber-200/60 px-6 py-3 rounded-2xl shadow-sm">
-            <Lock className="w-4 h-4 inline mr-2 text-amber-600" />
-            Secure SSL Encrypted Checkout
+        <FadeIn direction="down">
+          <div className="flex items-center justify-between mb-5">
+            <Link href="/cart">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center text-amber-700 font-semibold hover:text-amber-800 transition-colors bg-white border border-amber-200/60 px-6 py-3 rounded-2xl shadow-sm hover:shadow-md cursor-pointer"
+              >
+                <ArrowLeft className="w-5 h-5 mr-2 text-amber-600" />
+                Back to Cart
+              </motion.button>
+            </Link>
+            <div className="text-sm text-gray-700 bg-white border border-amber-200/60 px-6 py-3 rounded-2xl shadow-sm">
+              <Lock className="w-4 h-4 inline mr-2 text-amber-600" />
+              Secure SSL Encrypted Checkout
+            </div>
           </div>
-        </div>
 
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Complete Your Order
-          </h1>
-          <p className="text-lg text-gray-600">
-            Secure checkout in just a few simple steps
-          </p>
-        </div>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              Complete Your Order
+            </h1>
+            <p className="text-lg text-gray-600">
+              Secure checkout in just a few simple steps
+            </p>
+          </div>
+        </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Checkout Form */}
@@ -1197,8 +1216,9 @@ const CheckoutPage = () => {
 
           {/* Enhanced Order Summary Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-3xl shadow-xl p-8 sticky top-8 border border-gray-100">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-8 flex items-center">
+            <FadeIn direction="left">
+              <div className="bg-white rounded-3xl shadow-xl p-8 sticky top-8 border border-gray-100">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-8 flex items-center">
                 <div className="w-8 h-8 bg-gradient-to-br from-amber-100 to-amber-50 rounded-xl flex items-center justify-center mr-3 border border-amber-200/50">
                   <CheckCircle className="w-5 h-5 text-amber-600" />
                 </div>
@@ -1308,7 +1328,8 @@ const CheckoutPage = () => {
                 </div>
               )} */}
             </div>
-          </div>
+          </FadeIn>
+        </div>
         </div>
       </div>
       {isProcessing && <Loader fullscreen text="Securing and placing your order..." />}
