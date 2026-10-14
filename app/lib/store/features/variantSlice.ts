@@ -206,21 +206,38 @@ const variantSlice = createSlice({
     // Fetch Product Variants
     builder.addCase(fetchProductVariants.fulfilled, (state, action) => {
       const { productId, data } = action.payload;
-      state.productVariants[productId] = data;
+      const list = Array.isArray(data) ? data : (data?.data || []);
+      state.productVariants[productId] = list;
     });
 
     // Create Product Variant
     builder.addCase(createProductVariant.fulfilled, (state, action) => {
       state.status = "succeeded";
+      const { productId, data } = action.payload;
+      const newVar = data?.data || data;
+      if (newVar && newVar.id) {
+        if (!Array.isArray(state.productVariants[productId])) {
+          state.productVariants[productId] = [];
+        }
+        const exists = state.productVariants[productId].some(
+          (v: any) => v.id === newVar.id
+        );
+        if (!exists) {
+          state.productVariants[productId].push(newVar);
+        }
+      }
     });
 
     // Delete Product Variant
     builder.addCase(deleteProductVariant.fulfilled, (state, action) => {
       const variantId = action.payload;
       Object.keys(state.productVariants).forEach((productId) => {
-        state.productVariants[parseInt(productId)] = state.productVariants[
-          parseInt(productId)
-        ].filter((variant) => variant.id !== variantId);
+        const list = state.productVariants[parseInt(productId)];
+        if (Array.isArray(list)) {
+          state.productVariants[parseInt(productId)] = list.filter(
+            (variant) => variant.id !== variantId
+          );
+        }
       });
     });
     builder.addCase(deleteVariantCategory.fulfilled, (state, action) => {

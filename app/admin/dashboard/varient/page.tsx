@@ -255,7 +255,13 @@ function ProductVariantsContent() {
     }
   };
 
-  const currentVariants = selectedProduct ? productVariants[selectedProduct.id] || [] : [];
+  const currentVariants: any[] = useMemo(() => {
+    if (!selectedProduct) return [];
+    const val = productVariants[selectedProduct.id];
+    if (Array.isArray(val)) return val;
+    if (val && Array.isArray((val as any).data)) return (val as any).data;
+    return [];
+  }, [selectedProduct, productVariants]);
 
   return (
     <div className={`min-h-screen p-4 sm:p-8 transition-colors duration-200 ${isDark ? "bg-[#09090b] text-white" : "bg-slate-50 text-slate-900"}`}>

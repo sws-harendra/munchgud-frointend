@@ -280,51 +280,8 @@ export default function ProductDetailClient({
 
   const activeImage = displayImages[selectedImage] || displayImages[0] || "";
 
-  // Extract Color Options from ProductVariants or Tags (100% dynamic, no fake fallbacks)
+  // Extract Color Options from ProductVariants, Base Product & Tags (100% dynamic, preserves base color)
   const availableColors: ColorOption[] = useMemo(() => {
-    if (product.ProductVariants && product.ProductVariants.length > 0) {
-      const colorVariants = product.ProductVariants.filter((v) =>
-        v.options?.some(
-          (opt) =>
-            opt.category?.name?.toLowerCase() === "color" ||
-            opt.category?.name?.toLowerCase() === "colour" ||
-            opt.category?.name?.toLowerCase() === "shade"
-        )
-      );
-
-      if (colorVariants.length > 0) {
-        return colorVariants.map((v) => {
-          const colorOpt = v.options.find(
-            (opt) =>
-              opt.category?.name?.toLowerCase() === "color" ||
-              opt.category?.name?.toLowerCase() === "colour" ||
-              opt.category?.name?.toLowerCase() === "shade"
-          );
-          const name = colorOpt ? colorOpt.value : v.sku || "Active Colour";
-          let hex = colorOpt?.hexCode || "#1F1F1F";
-          const lower = name.toLowerCase();
-          if (lower.includes("black")) hex = "#18181B";
-          else if (lower.includes("teal") || lower.includes("green")) hex = "#115E59";
-          else if (lower.includes("navy") || lower.includes("blue")) hex = "#1E3A8A";
-          else if (lower.includes("gold") || lower.includes("champagne")) hex = "#D97706";
-          else if (lower.includes("white")) hex = "#F4F4F5";
-          else if (lower.includes("red")) hex = "#991B1B";
-
-          return {
-            name,
-            hex,
-            image: v.image || undefined,
-            images: Array.isArray(v.images) ? v.images : undefined,
-            variantId: v.id,
-            price: v.price,
-            originalPrice: v.originalPrice || undefined,
-            stock: v.stock,
-          };
-        });
-      }
-    }
-
-    // Check tags for colors added in admin
     const knownColors = [
       { name: "Black", hex: "#18181B" },
       { name: "White", hex: "#F4F4F5" },
@@ -336,17 +293,128 @@ export default function ProductDetailClient({
       { name: "Navy Blue", hex: "#1B2B48" },
       { name: "Red", hex: "#991B1B" },
       { name: "Green", hex: "#15803D" },
+      { name: "Silver", hex: "#E2E8F0" },
+      { name: "Grey", hex: "#4B5563" },
+      { name: "Yellow", hex: "#EAB308" },
+      { name: "Pink", hex: "#EC4899" },
+      { name: "Purple", hex: "#8B5CF6" },
     ];
+
+    const getHexForColor = (colorName: string, defaultHex?: string) => {
+      if (defaultHex && defaultHex !== "#000000" && defaultHex !== "#111827") return defaultHex;
+      const lower = colorName.toLowerCase();
+      const matched = knownColors.find((kc) => lower.includes(kc.name.toLowerCase()));
+      if (matched) return matched.hex;
+      if (lower.includes("black")) return "#18181B";
+      if (lower.includes("teal") || lower.includes("green")) return "#115E59";
+      if (lower.includes("navy") || lower.includes("blue")) return "#1E3A8A";
+      if (lower.includes("gold") || lower.includes("champagne")) return "#D97706";
+      if (lower.includes("white")) return "#F4F4F5";
+      if (lower.includes("red")) return "#991B1B";
+      return defaultHex || "#1F1F1F";
+    };
+
+    // 1. Extract variants from ProductVariants
+    const variantColors: ColorOption[] = [];
+    if (product.ProductVariants && product.ProductVariants.length > 0) {
+      product.ProductVariants.forEach((v) => {
+        const colorOpt = v.options?.find(
+          (opt) =>
+            opt.category?.name?.toLowerCase() === "color" ||
+            opt.category?.name?.toLowerCase() === "colour" ||
+            opt.category?.name?.toLowerCase() === "shade"
+        ) || v.options?.[0];
+
+        const rawName = colorOpt ? (colorOpt.name || colorOpt.value) : v.sku || "";
+        if (!rawName && !v.sku) return;
+
+        const name = rawName
+          ? rawName.charAt(0).toUpperCase() + rawName.slice(1)
+          : "Active Colour";
+
+        const hex = getHexForColor(name, colorOpt?.hexCode);
+
+        variantColors.push({
+          name,
+          hex,
+          image: v.image || undefined,
+          images: Array.isArray(v.images) ? v.images : undefined,
+          variantId: v.id,
+          price: v.price,
+          originalPrice: v.originalPrice || undefined,
+          stock: v.stock,
+        });
+      });
+    }
+
+    // 2. Identify the Base Product's Color (from varientValue or tags or description)
+    const baseColors: ColorOption[] = [];
+
+    // Check product.varientValue (e.g. "Obsidian Black", "Champagne Gold Edition", "Black")
+    if (product.varientValue && typeof product.varientValue === "string" && product.varientValue.trim()) {
+      const val = product.varientValue.trim();
+      const hex = getHexForColor(val);
+      baseColors.push({
+        name: val,
+        hex,
+        image: Array.isArray(product.images) ? product.images[0] : product.images,
+        images: Array.isArray(product.images) ? product.images : [],
+        price: product.discountPrice || product.price,
+        originalPrice: product.originalPrice,
+        stock: product.stock,
+        variantId: undefined,
+      });
+    }
+
+    // Also check tags for known colors (e.g. "Black" tag)
     const matchedColorsFromTags = formattedTags
       .map((t) => knownColors.find((kc) => kc.name.toLowerCase() === t.toLowerCase()))
-      .filter(Boolean) as ColorOption[];
+      .filter(Boolean) as { name: string; hex: string }[];
 
-    if (matchedColorsFromTags.length > 0) {
-      return matchedColorsFromTags;
+    matchedColorsFromTags.forEach((tc) => {
+      if (!baseColors.some((bc) => bc.name.toLowerCase().includes(tc.name.toLowerCase()))) {
+        baseColors.push({
+          name: tc.name,
+          hex: tc.hex,
+          image: Array.isArray(product.images) ? product.images[0] : product.images,
+          images: Array.isArray(product.images) ? product.images : [],
+          price: product.discountPrice || product.price,
+          originalPrice: product.originalPrice,
+          stock: product.stock,
+          variantId: undefined,
+        });
+      }
+    });
+
+    // 3. Combine: If variantColors has items, include baseColors that are NOT already in variantColors!
+    if (variantColors.length > 0) {
+      const combined: ColorOption[] = [];
+
+      // Add baseColors that aren't already represented in variantColors
+      baseColors.forEach((bc) => {
+        const alreadyInVariants = variantColors.some(
+          (vc) =>
+            vc.name.toLowerCase() === bc.name.toLowerCase() ||
+            vc.name.toLowerCase().includes(bc.name.toLowerCase()) ||
+            bc.name.toLowerCase().includes(vc.name.toLowerCase())
+        );
+        if (!alreadyInVariants) {
+          combined.push(bc);
+        }
+      });
+
+      // Append all variant colors
+      combined.push(...variantColors);
+      return combined;
+    }
+
+    // If no variantColors exist yet, return baseColors
+    if (baseColors.length > 0) {
+      return baseColors;
     }
 
     return [];
-  }, [product.ProductVariants, formattedTags]);
+  }, [product, formattedTags]);
 
   const [activeColorIndex, setActiveColorIndex] = useState(0);
   const activeColor = availableColors[activeColorIndex] || null;
@@ -532,6 +600,9 @@ export default function ProductDetailClient({
         setSelectedVariant(matched);
         setSelectedImage(0); // Reset main preview image to first photo of this color
       }
+    } else {
+      setSelectedVariant(null);
+      setSelectedImage(0);
     }
   };
 
@@ -1025,7 +1096,7 @@ export default function ProductDetailClient({
             />
 
             {/* Check Delivery Box */}
-            <div className="pt-2 space-y-2">
+            {/* <div className="pt-2 space-y-2">
               <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-neutral-900">
                 <MapPin size={15} className="text-neutral-700" />
                 <span>Check Delivery</span>
@@ -1056,7 +1127,7 @@ export default function ProductDetailClient({
                   <span className="text-neutral-700 font-medium">By {deliveryDateStr}</span>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Payment Mode Indicator */}
             {(() => {

@@ -70,11 +70,11 @@ const menuItems: MenuItem[] = [
     icon: ShieldCheck,
     href: "/admin/dashboard/warranty-claims",
   },
-  {
-    name: "Video Management",
-    icon: Video,
-    href: "/admin/dashboard/video-management",
-  },
+  // {
+  //   name: "Video Management",
+  //   icon: Video,
+  //   href: "/admin/dashboard/video-management",
+  // },
   // {
   //   name: "Banners",
   //   icon: Banknote,
@@ -85,36 +85,36 @@ const menuItems: MenuItem[] = [
     icon: Sparkles,
     href: "/admin/dashboard/hero-images",
   },
-  {
-    name: "Section Control",
-    icon: Section,
-    href: "/admin/dashboard/section-control",
-  },
+  // {
+  //   name: "Section Control",
+  //   icon: Section,
+  //   href: "/admin/dashboard/section-control",
+  // },
   {
     name: "Category",
     icon: SeparatorVertical,
     href: "/admin/dashboard/category",
   },
-  {
-    name: "Instargram",
-    icon: Instagram,
-    href: "/admin/dashboard/instagram",
-  },
-  {
-    name: "Service Area",
-    icon: LocateIcon,
-    href: "/admin/dashboard/service-area",
-  },
+  // {
+  //   name: "Instargram",
+  //   icon: Instagram,
+  //   href: "/admin/dashboard/instagram",
+  // },
+  // {
+  //   name: "Service Area",
+  //   icon: LocateIcon,
+  //   href: "/admin/dashboard/service-area",
+  // },
   {
     name: "Add Pages",
     icon: PackagePlusIcon,
     href: "/admin/dashboard/staticpages",
   },
-  {
-    name: "Media Coverage",
-    icon: Camera,
-    href: "/admin/dashboard/media-coverage",
-  },
+  // {
+  //   name: "Media Coverage",
+  //   icon: Camera,
+  //   href: "/admin/dashboard/media-coverage",
+  // },
   {
     name: "Blogs",
     icon: Pen,
@@ -130,11 +130,11 @@ const menuItems: MenuItem[] = [
     icon: StarHalf,
     href: "/admin/dashboard/reviews",
   },
-  {
-    name: "Testimonial",
-    icon: Star,
-    href: "/admin/dashboard/testimonials",
-  },
+  // {
+  //   name: "Testimonial",
+  //   icon: Star,
+  //   href: "/admin/dashboard/testimonials",
+  // },
   {
     name: "Social Media Management",
     icon: Video,
