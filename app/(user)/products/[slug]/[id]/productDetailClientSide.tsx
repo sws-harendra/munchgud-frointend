@@ -287,6 +287,7 @@ export default function ProductDetailClient({
         v.options?.some(
           (opt) =>
             opt.category?.name?.toLowerCase() === "color" ||
+            opt.category?.name?.toLowerCase() === "colour" ||
             opt.category?.name?.toLowerCase() === "shade"
         )
       );
@@ -296,9 +297,10 @@ export default function ProductDetailClient({
           const colorOpt = v.options.find(
             (opt) =>
               opt.category?.name?.toLowerCase() === "color" ||
+              opt.category?.name?.toLowerCase() === "colour" ||
               opt.category?.name?.toLowerCase() === "shade"
           );
-          const name = colorOpt ? colorOpt.value : v.sku || "Active Color";
+          const name = colorOpt ? colorOpt.value : v.sku || "Active Colour";
           let hex = colorOpt?.hexCode || "#1F1F1F";
           const lower = name.toLowerCase();
           if (lower.includes("black")) hex = "#18181B";
@@ -491,7 +493,7 @@ export default function ProductDetailClient({
     }
     if (availableColors.length > 0) {
       list.push({
-        label: "Color Options",
+        label: "Colour Options",
         value: availableColors.map((c) => c.name).join(", "),
       });
     }
@@ -559,7 +561,7 @@ export default function ProductDetailClient({
 
   const handleAddToCart = () => {
     if (currentStock <= 0) {
-      toast.error("This color variant is currently out of stock!");
+      toast.error("This colour variant is currently out of stock!");
       return;
     }
     dispatch(
@@ -579,7 +581,7 @@ export default function ProductDetailClient({
 
   const handleBuyNow = () => {
     if (currentStock <= 0) {
-      toast.error("This color variant is currently out of stock!");
+      toast.error("This colour variant is currently out of stock!");
       return;
     }
     handleAddToCart();
@@ -905,11 +907,11 @@ export default function ProductDetailClient({
               <span className="text-neutral-500 text-sm">›</span>
             </div> */}
 
-            {/* Choose Your Color (Only shown if colors exist in DB) */}
+            {/* Choose Your Colour (Only shown if colours exist in DB) */}
             {availableColors.length > 0 && (
               <div className="space-y-2.5">
                 <div className="text-xs sm:text-sm font-bold text-neutral-900">
-                  Choose your color :{" "}
+                  Choose your colour :{" "}
                   <span className="font-semibold text-neutral-700">
                     {activeColor?.name}
                   </span>

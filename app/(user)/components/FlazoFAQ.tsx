@@ -51,7 +51,7 @@ const faqs: FAQItem[] = [
     category: "Return Policy",
     question: "What is the 7-Day Hassle-Free Swap & Return Policy?",
     answer:
-      "We want you to fall in love with Flazo sound. If for any reason the acoustic fit, sound signature, or comfort does not meet your expectations, or if you receive an incorrect item due to our error, you can request an instant replacement or swap within 7 days of package delivery. Please note that replacements will be provided for the exact item and color originally ordered; color changes are not permitted.",
+      "We want you to fall in love with Flazo sound. If for any reason the acoustic fit, sound signature, or comfort does not meet your expectations, or if you receive an incorrect item due to our error, you can request an instant replacement or swap within 7 days of package delivery. Please note that replacements will be provided for the exact item and colour originally ordered; colour changes are not permitted.",
   },
 ];
 

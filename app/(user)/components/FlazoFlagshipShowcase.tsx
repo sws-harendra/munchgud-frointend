@@ -217,9 +217,9 @@ export default function FlazoFlagshipShowcase() {
                 </div>
               </div>
 
-              {/* Color Shade Selector with smooth scale & active ring */}
+              {/* Colour Shade Selector with smooth scale & active ring */}
               <div className="mt-6 flex items-center gap-3">
-                <span className="text-xs font-bold text-neutral-600">Color:</span>
+                <span className="text-xs font-bold text-neutral-600">Colour:</span>
                 <div className="flex items-center gap-2">
                   {selectedModel.colors.map((c) => (
                     <button
