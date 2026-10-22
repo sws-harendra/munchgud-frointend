@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { Sparkles, ShieldCheck, Truck, Headphones, Award } from "lucide-react";
-import { FadeIn, Float, HoverCard, Stagger, StaggerItem } from "@/app/commonComponents/motion";
+import { FadeIn, HoverCard, Stagger, StaggerItem } from "@/app/commonComponents/motion";
 
 export default function FlazoLifestyleStory() {
   return (
@@ -12,30 +12,18 @@ export default function FlazoLifestyleStory() {
         {/* Lifestyle Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Left: Lifestyle Photography with Floating Quote */}
-          <FadeIn direction="right" distance={30} className="lg:col-span-6 relative">
+          {/* Left: Lifestyle Photography Showcase */}
+          <FadeIn direction="right" distance={30} className="lg:col-span-6 relative flex justify-center">
             <div className="absolute -inset-4 bg-radial from-amber-400/20 via-transparent to-transparent blur-2xl pointer-events-none" />
-            <div className="relative aspect-square max-w-lg mx-auto rounded-3xl overflow-hidden border-2 border-amber-200/80 shadow-2xl bg-amber-50 group">
+            <div className="relative w-full max-w-[480px] mx-auto rounded-3xl overflow-hidden border-2 border-amber-200/80 shadow-2xl bg-neutral-950 group">
               <Image
-                src="/images/lifestyle-model.jpg"
-                alt="Flazo Luxury Earbuds Lifestyle"
-                width={700}
-                height={700}
-                className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-700"
+                src="/images/boombass-lifestyle.png"
+                alt="Flazo Luxury Earbuds"
+                width={426}
+                height={612}
+                className="w-full h-auto block transform group-hover:scale-105 transition-transform duration-700"
+                priority
               />
-              
-              {/* Floating Quote Badge */}
-              <Float amplitude={5} duration={4} className="absolute bottom-6 left-6 right-6">
-                <div className="bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-amber-300 shadow-2xl">
-                  <p className="text-xs font-semibold text-neutral-800 italic">
-                    &ldquo;Flazo isn’t just an audio wearable. It’s jewelry that punches through with chest-rattling bass.&rdquo;
-                  </p>
-                  <div className="mt-2 flex items-center justify-between">
-                    <span className="text-[11px] font-black text-amber-900">GQ Style & Tech 2025</span>
-                    <div className="flex gap-0.5 text-amber-500 text-xs">★★★★★</div>
-                  </div>
-                </div>
-              </Float>
             </div>
           </FadeIn>
 
