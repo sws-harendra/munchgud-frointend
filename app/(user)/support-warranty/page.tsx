@@ -413,40 +413,49 @@ export default function SupportWarrantyPage() {
               <span>OFFICIAL FLAZO CARE+</span>
             </div>
 
-            {/* Headline: Punchy Bold Lowercase Nu Republic Style */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-[#1A1815] tracking-tight leading-[1.08] lowercase">
-              next-level support. <br />
+            {/* Headline */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-[#1A1815] tracking-tight leading-[1.08]">
+              Next-Level Support. <br />
               <span className="bg-gradient-to-r from-[#9E7324] via-[#C99726] to-[#8C6016] bg-clip-text text-transparent italic font-serif">
-                for next-level you.
+                For Next-Level You.
               </span>
             </h1>
 
             {/* Manifesto Body Text */}
             <div className="space-y-3 text-neutral-600 text-xs sm:text-sm leading-relaxed max-w-xl">
               <p>
-                at the <strong className="text-neutral-900 font-bold">Flazo universe</strong>, we believe great acoustics deserve even better support. and great listeners? they deserve the absolute best.
+                At the <strong className="text-neutral-900 font-bold">Flazo Universe</strong>, we believe great acoustics deserve even better support. And great listeners? They deserve the absolute best.
               </p>
               <p>
-                that&apos;s why our team shows up fast, stays reliable, and has your back at every step. from doorstep replacements to real human answers, we keep things seamless, effortless, and stress-free — so your experience stays as pure as the sound you love.
+                That&apos;s why our team acts fast, stays reliable, and has your back at every step. From hassle-free doorstep warranty service to quick human responses, we keep things seamless, effortless, and stress-free — so your experience stays as pure as the sound you love.
               </p>
             </div>
 
-            {/* Staccato Value Bullet Points */}
-            <div className="space-y-1.5 text-xs sm:text-sm font-bold text-neutral-900 pt-1">
-              <p className="flex items-center gap-2.5">
-                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                <span>no automated runarounds.</span>
+            {/* Value Bullet Points / Support Commitment */}
+            <div className="space-y-2 text-xs sm:text-sm text-neutral-700 pt-1">
+              <p className="text-[11px] font-black uppercase tracking-wider text-[#8C6016] mb-1">
+                OUR SUPPORT COMMITMENT
               </p>
-              <p className="flex items-center gap-2.5">
-                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                <span>no cold waiting responses.</span>
+              <p className="flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1.5" />
+                <span>
+                  <strong className="text-neutral-900 font-bold">No automated runarounds:</strong> Direct access to dedicated support team members.
+                </span>
               </p>
-              <p className="flex items-center gap-2.5">
-                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                <span>just genuine human support that moves at your speed.</span>
+              <p className="flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1.5" />
+                <span>
+                  <strong className="text-neutral-900 font-bold">No cold, endless waiting:</strong> Rapid response and resolution workflows.
+                </span>
               </p>
-              <p className="text-[#8C6016] font-extrabold italic pt-1.5 text-xs sm:text-sm">
-                because when you&apos;re next-level, your support should be too.
+              <p className="flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1.5" />
+                <span>
+                  <strong className="text-neutral-900 font-bold">Genuine human support:</strong> Service designed to move at your speed.
+                </span>
+              </p>
+              <p className="text-[#8C6016] font-extrabold italic pt-1 text-xs sm:text-sm">
+                &ldquo;Because when you&apos;re next-level, your support should be too.&rdquo;
               </p>
             </div>
 
