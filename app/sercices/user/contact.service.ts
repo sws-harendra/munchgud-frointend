@@ -12,6 +12,7 @@ export interface ContactInquiryItem {
   status: "new" | "in_progress" | "resolved" | "closed";
   userId?: number;
   adminNotes?: string;
+  attachment?: string;
   ipAddress?: string;
   createdAt: string;
   updatedAt: string;
@@ -42,16 +43,24 @@ export interface InquiriesResponse {
 
 export const contactService = {
   // Public/Customer: Submit Inquiry or Concierge message
-  sendContactInquiry: async (data: {
-    name?: string;
-    email?: string;
-    phone?: string;
-    orderId?: string;
-    subject?: string;
-    message: string;
-    source?: string;
-  }) => {
-    const response = await axiosInstance.post("/contact", data);
+  sendContactInquiry: async (
+    data:
+      | {
+          name?: string;
+          email?: string;
+          phone?: string;
+          orderId?: string;
+          subject?: string;
+          message: string;
+          source?: string;
+          attachment?: File | string;
+        }
+      | FormData
+  ) => {
+    const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+    const response = await axiosInstance.post("/contact", data, {
+      headers: isFormData ? { "Content-Type": "multipart/form-data" } : undefined,
+    });
     return response.data;
   },
 

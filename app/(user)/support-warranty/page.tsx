@@ -27,7 +27,9 @@ import {
   RefreshCw,
   Wrench,
   Sparkles,
+  Paperclip,
 } from "lucide-react";
+import FlazoLogo from "@/app/commonComponents/FlazoLogo";
 import { toast } from "sonner";
 import { useAppSelector } from "@/app/lib/store/store";
 import { contactService } from "@/app/sercices/user/contact.service";
@@ -82,6 +84,7 @@ export default function SupportWarrantyPage() {
     orderId: "",
     message: "",
   });
+  const [contactFile, setContactFile] = useState<File | null>(null);
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
 
   // Nu Republic Style Hero Warranty Station State
@@ -345,6 +348,10 @@ export default function SupportWarrantyPage() {
       toast.error("Please enter your email.");
       return;
     }
+    if (!contactForm.phone.trim()) {
+      toast.error("Please enter your Phone / WhatsApp number.");
+      return;
+    }
     if (!contactForm.message.trim()) {
       toast.error("Please write your message.");
       return;
@@ -352,15 +359,21 @@ export default function SupportWarrantyPage() {
 
     setIsSubmittingContact(true);
     try {
-      await contactService.sendContactInquiry({
-        name: contactForm.name.trim(),
-        email: contactForm.email.trim(),
-        phone: contactForm.phone.trim() || undefined,
-        orderId: contactForm.orderId.trim() || undefined,
-        subject: "Support & Warranty Inquiry",
-        message: contactForm.message.trim(),
-        source: "support_warranty",
-      });
+      const formData = new FormData();
+      formData.append("name", contactForm.name.trim());
+      formData.append("email", contactForm.email.trim());
+      formData.append("phone", contactForm.phone.trim());
+      if (contactForm.orderId.trim()) {
+        formData.append("orderId", contactForm.orderId.trim());
+      }
+      formData.append("subject", "Support & Warranty Inquiry");
+      formData.append("message", contactForm.message.trim());
+      formData.append("source", "support_warranty");
+      if (contactFile) {
+        formData.append("attachment", contactFile);
+      }
+
+      await contactService.sendContactInquiry(formData);
 
       toast.success("Thank you! Your inquiry has been sent to Flazo Support team.");
       setContactForm({
@@ -370,9 +383,10 @@ export default function SupportWarrantyPage() {
         orderId: "",
         message: "",
       });
+      setContactFile(null);
       setActiveModal(null);
     } catch (err: any) {
-      toast.error(err.message || "Failed to submit inquiry. Please try again.");
+      toast.error(err.response?.data?.message || err.message || "Failed to submit inquiry. Please try again.");
     } finally {
       setIsSubmittingContact(false);
     }
@@ -1341,9 +1355,9 @@ export default function SupportWarrantyPage() {
           <div className="bg-white rounded-3xl border border-[#E5D4BC] max-w-lg w-full shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
             {/* Modal Header */}
             <div className="px-5 py-4 bg-[#FAF5EC] border-b border-[#E8D7BE] flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#9E6B20] text-white flex items-center justify-center font-bold text-xs shrink-0">
-                  FLZ
+              <div className="flex items-center gap-3">
+                <div className="shrink-0 flex items-center">
+                  <FlazoLogo size="xs" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-[#1A1A1A]">Flazo Customer Support</h4>
@@ -1371,6 +1385,7 @@ export default function SupportWarrantyPage() {
                 Leave your inquiry details below. Our customer care team will review your request and reach out promptly.
               </p>
 
+              {/* 1. Full Name * & Email Address * */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-bold text-neutral-700 block mb-1">
@@ -1400,14 +1415,16 @@ export default function SupportWarrantyPage() {
                 </div>
               </div>
 
+              {/* 2. Phone / WhatsApp Number * & Order ID (Optional) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-bold text-neutral-700 block mb-1">
-                    Phone Number (Optional)
+                    Phone / WhatsApp Number *
                   </label>
                   <input
                     type="tel"
-                    placeholder="Mobile number"
+                    required
+                    placeholder="Mobile / WhatsApp number"
                     value={contactForm.phone}
                     onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
                     className="w-full px-3 py-2 text-xs border border-[#E8D7BE] rounded-xl focus:outline-none focus:border-[#9E6B20] bg-white text-neutral-900"
@@ -1427,6 +1444,50 @@ export default function SupportWarrantyPage() {
                 </div>
               </div>
 
+              {/* 3. Attach Invoice / Photo (Optional) (New) */}
+              <div>
+                <label className="text-[11px] font-bold text-neutral-700 block mb-1">
+                  Attach Invoice / Photo (Optional)
+                </label>
+                <div className="flex items-center gap-2">
+                  <label className="flex-1 flex items-center justify-between px-3 py-2.5 text-xs border border-dashed border-[#D9C4A4] rounded-xl bg-white hover:bg-[#FAF6EE] cursor-pointer transition text-neutral-600">
+                    <span className="flex items-center gap-2 truncate">
+                      <Paperclip className="w-3.5 h-3.5 text-[#9E6B20] shrink-0" />
+                      <span className="truncate">
+                        {contactFile ? contactFile.name : "Upload invoice or photo (JPG, PNG, PDF up to 10MB)"}
+                      </span>
+                    </span>
+                    <span className="px-2.5 py-1 text-[10px] font-bold bg-[#FAF3E5] text-[#9E6B20] rounded-lg border border-[#E5D4BC] shrink-0 ml-2">
+                      Upload
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        if (file && file.size > 10 * 1024 * 1024) {
+                          toast.error("File size must be under 10MB");
+                          return;
+                        }
+                        setContactFile(file);
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                  {contactFile && (
+                    <button
+                      type="button"
+                      onClick={() => setContactFile(null)}
+                      className="p-2 text-neutral-400 hover:text-rose-500 rounded-lg hover:bg-rose-50 transition shrink-0"
+                      title="Remove file"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* 4. Your Message * */}
               <div>
                 <label className="text-[11px] font-bold text-neutral-700 block mb-1">
                   Your Message *
@@ -1441,6 +1502,7 @@ export default function SupportWarrantyPage() {
                 />
               </div>
 
+              {/* [ Submit Inquiry ] Button */}
               <div className="pt-2 border-t border-[#E8D7BE] flex items-center justify-between">
                 <a
                   href="/contactus"

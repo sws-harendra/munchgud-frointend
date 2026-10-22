@@ -25,6 +25,7 @@ import {
   Archive,
   Save,
   FileText,
+  Paperclip,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -500,10 +501,25 @@ export default function AdminInquiriesPage() {
                           </a>
 
                           {item.phone && (
-                            <a href={`tel:${item.phone}`} className="hover:underline flex items-center gap-1">
-                              <Phone className="w-3 h-3 text-emerald-500" />
-                              <span>{item.phone}</span>
-                            </a>
+                            <div className="flex items-center gap-1.5">
+                              <a href={`tel:${item.phone}`} className="hover:underline flex items-center gap-1">
+                                <Phone className="w-3 h-3 text-emerald-500" />
+                                <span>{item.phone}</span>
+                              </a>
+                              <a
+                                href={`https://wa.me/${String(item.phone).replace(/[^0-9]/g, "")}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`text-[10px] font-bold px-1.5 py-0.5 rounded border transition flex items-center gap-1 ${
+                                  isDark
+                                    ? "bg-emerald-950/60 border-emerald-800/60 text-emerald-300 hover:bg-emerald-900/60"
+                                    : "bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100"
+                                }`}
+                                title="Open WhatsApp Chat"
+                              >
+                                WhatsApp
+                              </a>
+                            </div>
                           )}
 
                           <span className="flex items-center gap-1 text-[11px] font-mono">
@@ -591,6 +607,30 @@ export default function AdminInquiriesPage() {
                     )}
                     <p className="whitespace-pre-wrap">{item.message}</p>
                   </div>
+
+                  {/* Attached Invoice / Photo */}
+                  {item.attachment && (
+                    <div className="pt-1">
+                      <a
+                        href={
+                          item.attachment.startsWith("http")
+                            ? item.attachment
+                            : `${process.env.NEXT_PUBLIC_serverurl || "http://localhost:8008"}/uploads/${item.attachment}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition border ${
+                          isDark
+                            ? "bg-amber-950/40 text-amber-300 border-amber-800/50 hover:bg-amber-900/40"
+                            : "bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100"
+                        }`}
+                      >
+                        <Paperclip className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                        <span>View Attached Invoice / Photo</span>
+                        <ExternalLink className="w-3 h-3 ml-0.5 opacity-70" />
+                      </a>
+                    </div>
+                  )}
 
                   {/* Admin Notes Section */}
                   <div className="flex items-center justify-between gap-2 pt-1 text-xs">
