@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
@@ -21,8 +21,11 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAdminTheme } from "../context/AdminThemeContext";
-import { useAppDispatch } from "@/app/lib/store/store";
-import { logout, resetAuthState } from "@/app/lib/store/features/authSlice";
+import { useAppDispatch, useAppSelector } from "@/app/lib/store/store";
+import { logout, resetAuthState, getUserDetails } from "@/app/lib/store/features/authSlice";
+import { getImageUrl } from "@/app/utils/getImageUrl";
+import SidebarForm from "./SidebarForm";
+import EditUser from "./editUser";
 
 // Friendly path names mapper for breadcrumb
 const PATH_MAP: Record<string, string> = {
@@ -83,6 +86,17 @@ export default function AdminTopBar() {
   }, []);
 
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.auth.user);
+
+  const adminInitials = useMemo(() => {
+    if (!currentUser?.fullname) return "AD";
+    return currentUser.fullname
+      .split(" ")
+      .map((n: string) => n[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  }, [currentUser?.fullname]);
 
   const handleLogout = async () => {
     try {
@@ -280,29 +294,80 @@ export default function AdminTopBar() {
           </span>
         </button>
 
-        {/* Admin Profile Mini Avatar */}
-        <div
-          className={`flex items-center gap-2 pl-2 sm:pl-3 border-l ${
-            resolvedTheme === "dark" ? "border-zinc-800" : "border-slate-200"
-          }`}
-        >
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs shadow-xs"
-            style={{
-              backgroundColor: settings.accentColor,
-              color: "#000000",
-            }}
+        {/* Admin Profile Mini Avatar with Edit Drawer */}
+        {currentUser ? (
+          <SidebarForm
+            title={`Edit Profile (${currentUser.fullname || "Admin"})`}
+            trigger={
+              <button
+                type="button"
+                className={`flex items-center gap-2 pl-2 sm:pl-3 border-l text-left cursor-pointer hover:opacity-85 transition-opacity ${
+                  resolvedTheme === "dark" ? "border-zinc-800" : "border-slate-200"
+                }`}
+                title="Click to edit admin details & change password"
+              >
+                {currentUser.avatar ? (
+                  <img
+                    src={getImageUrl(currentUser.avatar)}
+                    alt={currentUser.fullname || "Admin"}
+                    className="w-8 h-8 rounded-full object-cover border border-amber-500 shadow-xs"
+                  />
+                ) : (
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs shadow-xs"
+                    style={{
+                      backgroundColor: settings.accentColor,
+                      color: "#000000",
+                    }}
+                  >
+                    {adminInitials}
+                  </div>
+                )}
+                <div className="hidden xl:block text-left leading-tight">
+                  <p className="text-xs font-bold truncate max-w-[120px]">
+                    {currentUser.fullname || "Admin"}
+                  </p>
+                  <p className="text-[10px] text-emerald-500 font-semibold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Online • Edit
+                  </p>
+                </div>
+              </button>
+            }
           >
-            AD
-          </div>
-          <div className="hidden xl:block text-left leading-tight">
-            <p className="text-xs font-bold truncate">Admin</p>
-            <p className="text-[10px] text-emerald-500 font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Online
-            </p>
-          </div>
-        </div>
+            <EditUser
+              user={currentUser}
+              onSuccess={() => {
+                dispatch(getUserDetails());
+              }}
+            />
+          </SidebarForm>
+        ) : (
+          <Link
+            href="/admin/dashboard/users"
+            className={`flex items-center gap-2 pl-2 sm:pl-3 border-l text-left hover:opacity-85 transition-opacity ${
+              resolvedTheme === "dark" ? "border-zinc-800" : "border-slate-200"
+            }`}
+            title="User Accounts"
+          >
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs shadow-xs"
+              style={{
+                backgroundColor: settings.accentColor,
+                color: "#000000",
+              }}
+            >
+              AD
+            </div>
+            <div className="hidden xl:block text-left leading-tight">
+              <p className="text-xs font-bold truncate">Admin</p>
+              <p className="text-[10px] text-emerald-500 font-semibold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Online
+              </p>
+            </div>
+          </Link>
+        )}
 
         {/* Quick Logout Button */}
         <button
