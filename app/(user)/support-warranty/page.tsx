@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
@@ -119,7 +119,7 @@ export default function SupportWarrantyPage() {
     }
   }, [user]);
 
-  // 5 Help Topic Cards
+  // 4 Help Topic Cards
   const helpTopics = [
     {
       id: "setup",
@@ -148,16 +148,6 @@ export default function SupportWarrantyPage() {
         setActiveModal("register");
       },
       icon: Shield,
-    },
-    {
-      id: "care",
-      title: "Product Care",
-      desc: "Tips to keep your Flazo product in the best condition.",
-      linkText: "Care Tips",
-      action: () => {
-        toast.info("Store earbuds in dry case, clean ear tips with micro-fiber cloth weekly.");
-      },
-      icon: Package,
     },
     {
       id: "contact",
@@ -589,8 +579,8 @@ export default function SupportWarrantyPage() {
           </div>
         </FadeIn>
 
-        {/* 5 Topic Cards Grid */}
-        <Stagger staggerChildren={0.08} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* Topic Cards Grid */}
+        <Stagger staggerChildren={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {filteredTopics.map((topic) => {
             const IconComponent = topic.icon;
             return (
@@ -1475,38 +1465,90 @@ export default function SupportWarrantyPage() {
       {/* 5. View Guides Modal */}
       {activeModal === "guides" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl p-7 border border-[#E5D4BC] max-w-lg w-full shadow-2xl relative max-h-[85vh] overflow-y-auto">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E5D4BC] max-w-xl w-full shadow-2xl relative max-h-[85vh] overflow-y-auto">
             <button
               onClick={() => setActiveModal(null)}
-              className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-700"
+              className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-700 p-1 rounded-full hover:bg-neutral-100 transition"
+              aria-label="Close"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-xl font-serif font-black text-[#1A1A1A] mb-4">
-              Quick Setup & Troubleshooting Guides
-            </h3>
+            <div className="mb-5 pr-6">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#8C6016] block mb-1">
+                Help &amp; Documentation
+              </span>
+              <h3 className="text-xl sm:text-2xl font-serif font-black text-[#1A1A1A]">
+                Quick Setup &amp; Troubleshooting Guides
+              </h3>
+            </div>
 
-            <div className="space-y-4 text-xs text-neutral-700">
-              <div className="p-4 rounded-2xl bg-[#FAF5EC] border border-[#E8D7BE]">
-                <h4 className="font-bold text-[#1A1A1A] mb-1">1. Bluetooth Pairing Reset</h4>
-                <p className="leading-relaxed text-neutral-600">
-                  Place both earbuds back in the charging case. Press and hold the case button for 10 seconds until the front golden LEDs flash three times. Remove both earbuds together.
-                </p>
+            <div className="space-y-4 text-xs sm:text-sm text-neutral-700 leading-relaxed">
+              {/* 1. Bluetooth Pairing & Factory Reset */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF5EC] border border-[#E8D7BE] space-y-2.5">
+                <h4 className="font-bold text-[#1A1A1A] text-sm sm:text-base">
+                  1. Bluetooth Pairing &amp; Factory Reset
+                </h4>
+                <div className="space-y-2 text-neutral-600">
+                  <p>
+                    <strong className="text-neutral-800">Bluetooth Pairing Reset:</strong> Place both earbuds back in the charging case. Press and hold the case button for 10 seconds until the front golden LEDs flash three times. Remove both earbuds together.
+                  </p>
+                  <p>
+                    <strong className="text-neutral-800">Factory Reset:</strong> Tap 6 times on either earbud to trigger Factory Reset.
+                  </p>
+                </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#FAF5EC] border border-[#E8D7BE]">
-                <h4 className="font-bold text-[#1A1A1A] mb-1">2. Switching Between 50dB ANC & Ambient Mode</h4>
-                <p className="leading-relaxed text-neutral-600">
-                  Long-press the right earbud touch sensor for 2 seconds. A studio chime will sound announcing &quot;ANC Active&quot;, &quot;Spatial Ambient&quot;, or &quot;Normal Mode&quot;.
-                </p>
+              {/* 2. Smart Touch Controls & Modes */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF5EC] border border-[#E8D7BE] space-y-3">
+                <h4 className="font-bold text-[#1A1A1A] text-sm sm:text-base">
+                  2. Smart Touch Controls &amp; Modes
+                </h4>
+                <div className="space-y-2 text-neutral-600">
+                  <p>
+                    <strong className="text-neutral-800">Switching Between 50dB ANC &amp; Ambient Mode:</strong> Long-press the right earbud touch sensor for 2 seconds. A studio chime will sound announcing &quot;ANC Active&quot;, &quot;Spatial Ambient&quot;, or &quot;Normal Mode&quot;.
+                  </p>
+                  <div className="pt-1">
+                    <p className="font-bold text-neutral-800 mb-1.5">
+                      Touch Operations:
+                    </p>
+                    <ul className="space-y-1.5 list-disc pl-5 text-neutral-600 marker:text-[#9E6B20]">
+                      <li>
+                        <strong className="text-neutral-800">Single Tap:</strong> Play/Pause, Answer/Hang Up
+                      </li>
+                      <li>
+                        <strong className="text-neutral-800">Double Tap:</strong> Previous/Next Track, Reject Call
+                      </li>
+                      <li>
+                        <strong className="text-neutral-800">Triple Tap:</strong> Volume Up/Down
+                      </li>
+                      <li>
+                        <strong className="text-neutral-800">4 Taps:</strong> Game Mode
+                      </li>
+                      <li>
+                        <strong className="text-neutral-800">Long Press:</strong> Voice Assistant
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#FAF5EC] border border-[#E8D7BE]">
-                <h4 className="font-bold text-[#1A1A1A] mb-1">3. Charging & Battery Optimization</h4>
-                <p className="leading-relaxed text-neutral-600">
-                  Always use the provided 5V/2A USB-C fast charging cable. 10 minutes of FlashCharge supplies 10 hours of continuous playback.
-                </p>
+              {/* 3. Charging & Battery Optimization */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF5EC] border border-[#E8D7BE] space-y-2.5">
+                <h4 className="font-bold text-[#1A1A1A] text-sm sm:text-base">
+                  3. Charging &amp; Battery Optimization
+                </h4>
+                <div className="space-y-2 text-neutral-600">
+                  <p>
+                    <strong className="text-neutral-800">Charging Details:</strong> Always use the provided 5V/2.1A USB-C fast charging cable.
+                  </p>
+                  <p>
+                    <strong className="text-neutral-800">Playtime:</strong> Total Playtime: Up to 100 Hours (with case, depends on volume). Single Charge: Max 8 Hours (at moderate volume).
+                  </p>
+                  <p>
+                    <strong className="text-neutral-800">Smart Indicators:</strong> Dual Light Status — Buds: Pulsing white light; Case: Flashing red (charging), Solid red (full).
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -1516,28 +1558,81 @@ export default function SupportWarrantyPage() {
       {/* 6. Terms & Conditions Modal */}
       {activeModal === "terms" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl p-7 border border-[#E5D4BC] max-w-lg w-full shadow-2xl relative max-h-[85vh] overflow-y-auto">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E5D4BC] max-w-xl w-full shadow-2xl relative max-h-[85vh] overflow-y-auto">
             <button
               onClick={() => setActiveModal(null)}
-              className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-700"
+              className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-700 p-1 rounded-full hover:bg-neutral-100 transition"
+              aria-label="Close"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-xl font-serif font-black text-[#1A1A1A] mb-3">
-              1 Year Limited Warranty Terms
-            </h3>
+            <div className="mb-5 pr-6">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#8C6016] block mb-1">
+                Official Policy
+              </span>
+              <h3 className="text-xl sm:text-2xl font-serif font-black text-[#1A1A1A]">
+                FLAZO - WARRANTY &amp; REPLACEMENT POLICY
+              </h3>
+            </div>
 
-            <div className="space-y-3 text-xs text-neutral-600 leading-relaxed">
-              <p>
-                <strong>1. Scope of Coverage:</strong> Flazo guarantees that your audio product will be free from manufacturing, internal electrical, and component defects for a period of 1 Year (365 days) from the invoice date.
-              </p>
-              <p>
-                <strong>2. Doorstep Swap:</strong> In case of any verified hardware failure, Flazo will arrange a doorstep courier pickup and deliver a fresh replacement unit at zero shipping charge across India.
-              </p>
-              <p>
-                <strong>3. Exclusions:</strong> Warranty does not cover accidental physical crush damage, unauthorized third-party teardowns, liquid submersion beyond IPX7 specifications, or cosmetic scratches from normal daily wear.
-              </p>
+            <div className="space-y-4 text-xs sm:text-sm text-neutral-700 leading-relaxed">
+              {/* 1. 7-Day Technical Replacement Policy */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF5EC] border border-[#E8D7BE]">
+                <h4 className="font-bold text-[#1A1A1A] text-sm sm:text-base mb-2">
+                  1. 7-Day Technical Replacement Policy
+                </h4>
+                <ul className="space-y-2 list-disc pl-5 text-neutral-600 marker:text-[#9E6B20]">
+                  <li>
+                    Flazo ensures a straightforward replacement window limited strictly to the first 7 days from the date of product delivery.
+                  </li>
+                  <li>
+                    This policy applies solely to verified manufacturing or technical malfunctions, including but not limited to acoustic/speaker failure, hardware pairing disruptions, or critical charging anomalies.
+                  </li>
+                  <li>
+                    Incidents involving physical impact, accidental drops, liquid ingress exceeding IPX5 limits, or subjective user dissatisfaction are strictly excluded.
+                  </li>
+                </ul>
+              </div>
+
+              {/* 2. 1-Year Comprehensive Warranty Coverage */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF5EC] border border-[#E8D7BE]">
+                <h4 className="font-bold text-[#1A1A1A] text-sm sm:text-base mb-2">
+                  2. 1-Year Comprehensive Warranty Coverage
+                </h4>
+                <ul className="space-y-2 list-disc pl-5 text-neutral-600 marker:text-[#9E6B20]">
+                  <li>
+                    Spanning from the 8th day up to 365 days (1 year) post-invoice issuance, Flazo extends an official warranty against internal electrical failures and component defects.
+                  </li>
+                  <li>
+                    Validated hardware claims are processed via doorstep logistics, ensuring seamless pickup, professional evaluation, and service or repair under zero shipping charges across India.
+                  </li>
+                </ul>
+              </div>
+
+              {/* 3. Policy Exclusions & Limitations */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF5EC] border border-[#E8D7BE]">
+                <h4 className="font-bold text-[#1A1A1A] text-sm sm:text-base mb-2">
+                  3. Policy Exclusions &amp; Limitations
+                </h4>
+                <p className="text-neutral-600 mb-2">
+                  The warranty framework explicitly voids coverage for:
+                </p>
+                <ul className="space-y-2 list-disc pl-5 text-neutral-600 marker:text-[#9E6B20]">
+                  <li>
+                    Physical structural damage, crushing, or fractures resulting from external mishandling.
+                  </li>
+                  <li>
+                    Liquid damage caused by submersion beyond certified IPX5 ratings.
+                  </li>
+                  <li>
+                    Unauthorized modifications, third-party teardowns, or user-inflicted tampering.
+                  </li>
+                  <li>
+                    Standard cosmetic wear, fading, or superficial scratches accumulated through routine daily usage.
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
